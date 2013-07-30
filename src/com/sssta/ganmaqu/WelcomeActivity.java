@@ -3,6 +3,8 @@ package com.sssta.ganmaqu;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import kankan.wheel.demo.CitiesActivity;
+
 
 
 import android.os.Bundle;
@@ -17,16 +19,16 @@ public class WelcomeActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		this.requestWindowFeature(Window.FEATURE_NO_TITLE);  //设置取消标题栏
-		this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN); //设置全屏
+		this.requestWindowFeature(Window.FEATURE_NO_TITLE);  //璁剧疆鍙栨秷鏍囬鏍�
+		this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN); //璁剧疆鍏ㄥ睆
 		setContentView(R.layout.activity_welcome);
 		final Intent intent2 = new Intent(WelcomeActivity.this, MainActivity.class);
-		Timer timer = new Timer(); //设置Timer
+		Timer timer = new Timer(); //璁剧疆Timer
 		TimerTask task = new TimerTask() {
 			@Override
 			public void run() {
 				startActivity(intent2);
-				finish(); // 结束
+				finish(); // 缁撴潫
 			}
 		};
 		timer.schedule(task, 1000 * 2);

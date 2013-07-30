@@ -36,6 +36,7 @@ import android.text.StaticLayout;
 import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.util.FloatMath;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.MotionEvent;
@@ -466,6 +467,7 @@ public class WheelView extends View {
 	 * @param useCurrentValue
 	 * @return the text
 	 */
+	
 	private String buildText(boolean useCurrentValue) {
 		StringBuilder itemsText = new StringBuilder();
 		int addItems = visibleItems / 2 + 1;
@@ -766,9 +768,10 @@ public class WheelView extends View {
 	 * Scrolls the wheel
 	 * @param delta the scrolling value
 	 */
-	private void doScroll(int delta) {
+	//edit to public
+	public void doScroll(int delta) {
 		scrollingOffset += delta;
-		
+		Log.i("delta", String.valueOf(delta));
 		int count = scrollingOffset / getItemHeight();
 		int pos = currentItem - count;
 		if (isCyclic && adapter.getItemsCount() > 0) {
@@ -915,7 +918,7 @@ public class WheelView extends View {
 	/**
 	 * Starts scrolling
 	 */
-	private void startScrolling() {
+	public void startScrolling() {
 		if (!isScrollingPerformed) {
 			isScrollingPerformed = true;
 			notifyScrollingListenersAboutStart();
@@ -925,7 +928,7 @@ public class WheelView extends View {
 	/**
 	 * Finishes scrolling
 	 */
-	void finishScrolling() {
+	public void finishScrolling() {
 		if (isScrollingPerformed) {
 			notifyScrollingListenersAboutEnd();
 			isScrollingPerformed = false;

@@ -26,6 +26,10 @@
             android:name="com.sssta.ganmaqu.MainActivity"
             android:label="@string/title_activity_main" >
         </activity>
+        <activity
+            android:name="kankan.wheel.demo.CitiesActivity"
+            android:label="@string/title_activity_main" >
+        </activity>
     </application>
 
 </manifest>

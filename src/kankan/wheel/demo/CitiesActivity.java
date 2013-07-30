@@ -16,16 +16,13 @@ public class CitiesActivity extends Activity {
         setContentView(R.layout.cities_layout);
                 
         WheelView country = (WheelView) findViewById(R.id.country);
-        String countries[] = new String[] {"USA", "Canada", "Ukraine", "France"};
+        String countries[] = new String[] {"我要我要", "我要我要", "Ukraine", "France"};
         country.setVisibleItems(3);
         country.setCyclic(true);//
         country.setAdapter(new ArrayWheelAdapter<String>(countries));
-
+        String Types[] = new String[] {"亲子出行", "朋友聚会", "情侣约会"};
         final String cities[][] = new String[][] {
-        		new String[] {"New York", "Washington", "Chicago", "Atlanta", "Orlando"},
-        		new String[] {"Ottawa", "Vancouver", "Toronto", "Windsor", "Montreal"},
-        		new String[] {"Kiev", "Dnipro", "Lviv", "Kharkiv"},
-        		new String[] {"Paris", "Bordeaux"},
+        		   Types,Types,Types,Types
         		};
         
         final WheelView city = (WheelView) findViewById(R.id.city);
@@ -39,6 +36,6 @@ public class CitiesActivity extends Activity {
 			}
 		});
         
-        country.setCurrentItem(2);
+        country.setCurrentItem(1);
     }
 }
