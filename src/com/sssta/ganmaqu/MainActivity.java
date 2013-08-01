@@ -4,6 +4,7 @@ import kankan.wheel.widget.ArrayWheelAdapter;
 import kankan.wheel.widget.WheelView;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
@@ -48,7 +49,11 @@ public class MainActivity extends Activity {
 				@Override
 				public void onClick(View v) {
 					// TODO Auto-generated method stub
-					 Toast.makeText(getApplicationContext(), String.valueOf(numberWheel.getCurrentItem()+2), Toast.LENGTH_LONG).show();
+					 Toast.makeText(getApplicationContext(), String.valueOf(numberWheel.getCurrentItem()+2)+"人  "+typeWheel.getCurrentItem(), Toast.LENGTH_SHORT).show();
+					 Intent intent = new Intent();
+					 intent.setClass(getApplicationContext(), TestBedDSLV.class);
+					 startActivity(intent);
+					 
 				}
 			});
 	        numberWheel.setCurrentItem(3);

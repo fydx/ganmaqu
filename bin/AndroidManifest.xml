@@ -30,6 +30,14 @@
             android:name="kankan.wheel.demo.CitiesActivity"
             android:label="@string/title_activity_main" >
         </activity>
+        <activity
+            android:name="com.sssta.ganmaqu.ResultActivity"
+            android:label="@string/title_activity_result" >
+        </activity>
+         <activity
+            android:name="com.sssta.ganmaqu.TestBedDSLV"
+            android:label="@string/title_activity_result" >
+        </activity>
     </application>
 
 </manifest>
