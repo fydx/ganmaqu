@@ -3,7 +3,6 @@ package com.sssta.ganmaqu;
 import com.mobeta.android.dslv.DragSortController;
 
 import android.support.v4.app.DialogFragment;
-import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -14,7 +13,6 @@ import com.mobeta.android.dslv.DragSortController;
 /**
  * Simply passes remove mode back to OnOkListener
  */
-@SuppressLint("ValidFragment")
 public class RemoveModeDialog extends DialogFragment {
 
     private int mRemoveMode;

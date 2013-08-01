@@ -38,6 +38,10 @@
             android:name="com.sssta.ganmaqu.TestBedDSLV"
             android:label="@string/title_activity_result" >
         </activity>
+        <activity
+            android:name="com.sssta.ganmaqu.WarpDSLV"
+            android:label="@string/title_activity_result" >
+        </activity>
     </application>
 
 </manifest>
