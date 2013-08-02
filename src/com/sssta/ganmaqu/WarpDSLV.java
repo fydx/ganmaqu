@@ -2,10 +2,15 @@ package com.sssta.ganmaqu;
 
 import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Collection;
 
 import android.app.ListActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Toast;
+import android.widget.AdapterView.OnItemClickListener;
 
 import com.mobeta.android.dslv.DragSortListView;
 import com.mobeta.android.dslv.DragSortController;
@@ -55,7 +60,7 @@ public class WarpDSLV extends ListActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.warp_main);
-
+     
         DragSortListView lv = (DragSortListView) getListView(); 
 
         lv.setDropListener(onDrop);
@@ -64,8 +69,21 @@ public class WarpDSLV extends ListActivity {
 
         array = getResources().getStringArray(R.array.countries);
         list = new ArrayList<String>(Arrays.asList(array));
+        /*   list = new ArrayList<String>();
+        list.add("上午 ： 汤姆熊欢乐世界");
+        list.add("中午 ： 骡马市必胜客");
+        list.add("下午 ： 骡马市民生百货");*/
+        lv.setOnItemClickListener(new OnItemClickListener() {
 
-        adapter = new ArrayAdapter<String>(this, R.layout.list_item_handle_right, R.id.text, list);
+			@Override
+			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
+					long arg3) {
+				// TODO Auto-generated method stub
+				Toast.makeText(getApplicationContext(), "This is "+ String.valueOf(arg2+1) + " item", Toast.LENGTH_SHORT).show();
+			}
+        	
+		});
+        adapter = new ArrayAdapter<String>(this, R.layout.list_item_handle_left, R.id.text, list);
         setListAdapter(adapter);
     }
 

@@ -18,7 +18,7 @@ public class WelcomeActivity extends Activity {
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE);  //璁剧疆鍙栨秷鏍囬鏍�
 		this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN); //璁剧疆鍏ㄥ睆
 		setContentView(R.layout.activity_welcome);
-		final Intent intent2 = new Intent(WelcomeActivity.this, WarpDSLV.class);
+		final Intent intent2 = new Intent(WelcomeActivity.this, MapActivity.class);
 		Timer timer = new Timer(); //璁剧疆Timer
 		TimerTask task = new TimerTask() {
 			@Override
@@ -27,7 +27,7 @@ public class WelcomeActivity extends Activity {
 				finish(); // 缁撴潫
 			}
 		};
-		timer.schedule(task, 1000 * 2);
+		timer.schedule(task, 1000 * 1);
 		
 		
 		
