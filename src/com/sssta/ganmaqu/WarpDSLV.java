@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import junit.framework.Test;
 
@@ -28,6 +29,7 @@ public class WarpDSLV extends ListActivity {
     private String jsonString;
     private String[] array;
     private ArrayList<String> list;
+    private List<place> places;
 
     private DragSortListView.DropListener onDrop =
         new DragSortListView.DropListener() {
@@ -67,7 +69,7 @@ public class WarpDSLV extends ListActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.warp_main);
-     
+        
         DragSortListView lv = (DragSortListView) getListView(); 
 
         lv.setDropListener(onDrop);
@@ -97,6 +99,11 @@ public class WarpDSLV extends ListActivity {
         try {
 			decodeJson objdecodeJson = new decodeJson(jsonString);
 			Log.i("top", objdecodeJson.getTop());
+			places= objdecodeJson.JsonToPlaceList(objdecodeJson.getJsonArray());
+			for(int i=0;i<places.size();i++)
+			{
+				Log.i("places info", places.get(i).getShopName());
+			}
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
