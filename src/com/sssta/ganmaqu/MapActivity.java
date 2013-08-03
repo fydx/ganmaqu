@@ -37,7 +37,7 @@ public class MapActivity extends Activity {
 				//Ö´ÐÐjs´úÂë
 			mapView.loadUrl("javascript:calcRoute()");
 				
-				Toast.makeText(getApplicationContext(), "run js", Toast.LENGTH_SHORT).show();
+			Toast.makeText(getApplicationContext(), "run js", Toast.LENGTH_SHORT).show();
 			}
 		});
 		/*mapView.setWebChromeClient(new WebChromeClient() {

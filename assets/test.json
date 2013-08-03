@@ -1,0 +1,72 @@
+[
+   {
+      "address" : "莲湖区西稍门开元商城2单元806室",
+      "cost" : 30,
+      "detailType" : "游乐游艺",
+      "id" : "6854370",
+      "mainType" : "休闲娱乐",
+      "pos_x" : 108.943180,
+      "pos_y" : 34.260230,
+      "rate" : 0,
+      "shopName" : "狼人真人密室逃脱",
+      "suitType" : "无",
+      "telNumber" : "13572584731",
+      "time" : "上午"
+   },
+   {
+      "address" : "莲湖区北大街1号韩国城1楼",
+      "cost" : 5,
+      "detailType" : "其他小吃",
+      "id" : "5093909",
+      "mainType" : "美食",
+      "pos_x" : 108.942440,
+      "pos_y" : 34.261560,
+      "rate" : 30,
+      "shopName" : "章鱼小丸子",
+      "suitType" : "随便吃吃",
+      "telNumber" : "",
+      "time" : "中午"
+   },
+   {
+      "address" : "碑林区骡马市1号兴正元广场6楼",
+      "cost" : 36,
+      "detailType" : "电影院",
+      "id" : "2210761",
+      "mainType" : "休闲娱乐",
+      "pos_x" : 108.946140,
+      "pos_y" : 34.259890,
+      "rate" : 40,
+      "shopName" : "奥斯卡国际影城(骡马市店)",
+      "suitType" : "无",
+      "telNumber" : "87656866",
+      "time" : "下午"
+   },
+   {
+      "address" : "碑林区东大街骡马市1号兴正元广场B1楼",
+      "cost" : 45,
+      "detailType" : "韩国料理",
+      "id" : "2348308",
+      "mainType" : "美食",
+      "pos_x" : 108.945940,
+      "pos_y" : 34.260610,
+      "rate" : 20,
+      "shopName" : "金韩阁(骡马市店)",
+      "suitType" : "朋友聚餐",
+      "telNumber" : "87656008",
+      "time" : "晚餐"
+   },
+   {
+      "address" : "碑林区东大街",
+      "cost" : 170,
+      "detailType" : "酒吧",
+      "id" : "3525211",
+      "mainType" : "美食",
+      "pos_x" : 108.951070,
+      "pos_y" : 34.260950,
+      "rate" : 35,
+      "shopName" : "后宫",
+      "suitType" : "朋友聚餐",
+      "telNumber" : "",
+      "time" : "晚上"
+   }
+]

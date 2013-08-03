@@ -1,11 +1,18 @@
 package com.sssta.ganmaqu;
 
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import junit.framework.Test;
+
+import org.apache.http.util.EncodingUtils;
+import org.json.JSONException;
+
 import android.app.ListActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -18,7 +25,7 @@ import com.mobeta.android.dslv.DragSortController;
 public class WarpDSLV extends ListActivity {
 
     private ArrayAdapter<String> adapter;
-
+    private String jsonString;
     private String[] array;
     private ArrayList<String> list;
 
@@ -85,6 +92,32 @@ public class WarpDSLV extends ListActivity {
 		});
         adapter = new ArrayAdapter<String>(this, R.layout.list_item_handle_left, R.id.text, list);
         setListAdapter(adapter);
+        jsonString = getFromAssets("test.json");
+        Log.i("file_content",jsonString);
+        try {
+			decodeJson objdecodeJson = new decodeJson(jsonString);
+			Log.i("top", objdecodeJson.getTop());
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        
+        
     }
-
+    public String getFromAssets(String fileName){  
+        String result = "";  
+            try {  
+                InputStream in = getResources().getAssets().open(fileName);  
+                //获取文件的字节数  
+                int lenght = in.available();  
+                //创建byte数组  
+                byte[]  buffer = new byte[lenght];  
+                //将文件中的数据读到byte数组中  
+                in.read(buffer);  
+                result = EncodingUtils.getString(buffer, "UTF-8");  
+            } catch (Exception e) {  
+                e.printStackTrace();  
+            }  
+            return result;  
+    }
 }
