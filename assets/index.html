@@ -2,25 +2,101 @@
 <html>
   <head>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+
     <style type="text/css">
       html { height: 100% }
       body { height: 100%; margin: 0; padding: 0 }
       #map_canvas { height: 100% }
     </style>
     <script type="text/javascript"
-      src="http://maps.googleapis.com/maps/api/js?key=AIzaSyD5LGXb8bgnTOhSjSZAxldP8kzTkmf3YQ0&sensor=true">
+      src="http://maps.googleapis.com/maps/api/js?key=AIzaSyD5LGXb8bgnTOhSjSZAxldP8kzTkmf3YQ0&sensor=true&language=zh-cn">
     </script>
     <script type="text/javascript">
+ 
+      var directionsDisplay;
+      var directionsService = new google.maps.DirectionsService();
+      var map;
+      var ori = new google.maps.LatLng(34.2595, 108.9476);
+      var des = new google.maps.LatLng(34.2226, 108.9468);
+
+      // function addmarker(map)
+      //  {
+      //   var marker = new google.maps.Marker({
+      //      position: new google.maps.LatLng(34.2595, 108.9476),
+      //      map: map,
+      //      title: 'Click to zoom'
+      //    });
+      // }
+      // function refresh(pos_x,pos_y)
+      // {
+      //    var mapOptions = {
+      //     center: new google.maps.LatLng(34.2595, 108.9476),
+      //     zoom: 10,
+      //     mapTypeId: google.maps.MapTypeId.ROADMAP
+      //   };
+      //   map = new google.maps.Map(document.getElementById("map_canvas"),
+      //       mapOptions);
+      //    var marker = new google.maps.Marker({
+      //      position: new google.maps.LatLng(pos_x, pos_y),
+      //      map: map,
+      //      title: 'TWO'
+      //    });
+      // }
       function initialize() {
+         alert("status");
+         directionsDisplay = new google.maps.DirectionsRenderer();
         var mapOptions = {
           center: new google.maps.LatLng(34.2595, 108.9476),
-          zoom: 8,
+          zoom: 14,
           mapTypeId: google.maps.MapTypeId.ROADMAP
         };
-        var map = new google.maps.Map(document.getElementById("map_canvas"),
+       map = new google.maps.Map(document.getElementById("map_canvas"),
             mapOptions);
+        directionsDisplay.setMap(map);
+        calcRoute();
+        
       }
+
+      function calcRoute()
+      {
+        alert("status");
+      var request = {
+          origin: ori,
+          destination: des,
+          travelMode: google.maps.TravelMode.TRANSIT
+      };
+      directionsService.route(request, function(response, status) {
+        alert(status);
+       if (status == google.maps.DirectionsStatus.OK) {
+          directionsDisplay.setDirections(response);
+       }
+       });
+      }
+     // google.maps.event.addDomListener(window, 'load', initialize);
+     //   google.maps.event.addListener(map, 'center_changed', function() {
+     //    // 3 seconds after the center of the map has changed, pan back to the
+     //    // marker.
+     //   window.setTimeout(function() {
+     //   map.panTo(marker.getPosition());
+     //  }, 3000);
+     // });
+
+      function detectBrowser() {
+       var useragent = navigator.userAgent;
+       var mapdiv = document.getElementById("map_canvas");
+
+       if (useragent.indexOf('iPhone') != -1 || useragent.indexOf('Android') != -1 ) {
+       mapdiv.style.width = '100%';
+       mapdiv.style.height = '100%';
+       } else {
+       mapdiv.style.width = '600px';
+       mapdiv.style.height = '800px';
+  }
+}
+       
+  google.maps.event.addDomListener(window, 'load', initialize);
     </script>
+
   </head>
   <body onload="initialize()">
     <div id="map_canvas" style="width:100%; height:100%"></div>
