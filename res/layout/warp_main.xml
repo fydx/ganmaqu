@@ -44,12 +44,12 @@
         android:orientation="horizontal" >
 
         <Button
-            android:id="@+id/button1"
+            android:id="@+id/button_toMap"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
-            android:text="Button" />
+            android:text="Go to Map Page" />
     </LinearLayout>
 
 </RelativeLayout>

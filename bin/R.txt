@@ -49,11 +49,11 @@ int drawable wheel_bg 0x7f02000a
 int drawable wheel_val 0x7f02000b
 int id NumberOfPerson 0x7f04000c
 int id Type 0x7f04000d
-int id action_settings 0x7f040027
+int id action_settings 0x7f040028
 int id activity_desc 0x7f04001a
 int id activity_title 0x7f040019
-int id add_footer 0x7f04002c
-int id add_header 0x7f04002b
+int id add_footer 0x7f04002d
+int id add_header 0x7f04002c
 int id artist_albums_textview 0x7f040018
 int id artist_name_textview 0x7f040017
 int id bg_handle 0x7f040011
@@ -62,6 +62,7 @@ int id btn_mix 0x7f040020
 int id button1 0x7f040026
 int id button_back 0x7f040007
 int id button_right 0x7f040009
+int id button_toMap 0x7f040027
 int id button_yes 0x7f04000e
 int id city 0x7f040013
 int id clickRemove 0x7f040000
@@ -83,9 +84,9 @@ int id passw_3 0x7f04001d
 int id passw_4 0x7f04001e
 int id pwd_status 0x7f04001f
 int id section_div 0x7f040021
-int id select_drag_init_mode 0x7f040029
-int id select_enables 0x7f04002a
-int id select_remove_mode 0x7f040028
+int id select_drag_init_mode 0x7f04002a
+int id select_enables 0x7f04002b
+int id select_remove_mode 0x7f040029
 int id test_bed 0x7f040022
 int id test_button 0x7f040010
 int id text 0x7f040016
