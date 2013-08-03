@@ -19,29 +19,36 @@
       var ori = new google.maps.LatLng(34.2595, 108.9476);
       var des = new google.maps.LatLng(34.2226, 108.9468);
 
-      function addmarker(map)
+      function addmarker(pos_x,pos_y)
        {
-        var marker = new google.maps.Marker({
-           position: new google.maps.LatLng(34.2595, 108.9476),
+      
+          var marker = new google.maps.Marker({
+           position: new google.maps.LatLng(pos_x,pos_y),
            map: map,
            title: 'Click to zoom'
          });
+        
+       
       }
-      function refresh(pos_x,pos_y)
+
+      function refresh()
       {
          var mapOptions = {
           center: new google.maps.LatLng(34.2595, 108.9476),
-          zoom: 10,
+          zoom: 12,
           mapTypeId: google.maps.MapTypeId.ROADMAP
         };
         map = new google.maps.Map(document.getElementById("map_canvas"),
             mapOptions);
-         var marker = new google.maps.Marker({
-           position: new google.maps.LatLng(pos_x, pos_y),
+        for (var i = 0 ;i <arguments.length; i+2) {
+          var marker = new google.maps.Marker({
+           position: new google.maps.LatLng(arguments[i], arguments[i+1]),
            map: map,
-           title: 'TWO'
+           title: 'dest'
          });
-      }
+        };
+
+      }     
       function initialize() {
          directionsDisplay = new google.maps.DirectionsRenderer();
         var mapOptions = {
@@ -52,7 +59,9 @@
        map = new google.maps.Map(document.getElementById("map_canvas"),
             mapOptions);
         directionsDisplay.setMap(map);
-        calcRoute2();
+       // calcRoute2();
+       //refresh(34.2179,108.9123);
+       addmarker(34.2179,108.9123);
        
       }
 

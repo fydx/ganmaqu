@@ -35,9 +35,9 @@ public class MapActivity extends Activity {
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				//Ö´ÐÐjs´úÂë
-			mapView.loadUrl("javascript:calcRoute()");
+			mapView.loadUrl("javascript:addmarker(34.2179,108.9123)");
 				
-			Toast.makeText(getApplicationContext(), "run js", Toast.LENGTH_SHORT).show();
+			Toast.makeText(getApplicationContext(), "run", Toast.LENGTH_SHORT).show();
 			}
 		});
 		/*mapView.setWebChromeClient(new WebChromeClient() {
