@@ -28,21 +28,25 @@ public class MapActivity extends Activity {
 				"places");
 		Log.i("places nums", String.valueOf(places.size()));
 		WebSettings webSettings = mapView.getSettings();
-		// WebViewÆôÓÃJavascript½Å±¾Ö´ÐÐ
+		// WebViewï¿½ï¿½ï¿½ï¿½Javascriptï¿½Å±ï¿½Ö´ï¿½ï¿½
 		webSettings.setJavaScriptEnabled(true);
 		webSettings.setJavaScriptCanOpenWindowsAutomatically(true);
-		// ¼ÓÔØÖ¸¶¨Url
+		// ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½Url
 		mapView.loadUrl("file:///android_asset/index.html");
 		// mapView.loadUrl("file:///android_asset/js.html");
-		//mapView.loadUrl("javascript:refresh(34.2179,108.9123,34.2224,108.9468)");
+		Log.i("route", "javascript:calcRoute2("+String.valueOf(places.get(0).getPos_y())+","+
+		String.valueOf(places.get(0).getPos_x()+")"));
+	
+		
 		Button jsButton = (Button) findViewById(R.id.test_button);
 		jsButton.setText("run");
 		jsButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				// Ö´ÐÐjs´úÂë
-				
+				// Ö´ï¿½ï¿½jsï¿½ï¿½ï¿½ï¿½
+				mapView.loadUrl("javascript:calcRoute2("+String.valueOf(places.get(0).getPos_y())+","+
+						String.valueOf(places.get(0).getPos_x()+")"));
 				//Toast.makeText(getApplicationContext(), "run",
 				//		Toast.LENGTH_SHORT).show();
 				
