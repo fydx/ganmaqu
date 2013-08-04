@@ -19,6 +19,7 @@
       var ori = new google.maps.LatLng(34.2179, 108.9123);
       var des = new google.maps.LatLng(34.2224, 108.9468);
       var status_net;
+      var infowindow = new google.maps.InfoWindow();
      
      function addMessage()
      {
@@ -73,15 +74,19 @@
 
       }
         function attachSecretMessage(marker,num,message) {
-  //var message = ['This', 'is', 'the', 'secret', 'message'];
-  var infowindow = new google.maps.InfoWindow({
-    content: message
-  });
+      //var message = ['This', 'is', 'the', 'secret', 'message'];
+      
+      
 
-  google.maps.event.addListener(marker, 'click', function() {
-    infowindow.open(marker.get('map'), marker);
-  });
-}
+       google.maps.event.addListener(marker, 'click', function() {
+         infowindow.close();
+         infowindow = new google.maps.InfoWindow({
+       content: message
+       });
+         infowindow.open(marker.get('map'), marker);
+       
+       });
+      }
         function addmarker(pos_x,pos_y)
        {
           

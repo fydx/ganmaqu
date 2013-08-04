@@ -51,15 +51,13 @@ public class MainActivity extends Activity {
 					// TODO Auto-generated method stub
 					 Toast.makeText(getApplicationContext(), String.valueOf(numberWheel.getCurrentItem()+2)+"人  "+typeWheel.getCurrentItem(), Toast.LENGTH_SHORT).show();
 					 Intent intent = new Intent();
-					 intent.setClass(getApplicationContext(), TestBedDSLV.class);
+					 intent.setClass(getApplicationContext(), WarpDSLV.class);
 					 startActivity(intent);
 					 
 				}
 			});
 	        numberWheel.setCurrentItem(3);
-	       
 	}
-
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.

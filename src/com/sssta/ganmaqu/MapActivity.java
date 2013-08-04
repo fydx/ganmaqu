@@ -34,7 +34,7 @@ public class MapActivity extends Activity {
 		// 加载指定Url
 		mapView.loadUrl("file:///android_asset/index.html");
 		// mapView.loadUrl("file:///android_asset/js.html");
-		mapView.loadUrl("javascript:refresh(34.2179,108.9123,34.2224,108.9468)");
+		//mapView.loadUrl("javascript:refresh(34.2179,108.9123,34.2224,108.9468)");
 		Button jsButton = (Button) findViewById(R.id.test_button);
 		jsButton.setText("run");
 		jsButton.setOnClickListener(new OnClickListener() {
@@ -43,15 +43,17 @@ public class MapActivity extends Activity {
 				// TODO Auto-generated method stub
 				// 执行js代码
 				
-				Toast.makeText(getApplicationContext(), "run",
-						Toast.LENGTH_SHORT).show();
+				//Toast.makeText(getApplicationContext(), "run",
+				//		Toast.LENGTH_SHORT).show();
 				
-				/*for (int i = 0; i < places.size(); i++) {
-					String loadString = "javascript:addmarker(" + String.valueOf(places.get(i).getPos_y())+","+
-							String.valueOf(places.get(i).getPos_x())+ ")";
+				for (int i = 0; i < places.size(); i++) {
+					//String loadString = "javascript:addmarker(" + String.valueOf(places.get(i).getPos_y())+","+
+					//		String.valueOf(places.get(i).getPos_x())+ ")";
+					String loadString = "javascript:addMessage(" +String.valueOf(places.get(i).getPos_y())+","+
+							String.valueOf(places.get(i).getPos_x()+ "," +  "\"" +  places.get(i).getShopName()+ "\""+")");
 					Log.i("load String", loadString);
 					mapView.loadUrl(loadString);
-				}*/
+				}
 				// mapView.loadUrl("javascript:addmarker(34.2179,108.9143)");
 
 			}
