@@ -20,6 +20,20 @@
       var des = new google.maps.LatLng(34.2224, 108.9468);
       var status_net;
      
+     function addMessage()
+     {
+
+       
+        for (var i = 0 ;i <arguments.length; i+=3) {
+          var marker = new google.maps.Marker({
+           position: new google.maps.LatLng(arguments[i], arguments[i+1]),
+           map: map,
+           title: "in"
+         });
+         attachSecretMessage(marker,i/3,arguments[i+2]);
+
+       };
+     }
       function refresh()
       {
          
@@ -31,13 +45,13 @@
         };
         map = new google.maps.Map(document.getElementById("map_canvas"),
             mapOptions);
-        for (var i = 0 ;i <arguments.length; i+=2) {
+        for (var i = 0 ;i <arguments.length; i+=3) {
           var marker = new google.maps.Marker({
            position: new google.maps.LatLng(arguments[i], arguments[i+1]),
            map: map,
            title: "in"
          });
-         attachSecretMessage(marker,i/2);
+         attachSecretMessage(marker,i/3,arguments[i+2]);
        };
       }     
       function initialize() {
@@ -52,16 +66,16 @@
         directionsDisplay.setMap(map);
      
       
-       refresh(34.2179,108.9123,34.2224,108.9468);
+      // addMessage(34.2179,108.9123,"111",34.2224,108.9468,"222");
         //addmarker(34.2179,108.9123);
-        
+        //addMessage(34.26023,108.94318, "狼人真人密室逃脱" );
        // addmarker(34.2224,108.9468);
 
       }
-        function attachSecretMessage(marker, num) {
-  var message = ['This', 'is', 'the', 'secret', 'message'];
+        function attachSecretMessage(marker,num,message) {
+  //var message = ['This', 'is', 'the', 'secret', 'message'];
   var infowindow = new google.maps.InfoWindow({
-    content: message[num]
+    content: message
   });
 
   google.maps.event.addListener(marker, 'click', function() {
