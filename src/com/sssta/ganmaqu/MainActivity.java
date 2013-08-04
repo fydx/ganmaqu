@@ -29,11 +29,9 @@ public class MainActivity extends Activity {
 	        numberWheel.setVisibleItems(5);
 	        numberWheel.setCyclic(false);//
 	        numberWheel.setAdapter(new ArrayWheelAdapter<String>(countries));
-
 	       final String cities[][] = new String[][] {
 	    		   Types,Types,Types,Types,Types,Types,Types
 	        		};
-	        
 	        final WheelView typeWheel = (WheelView) findViewById(R.id.Type);
 	      typeWheel.setAdapter(new ArrayWheelAdapter<String>(Types));
 	        typeWheel.setVisibleItems(5);

@@ -65,7 +65,7 @@
        map = new google.maps.Map(document.getElementById("map_canvas"),
             mapOptions);
         directionsDisplay.setMap(map);
-     
+        calcRoute2(34.260230,108.943180);
       
       // addMessage(34.2179,108.9123,"111",34.2224,108.9468,"222");
         //addmarker(34.2179,108.9123);
@@ -154,12 +154,12 @@
       };
 
       }
-      function calcRoute2()
+      function calcRoute2(pos_x,pos_y)
       {
         
       var request = {
-          origin: new google.maps.LatLng(34.1218, 108.8410),
-          destination: new google.maps.LatLng(34.2133, 108.9469),
+          origin: new google.maps.LatLng(34.2339, 108.9186),
+          destination: new google.maps.LatLng(pos_x, pos_y),
           travelMode: google.maps.TravelMode.TRANSIT
       };
       directionsService.route(request, function(response, status) {

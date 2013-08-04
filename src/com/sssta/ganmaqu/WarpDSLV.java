@@ -19,6 +19,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.mobeta.android.dslv.DragSortListView;
@@ -27,12 +28,14 @@ import com.mobeta.android.dslv.DragSortListView;
 public class WarpDSLV extends ListActivity {
 
   //  private ArrayAdapter<String> adapter;
+	private int cost=0;
     private ArrayAdapter<String> adapter;
     private String jsonString;
     private String[] array;
     private ArrayList<String> list;
     private List<place> places;
     private Button button_toMap;
+    private TextView textView_cost;
     private DragSortListView.DropListener onDrop =
         new DragSortListView.DropListener() {
             @Override
@@ -111,14 +114,19 @@ public class WarpDSLV extends ListActivity {
 		}
         //array = getResources().getStringArray(R.array.countries);
         //list = new ArrayList<String>(Arrays.asList(array));
+        //calculate cost
+        textView_cost = (TextView) findViewById(R.id.cost);
+        
         list= new ArrayList<String>();
         for (int i = 0; i < places.size(); i++) {
         
         	list.add(places.get(i).getShopName() + "\n" + places.get(i).getMainType() + "  "+ places.get(i).getDetailType());
-
+        	cost+=places.get(i).getCost();
+        	
 		}
-     
-    /*adapter = new SimpleAdapter(this, //activity
+        Log.i("cost", "人均消费" + String.valueOf(cost));
+        textView_cost.setText("人均消费 : " + String.valueOf(cost)+ "元");
+        /*adapter = new SimpleAdapter(this, //activity
 				mylist,//ArrayList<HashMap>
 				R.layout.list_item_handle_left,// what is listitem ? 
 				//  key
@@ -140,10 +148,8 @@ public class WarpDSLV extends ListActivity {
 					long arg3) {
 				// TODO Auto-generated method stub
 				Toast.makeText(getApplicationContext(), "This is "+ String.valueOf(adapter.getItem(arg2)) + " item", Toast.LENGTH_SHORT).show();
-			}
-        	
+			}    	
 		});
-  
         adapter = new ArrayAdapter<String>(this, R.layout.list_item_handle_left, R.id.text, list);
         setListAdapter(adapter);
         

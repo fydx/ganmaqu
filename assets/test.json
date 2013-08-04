@@ -58,7 +58,7 @@
    {
       "address" : "碑林区东大街",
       "cost" : 170,
-      "detailType" : "酒吧",
+      "detailType" : "酒吧",  
       "id" : "3525211",
       "mainType" : "美食",
       "pos_x" : 108.951070,
