@@ -1,6 +1,7 @@
 package com.sssta.ganmaqu;
 
 import java.io.InputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -86,6 +87,7 @@ public class WarpDSLV extends ListActivity {
 				// TODO Auto-generated method stub
 				Intent intent = new Intent();
 				intent.setClass(getApplicationContext(), MapActivity.class);
+				intent.putExtra("places", (Serializable)places);
 				startActivity(intent);
 				
 			}

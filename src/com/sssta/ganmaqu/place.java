@@ -1,8 +1,12 @@
 package com.sssta.ganmaqu;
 
-import android.R.integer;
+import java.io.Serializable;
 
-public class place {
+public class place implements Serializable {
+	/**
+	 * Serializable 
+	 */
+	private static final long serialVersionUID = 1L;
 	private String address;
 	private int cost;
 	private String detailType;
