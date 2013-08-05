@@ -99,7 +99,7 @@ public class WarpDSLV extends ListActivity {
    		 *read from assets json files	
          */
         jsonString = getFromAssets("test.json");
-        Log.i("file_content",jsonString);
+      //  Log.i("file_content",jsonString);
         try {
 			decodeJson objdecodeJson = new decodeJson(jsonString);
 			Log.i("top", objdecodeJson.getTop());
@@ -148,6 +148,10 @@ public class WarpDSLV extends ListActivity {
 					long arg3) {
 				// TODO Auto-generated method stub
 				Toast.makeText(getApplicationContext(), "This is "+ String.valueOf(adapter.getItem(arg2)) + " item", Toast.LENGTH_SHORT).show();
+				Intent intent = new Intent();
+				intent.setClass(getApplicationContext(), WebActivity.class);
+				intent.putExtra("shopId", String.valueOf(places.get(arg2).getId()));
+				startActivity(intent);
 			}    	
 		});
         adapter = new ArrayAdapter<String>(this, R.layout.list_item_handle_left, R.id.text, list);

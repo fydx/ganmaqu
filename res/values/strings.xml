@@ -294,5 +294,6 @@
     </string-array>
 
     <string name="title_activity_map">MapActivity</string>
+    <string name="title_activity_web">WebActivity</string>
 
 </resources>

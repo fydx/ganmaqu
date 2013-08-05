@@ -27,7 +27,7 @@ public class WelcomeActivity extends Activity {
 				finish(); // 缁撴潫
 			}
 		};
-		timer.schedule(task, 1000 * 1);
+		timer.schedule(task, 100 * 1);
 		
 		
 		

@@ -1,6 +1,8 @@
 package com.sssta.ganmaqu;
 
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -36,9 +38,27 @@ public class MapActivity extends Activity {
 		// mapView.loadUrl("file:///android_asset/js.html");
 		Log.i("route", "javascript:calcRoute2("+String.valueOf(places.get(0).getPos_y())+","+
 		String.valueOf(places.get(0).getPos_x()+")"));
-	
-		
 		Button jsButton = (Button) findViewById(R.id.test_button);
+//		mapView.loadUrl("javascript:calcRoute2("+String.valueOf(places.get(0).getPos_y())+","+
+//				String.valueOf(places.get(0).getPos_x()+")"));
+		//经过测试，这里必须设置timer才能执行，也就是页面文件需要加载完毕后才能使用其他的js方法
+		//时间设定为0.1s即可
+		Timer timer = new Timer(); //设置Timer
+		TimerTask task = new TimerTask() {
+			@Override
+			public void run() {
+				mapView.loadUrl("javascript:calcRoute2("+String.valueOf(places.get(0).getPos_y())+","+
+						String.valueOf(places.get(0).getPos_x()+")"));
+				
+					for (int i = 0; i < places.size(); i++) {
+					String loadString = "javascript:addMessage(" +String.valueOf(places.get(i).getPos_y())+","+
+							String.valueOf(places.get(i).getPos_x()+ "," +  "\"" +  places.get(i).getShopName()+ "\""+")");
+					Log.i("load String", loadString);
+					mapView.loadUrl(loadString);
+				}
+			}
+		};
+		timer.schedule(task, 200 * 1);
 		jsButton.setText("run");
 		jsButton.setOnClickListener(new OnClickListener() {
 			@Override
