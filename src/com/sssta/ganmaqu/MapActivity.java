@@ -19,15 +19,20 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class MapActivity extends Activity {
-
+	private dataFromJs data;
+	private String jsString;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_map);
+		final TextView routeTextView;
+		routeTextView = (TextView)findViewById(R.id.text_route);
+		data= new dataFromJs();
 		final WebView mapView = (WebView) findViewById(R.id.mapView);
 		final List<place> places = (List<place>) getIntent().getSerializableExtra(
 				"places");
@@ -37,6 +42,16 @@ public class MapActivity extends Activity {
 		webSettings.setJavaScriptEnabled(true);
 		webSettings.setJavaScriptCanOpenWindowsAutomatically(true);
 	    mapView.setWebViewClient(new MyWebViewClient());
+	    mapView.setWebChromeClient(new WebChromeClient() {
+	        public void onConsoleMessage(String message, int lineNumber, String sourceID) {
+	            Log.i("MyApplication", message + " -- From line "
+	                                 + lineNumber + " of "
+	                                 + sourceID);
+
+	          }
+	        });
+	   // mapView.addJavascriptInterface(data, "mapView");
+	    
 		mapView.loadUrl("file:///android_asset/index.html");
 		// mapView.loadUrl("file:///android_asset/js.html");
 		Log.i("route", "javascript:calcRoute2("+String.valueOf(places.get(0).getPos_y())+","+
@@ -66,29 +81,17 @@ public class MapActivity extends Activity {
 			}
 		};
 		timer.schedule(task, 200 * 1);
+		
+		//mapView.loadUrl("javascript:getRouteInfo()");
 		jsButton.setText("run");
 		jsButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				// ִ��js����
-				mapView.loadUrl("javascript:calcRoute2("+String.valueOf(places.get(0).getPos_y())+","+
-						String.valueOf(places.get(0).getPos_x()+")"));
-				//Toast.makeText(getApplicationContext(), "run",
-				//		Toast.LENGTH_SHORT).show();
 				
-				for (int i = 0; i < places.size(); i++) {
-					//String loadString = "javascript:addmarker(" + String.valueOf(places.get(i).getPos_y())+","+
-					//		String.valueOf(places.get(i).getPos_x())+ ")";
-					String loadString = "javascript:addMessage(" +String.valueOf(places.get(i).getPos_y())+","+
-							String.valueOf(places.get(i).getPos_x()+ "," +  "\"" +  places.get(i).getShopName()+ "\""+")");
-					Log.i("load String", loadString);
-					mapView.loadUrl(loadString);
-				}
-				// mapView.loadUrl("javascript:addmarker(34.2179,108.9143)");
-
+		      System.exit(0);
 			}
 		});
+		
 		/*
 		 * mapView.setWebChromeClient(new WebChromeClient() {
 		 * 
@@ -112,5 +115,6 @@ public class MapActivity extends Activity {
 		return true;
 	}
 	
-
 }
+
+

@@ -20,7 +20,15 @@
       var des = new google.maps.LatLng(34.2224, 108.9468);
       var status_net;
       var infowindow = new google.maps.InfoWindow();
-     
+     function StringBuilder(){
+      this.__string__ = new Array();
+      }
+      StringBuilder.prototype.append = function(str){
+  this.__string__.push(str);
+      }
+      StringBuilder.prototype.toString = function(){
+  return this.__string__.join("");
+      }
      function addMessage()
      {
 
@@ -65,7 +73,7 @@
        map = new google.maps.Map(document.getElementById("map_canvas"),
             mapOptions);
         directionsDisplay.setMap(map);
-        //console.log("Hello World");
+        //console.log("主地图加载完成");
         //calcRoute2(34.260230,108.943180);
 
       
@@ -144,8 +152,8 @@
           status_net = "1"; 
           result = "111";
           directionsDisplay.setDirections(response);
-          var route = response.routes[0];
-           alert(route.legs[i].start_address);
+         
+          // alert(route.legs[i].start_address);
          // showSteps(response);  
 
        }
@@ -168,26 +176,41 @@
        // alert(status);
        if (status == google.maps.DirectionsStatus.OK) {
           directionsDisplay.setDirections(response);
+           
            showSteps(response);
+           var route_info  = new StringBuilder();
+           for (var i = 0 ; i < response.routes[0].legs[0].steps.length; i++) {
+               route_info.append(response.routes[0].legs[0].steps[i].instructions);
+          
+               
+               
+                
+           };
+          console.log(response.routes[0].legs[0].steps[1].transit.arrival_stop.name);
+          //console.log(route_info);
+
+          
+         
+           
        }
        });
       }
+      
       function showSteps(directionResult) {
        // For each step, place a marker, and add the text to    the marker's
        // info window. Also attach the marker to an array so we
         // can keep track of it and remove it when calculating new
        // routes.
        var myRoute = directionResult.routes[0].legs[0];
-      alert(myRoute.steps[0].transit.headsign);
+      //alert(myRoute.steps[0].transit.headsign);
       for (var i = 0; i < myRoute.steps.length; i++) {
       var marker = new google.maps.Marker({
         position: myRoute.steps[i].start_point,
         map: map
       });
       attachInstructionText(marker, myRoute.steps[i].instructions);
-      alert(i);
-     
-      markerArray[i] = marker;
+      //alert(i);
+      //markerArray[i] = marker;
   }
 }
 
