@@ -11,11 +11,13 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
+import android.view.Window;
 import android.view.View.OnClickListener;
 import android.webkit.JsResult;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -24,6 +26,7 @@ public class MapActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_map);
 		final WebView mapView = (WebView) findViewById(R.id.mapView);
 		final List<place> places = (List<place>) getIntent().getSerializableExtra(
@@ -33,7 +36,7 @@ public class MapActivity extends Activity {
 		// WebView����Javascript�ű�ִ��
 		webSettings.setJavaScriptEnabled(true);
 		webSettings.setJavaScriptCanOpenWindowsAutomatically(true);
-		// ����ָ��Url
+	    mapView.setWebViewClient(new MyWebViewClient());
 		mapView.loadUrl("file:///android_asset/index.html");
 		// mapView.loadUrl("file:///android_asset/js.html");
 		Log.i("route", "javascript:calcRoute2("+String.valueOf(places.get(0).getPos_y())+","+
@@ -51,8 +54,12 @@ public class MapActivity extends Activity {
 						String.valueOf(places.get(0).getPos_x()+")"));
 				
 					for (int i = 0; i < places.size(); i++) {
+					String	contentString ;
+					contentString ="<p><b>" + places.get(i).getShopName() + "</b></p>" + "<p>"
+					    + places.get(i).getAddress() + "</p>" + "<p><a href=http://m.dianping.com/shop/" + 
+							String.valueOf(places.get(i).getId()) + ">" + "详细信息>></a>" ;
 					String loadString = "javascript:addMessage(" +String.valueOf(places.get(i).getPos_y())+","+
-							String.valueOf(places.get(i).getPos_x()+ "," +  "\"" +  places.get(i).getShopName()+ "\""+")");
+							String.valueOf(places.get(i).getPos_x()+ "," +  "\"" +  contentString + "\""+")");
 					Log.i("load String", loadString);
 					mapView.loadUrl(loadString);
 				}
@@ -104,5 +111,6 @@ public class MapActivity extends Activity {
 		getMenuInflater().inflate(R.menu.map, menu);
 		return true;
 	}
+	
 
 }

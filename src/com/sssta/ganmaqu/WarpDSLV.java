@@ -120,12 +120,12 @@ public class WarpDSLV extends ListActivity {
         list= new ArrayList<String>();
         for (int i = 0; i < places.size(); i++) {
         
-        	list.add(places.get(i).getShopName() + "\n" + places.get(i).getMainType() + "  "+ places.get(i).getDetailType());
+        	list.add(places.get(i).getShopName() + "\n" + places.get(i).getDetailType() + "  人均" + String.valueOf(places.get(i).getCost()) + "元"  );
         	cost+=places.get(i).getCost();
         	
 		}
         Log.i("cost", "人均消费" + String.valueOf(cost));
-        textView_cost.setText("人均消费 : " + String.valueOf(cost)+ "元");
+        textView_cost.setText("人均消费总计 : " + String.valueOf(cost)+ "元");
         /*adapter = new SimpleAdapter(this, //activity
 				mylist,//ArrayList<HashMap>
 				R.layout.list_item_handle_left,// what is listitem ? 
