@@ -213,17 +213,18 @@ containing a value of this type.
     public static final class id {
         public static final int NumberOfPerson=0x7f04000b;
         public static final int Type=0x7f04000c;
-        public static final int action_settings=0x7f04002c;
+        public static final int action_settings=0x7f04002d;
         public static final int activity_desc=0x7f04001d;
         public static final int activity_title=0x7f04001c;
-        public static final int add_footer=0x7f040031;
-        public static final int add_header=0x7f040030;
+        public static final int add_footer=0x7f040032;
+        public static final int add_header=0x7f040031;
         public static final int artist_albums_textview=0x7f04001b;
         public static final int artist_name_textview=0x7f04001a;
         public static final int bg_handle=0x7f040014;
         public static final int btn=0x7f040017;
         public static final int btn_mix=0x7f040023;
         public static final int button1=0x7f040029;
+        public static final int button_SaveToDB=0x7f04002b;
         public static final int button_back=0x7f040007;
         public static final int button_right=0x7f040009;
         public static final int button_toMap=0x7f04002a;
@@ -231,7 +232,7 @@ containing a value of this type.
         public static final int city=0x7f040016;
         public static final int clickRemove=0x7f040000;
         public static final int click_remove=0x7f040006;
-        public static final int cost=0x7f04002b;
+        public static final int cost=0x7f04002c;
         public static final int country=0x7f040015;
         public static final int drag_handle=0x7f040005;
         public static final int empty=0x7f040018;
@@ -249,9 +250,9 @@ containing a value of this type.
         public static final int passw_4=0x7f040021;
         public static final int pwd_status=0x7f040022;
         public static final int section_div=0x7f040024;
-        public static final int select_drag_init_mode=0x7f04002e;
-        public static final int select_enables=0x7f04002f;
-        public static final int select_remove_mode=0x7f04002d;
+        public static final int select_drag_init_mode=0x7f04002f;
+        public static final int select_enables=0x7f040030;
+        public static final int select_remove_mode=0x7f04002e;
         public static final int test_bed=0x7f040025;
         public static final int test_button=0x7f040011;
         public static final int text=0x7f040019;

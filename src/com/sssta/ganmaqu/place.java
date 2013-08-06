@@ -6,11 +6,13 @@ public class place implements Serializable {
 	/**
 	 * Serializable 
 	 */
+	private int _id; //数据库主键
 	private static final long serialVersionUID = 1L;
 	private String address;
 	private int cost;
 	private String detailType;
 	private int id;
+	private int route_id; //路线的id
 	private String mainType;
 	private double pos_x;
 	private double pos_y;
@@ -20,6 +22,22 @@ public class place implements Serializable {
 	private String telNumber;
 	private String time;
 
+	public int get_id() {
+		return _id;
+	}
+
+	public void set_id(int _id) {
+		this._id = _id;
+	}
+	
+	public int getRoute_id() {
+		return route_id;
+	}
+
+	public void setRoute_id(int route_id) {
+		this.route_id = route_id;
+	}
+	
 	public place() {
 
 	}

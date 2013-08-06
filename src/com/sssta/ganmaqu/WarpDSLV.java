@@ -6,9 +6,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import net.tsz.afinal.FinalDb;
+
 import org.apache.http.util.EncodingUtils;
 import org.json.JSONException;
 
+import android.R.integer;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -28,13 +31,14 @@ import com.mobeta.android.dslv.DragSortListView;
 public class WarpDSLV extends ListActivity {
 
   //  private ArrayAdapter<String> adapter;
+	private FinalDb db;
 	private int cost=0;
     private ArrayAdapter<String> adapter;
     private String jsonString;
     private String[] array;
     private ArrayList<String> list;
     private List<place> places;
-    private Button button_toMap;
+    private Button button_toMap,button_saveToDB;
     private TextView textView_cost;
     private DragSortListView.DropListener onDrop =
         new DragSortListView.DropListener() {
@@ -75,7 +79,7 @@ public class WarpDSLV extends ListActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.warp_main);
-      
+        db = FinalDb.create(this);
         ArrayList<HashMap<String, String>> mylist = new ArrayList<HashMap<String, String>>();
         
         DragSortListView lv = (DragSortListView) getListView(); 
@@ -96,10 +100,13 @@ public class WarpDSLV extends ListActivity {
 				
 			}
 		});
+        button_saveToDB = (Button)findViewById(R.id.button_SaveToDB);
+       
         /**
    		 *read from assets json files	
          */
         jsonString = getFromAssets("test.json");
+       
       //  Log.i("file_content",jsonString);
         try {
 			decodeJson objdecodeJson = new decodeJson(jsonString);
@@ -113,6 +120,14 @@ public class WarpDSLV extends ListActivity {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+        button_saveToDB.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				saveToDB(places);
+			}
+		});
         //array = getResources().getStringArray(R.array.countries);
         //list = new ArrayList<String>(Arrays.asList(array));
         //calculate cost
@@ -178,5 +193,12 @@ public class WarpDSLV extends ListActivity {
                 e.printStackTrace();  
             }  
             return result;  
+    }
+    public void saveToDB(List<place> places)
+    {
+    	for (int i = 0; i < places.size(); i++) {
+			db.save(places.get(i));
+			Log.i("DBsave", String.valueOf(i));
+		}
     }
 }
