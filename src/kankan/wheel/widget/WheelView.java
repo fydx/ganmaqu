@@ -771,7 +771,7 @@ public class WheelView extends View {
 	//edit to public
 	public void doScroll(int delta) {
 		scrollingOffset += delta;
-		Log.i("delta", String.valueOf(delta));
+		//Log.i("delta", String.valueOf(delta));
 		int count = scrollingOffset / getItemHeight();
 		int pos = currentItem - count;
 		if (isCyclic && adapter.getItemsCount() > 0) {
