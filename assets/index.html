@@ -11,6 +11,7 @@
     <script type="text/javascript"
       src="http://maps.googleapis.com/maps/api/js?key=AIzaSyD5LGXb8bgnTOhSjSZAxldP8kzTkmf3YQ0&sensor=true&language=zh-cn">
     </script>
+    <div id='b'><a onclick="window.dataFromJs.showMessage()">b.c</a></div>
     <script type="text/javascript">
  
       var directionsDisplay;
@@ -187,6 +188,9 @@
                 
            };
           console.log(response.routes[0].legs[0].steps[1].transit.arrival_stop.name);
+
+          window.dataFromJs.setDataString(response.routes[0].legs[0].steps[1].transit.arrival_stop.name);
+          // window.dataFromjs.setDataString(response.routes[0].legs[0].steps[1].transit.arrival_stop.name);
           //console.log(route_info);
 
           

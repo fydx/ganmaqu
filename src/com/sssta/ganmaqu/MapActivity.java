@@ -41,6 +41,7 @@ public class MapActivity extends Activity {
 		// WebView����Javascript�ű�ִ��
 		webSettings.setJavaScriptEnabled(true);
 		webSettings.setJavaScriptCanOpenWindowsAutomatically(true);
+		
 	    mapView.setWebViewClient(new MyWebViewClient());
 	    mapView.setWebChromeClient(new WebChromeClient() {
 	        public void onConsoleMessage(String message, int lineNumber, String sourceID) {
@@ -51,7 +52,7 @@ public class MapActivity extends Activity {
 	          }
 	        });
 	   // mapView.addJavascriptInterface(data, "mapView");
-	    
+	    mapView.addJavascriptInterface(data, "dataFromJs");
 		mapView.loadUrl("file:///android_asset/index.html");
 		// mapView.loadUrl("file:///android_asset/js.html");
 		Log.i("route", "javascript:calcRoute2("+String.valueOf(places.get(0).getPos_y())+","+
@@ -59,8 +60,9 @@ public class MapActivity extends Activity {
 		Button jsButton = (Button) findViewById(R.id.test_button);
 //		mapView.loadUrl("javascript:calcRoute2("+String.valueOf(places.get(0).getPos_y())+","+
 //				String.valueOf(places.get(0).getPos_x()+")"));
+		
 		//经过测试，这里必须设置timer才能执行，也就是页面文件需要加载完毕后才能使用其他的js方法
-		//时间设定为0.1s即可
+		//时间设定为0.2s即可
 		Timer timer = new Timer(); //设置Timer
 		TimerTask task = new TimerTask() {
 			@Override
@@ -81,6 +83,22 @@ public class MapActivity extends Activity {
 			}
 		};
 		timer.schedule(task, 200 * 1);
+		
+		Timer timer_2 = new Timer(); //设置Timer
+		TimerTask task_2 = new TimerTask() {
+			@Override
+			public void run() {
+				if(data.getDataString()!= null)
+				{
+					Log.i("dataFromJs", data.getDataString());
+				}
+				else {
+					Log.i("dataFromJs", "null");
+				}
+		
+			}
+		};
+		timer_2.schedule(task_2, 3000 * 1);
 		
 		//mapView.loadUrl("javascript:getRouteInfo()");
 		jsButton.setText("run");
