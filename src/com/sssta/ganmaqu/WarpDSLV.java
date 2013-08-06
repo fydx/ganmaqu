@@ -48,11 +48,12 @@ public class WarpDSLV extends ListActivity {
             }
         };
 
-    private DragSortListView.RemoveListener onRemove = 
+   private DragSortListView.RemoveListener onRemove = 
         new DragSortListView.RemoveListener() {
             @Override
             public void remove(int which) {
-                adapter.remove(adapter.getItem(which));
+              //  adapter.remove(adapter.getItem(which));
+            	adapter.notifyDataSetChanged();
             }
         };
 
