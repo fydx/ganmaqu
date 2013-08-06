@@ -41,7 +41,7 @@ public class MapActivity extends Activity {
 		// WebView����Javascript�ű�ִ��
 		webSettings.setJavaScriptEnabled(true);
 		webSettings.setJavaScriptCanOpenWindowsAutomatically(true);
-		
+		webSettings.setDefaultTextEncodingName("utf-8");  
 	    mapView.setWebViewClient(new MyWebViewClient());
 	    mapView.setWebChromeClient(new WebChromeClient() {
 	        public void onConsoleMessage(String message, int lineNumber, String sourceID) {
@@ -82,7 +82,7 @@ public class MapActivity extends Activity {
 				}
 			}
 		};
-		timer.schedule(task, 200 * 1);
+		timer.schedule(task, 1000 * 1);
 		
 		Timer timer_2 = new Timer(); //设置Timer
 		TimerTask task_2 = new TimerTask() {

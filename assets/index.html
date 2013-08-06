@@ -187,9 +187,22 @@
                
                 
            };
-          console.log(response.routes[0].legs[0].steps[1].transit.arrival_stop.name);
+           console.log(route_info);
 
-          window.dataFromJs.setDataString(response.routes[0].legs[0].steps[1].transit.arrival_stop.name);
+          // console.log(response.routes[0].legs[0].steps[1].transit.arrival_stop.name);
+
+          var busline_info = new StringBuilder();
+         busline_info.append("在 ");
+          busline_info.append(response.routes[0].legs[0].steps[1].transit.departure_stop.name);
+          busline_info.append(" 乘坐 ");
+          busline_info.append(response.routes[0].legs[0].steps[1].transit.line.short_name);
+          busline_info.append(" 到 ");
+          busline_info.append(response.routes[0].legs[0].steps[1].transit.arrival_stop.name);
+          busline_info.append(" 下车")
+
+        //  console.log(busline_info);
+          document.getElementById("b").innerHTML=busline_info.toString();
+          window.dataFromJs.setDataString(busline_info.toString());
           // window.dataFromjs.setDataString(response.routes[0].legs[0].steps[1].transit.arrival_stop.name);
           //console.log(route_info);
 
