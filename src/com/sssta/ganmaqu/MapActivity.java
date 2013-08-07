@@ -38,7 +38,7 @@ public class MapActivity extends Activity {
 				"places");
 		Log.i("places nums", String.valueOf(places.size()));
 		WebSettings webSettings = mapView.getSettings();
-		// WebView����Javascript�ű�ִ��
+		// WebView 开启 javascript
 		webSettings.setJavaScriptEnabled(true);
 		webSettings.setJavaScriptCanOpenWindowsAutomatically(true);
 		webSettings.setDefaultTextEncodingName("utf-8");  

@@ -22,6 +22,7 @@ public class WebActivity extends Activity {
 		WebView webpageView = (WebView)findViewById(R.id.webPage);
 		WebSettings webSettings = webpageView.getSettings();
 		webSettings.setJavaScriptEnabled(true);
+//		webpageView.setWebViewClient(new MyWebViewClient());
 		idString = getIntent().getStringExtra("shopId");
 		if (idString != null) {
 			

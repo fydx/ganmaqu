@@ -295,5 +295,7 @@
 
     <string name="title_activity_map">MapActivity</string>
     <string name="title_activity_web">WebActivity</string>
+    <string name="title_activity_route_list">RouteListActivity</string>
+    <string name="title_activity_route_review">RouteReviewActivity</string>
 
 </resources>

@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 public class MainActivity extends Activity {
@@ -23,6 +24,17 @@ public class MainActivity extends Activity {
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE);  
 		setContentView(R.layout.activity_main);
 		Button button_yes  = (Button)findViewById(R.id.button_yes);
+		ImageView routeImageView = (ImageView)findViewById(R.id.routeList);
+		routeImageView.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				Intent intent2 = new Intent();
+				intent2.setClass(MainActivity.this, RouteListActivity.class);
+				startActivity(intent2);
+			}
+		});
 		//WheelView NumberOfPerson = (WheelView) findViewById(R.id.NumberOfPerson);
 		//String Numbers[] = new String[] {"1", "2", "3", "4","5","6","7","8","9","10"};
 		String Types[] = new String[] {"亲子出行", "朋友聚会", "情侣约会"};

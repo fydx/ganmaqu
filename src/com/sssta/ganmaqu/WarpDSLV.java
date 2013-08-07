@@ -31,7 +31,7 @@ import com.mobeta.android.dslv.DragSortListView;
 public class WarpDSLV extends ListActivity {
 
   //  private ArrayAdapter<String> adapter;
-	private FinalDb db;
+	private FinalDb db,db_user;
 	private int cost=0;
     private ArrayAdapter<String> adapter;
     private String jsonString;
@@ -80,8 +80,7 @@ public class WarpDSLV extends ListActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.warp_main);
         db = FinalDb.create(this);
-        ArrayList<HashMap<String, String>> mylist = new ArrayList<HashMap<String, String>>();
-        
+        db_user= FinalDb.create(this);  
         DragSortListView lv = (DragSortListView) getListView(); 
 
         lv.setDropListener(onDrop);
@@ -196,8 +195,11 @@ public class WarpDSLV extends ListActivity {
     }
     public void saveToDB(List<place> places)
     {
+    	User user = db_user.findById(0, User.class);
+    	int route_num = user.getRoute_num();	
     	for (int i = 0; i < places.size(); i++) {
-			db.save(places.get(i));
+			places.get(i).setRoute_id(route_num+1);
+    		db.save(places.get(i));
 			Log.i("DBsave", String.valueOf(i));
 		}
     }

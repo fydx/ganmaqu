@@ -56,6 +56,14 @@
             android:name="com.sssta.ganmaqu.WebActivity"
             android:label="@string/title_activity_web" >
         </activity>
+        <activity
+            android:name="com.sssta.ganmaqu.RouteListActivity"
+            android:label="@string/title_activity_route_list" >
+        </activity>
+        <activity
+            android:name="com.sssta.ganmaqu.RouteReviewActivity"
+            android:label="@string/title_activity_route_review" >
+        </activity>
     </application>
 
 </manifest>
