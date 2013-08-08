@@ -9,6 +9,9 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
@@ -22,16 +25,29 @@ public class RouteListActivity extends Activity {
 		ArrayList<HashMap<String, String>> mylist = new ArrayList<HashMap<String, String>>();
 		ListView listView_route = (ListView)findViewById(R.id.listView_route);
 		FinalDb db = FinalDb.create(this);
-		List<place> places = db.findAll(place.class);
+		FinalDb db_user = FinalDb.create(this);
+		List<place> places= db.findAll(place.class);
 		Log.i("DB item num", String.valueOf(places.size()));
+		User user = db_user.findById(1,	User.class);
+		int route_num = user.getRoute_num()+1;
+		/**
+		 * 由于现在数据库User是 (1,1)，so，k从1开始，因为已经加了1，所以k从2开始，终止值是getRoute_num+1
+		 */
+	
+		for(int k=2 ; k<=route_num ; k++)
+		{
+		places = db.findAllByWhere(place.class, "route_id = " + String.valueOf(k));
+		Log.i("item num in route", String.valueOf(places.size()));
 		HashMap<String, String> map = new HashMap<String, String>();
 		map.put("time", "2013-8-1");
+		
 		for (int i=0;i<places.size()-1;i++) {
 			detailString.append(places.get(i).getShopName()).append("-->" );	
 		}
 		detailString.append(places.get(places.size()-1).getShopName());
 		map.put("detail", detailString.toString());
 		mylist.add(map);
+		}
 		SimpleAdapter mSchedule = new SimpleAdapter(this, //activity
 				mylist,
 				R.layout.list_item_route_list,// ListItem
@@ -40,7 +56,18 @@ public class RouteListActivity extends Activity {
 				// ListItem TextView ID
 				new int[] { R.id.text_time, R.id.text_detail });
 		               // 
+
 		        listView_route.setAdapter(mSchedule);
+		 listView_route.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
+					long arg3) {
+				// TODO Auto-generated method stub
+				
+				
+			}
+		});
 	}
 
 	@Override

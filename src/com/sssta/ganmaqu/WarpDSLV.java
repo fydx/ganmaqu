@@ -101,11 +101,12 @@ public class WarpDSLV extends ListActivity {
        
         /**
    		 *read from assets json files	
-         */
-        jsonString = getFromAssets("test.json");
-       
-      //  Log.i("file_content",jsonString);
+         */ //  Log.i("file_content",jsonString);
+      
+        if((getIntent().getSerializableExtra("places"))==null)
+        {
         try {
+        	jsonString = getFromAssets("test.json");
 			decodeJson objdecodeJson = new decodeJson(jsonString);
 			Log.i("top", objdecodeJson.getTop());
 			places= objdecodeJson.JsonToPlaceList(objdecodeJson.getJsonArray());
@@ -117,6 +118,11 @@ public class WarpDSLV extends ListActivity {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+        }
+        else {
+			places = (List<place>) getIntent().getSerializableExtra("places");
+		}
+        
         button_saveToDB.setOnClickListener(new OnClickListener() {
 			
 			@Override
@@ -193,7 +199,7 @@ public class WarpDSLV extends ListActivity {
     }
     public void saveToDB(List<place> places)
     {
-    	User user = db_user.findById(0, User.class);
+    	User user = db_user.findById(1, User.class);
     	int route_num = user.getRoute_num();	
     	for (int i = 0; i < places.size(); i++) {
 			places.get(i).setRoute_id(route_num+1);

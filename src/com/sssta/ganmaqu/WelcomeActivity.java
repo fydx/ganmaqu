@@ -46,7 +46,7 @@ public class WelcomeActivity extends Activity {
 		if (count1==1) {
 			Log.i("firstboot", "True");
 			db_user = FinalDb.create(this);
-			User user = new User("1",0);
+			User user = new User(1,1);
 			db_user.save(user);
 		}
 		
