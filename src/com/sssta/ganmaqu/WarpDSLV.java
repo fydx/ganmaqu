@@ -3,7 +3,6 @@ package com.sssta.ganmaqu;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import net.tsz.afinal.FinalDb;
@@ -11,7 +10,6 @@ import net.tsz.afinal.FinalDb;
 import org.apache.http.util.EncodingUtils;
 import org.json.JSONException;
 
-import android.R.integer;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
