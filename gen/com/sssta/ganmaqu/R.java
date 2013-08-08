@@ -235,7 +235,7 @@ containing a value of this type.
         public static final int empty=0x7f040016;
         public static final int flingRemove=0x7f040001;
         public static final int hour=0x7f040021;
-        public static final int imageView_bg=0x7f04001c;
+        public static final int imageView_bg=0x7f04001d;
         public static final int linearLayout1=0x7f040007;
         public static final int listView_route=0x7f040011;
         public static final int mapView=0x7f04000e;
@@ -253,9 +253,9 @@ containing a value of this type.
         public static final int text=0x7f040017;
         public static final int textView1=0x7f04000a;
         public static final int textView2=0x7f04000b;
-        public static final int text_detail=0x7f04001e;
+        public static final int text_detail=0x7f04001c;
         public static final int text_route=0x7f040010;
-        public static final int text_time=0x7f04001d;
+        public static final int text_time=0x7f04001e;
         public static final int time=0x7f040023;
         public static final int webPage=0x7f040014;
     }

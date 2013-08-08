@@ -155,5 +155,12 @@ public class place implements Serializable {
 		this.telNumber = telNumber;
 		this.time = time;
 	}
+	
+	@Override
+	public String toString()
+	{
+		return shopName;
+	}
+	
 
 }
