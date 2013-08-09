@@ -16,18 +16,20 @@
         <Button
             android:id="@+id/button_toMap"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
             android:layout_weight="1"
+            android:background="@drawable/button_style_main"
             android:text="Go to Map Page" />
 
         <Button
             android:id="@+id/button_SaveToDB"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
+               android:background="@drawable/button_style_main"
             android:layout_weight="1"
             android:text="Save To DB" />
     </LinearLayout>
