@@ -83,4 +83,13 @@
         android:layout_alignParentTop="true"
         android:src="@drawable/appdrawer" />
 
+   <!--  <TextView
+        android:id="@+id/text_location"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:text="location"
+        android:textSize="20dp" />--> 
+
 </RelativeLayout>
