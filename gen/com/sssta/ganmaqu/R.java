@@ -197,22 +197,38 @@ containing a value of this type.
         public static final int section_div_height=0x7f060003;
     }
     public static final class drawable {
-        public static final int appdrawer=0x7f020000;
-        public static final int background_main=0x7f020001;
-        public static final int banner_main=0x7f020002;
-        public static final int bg_handle=0x7f020003;
-        public static final int bg_handle_section1=0x7f020004;
-        public static final int bg_handle_section1_selector=0x7f020005;
-        public static final int bg_handle_section2=0x7f020006;
-        public static final int bg_handle_section2_selector=0x7f020007;
-        public static final int delete_x=0x7f020008;
-        public static final int drag=0x7f020009;
-        public static final int ic_launcher=0x7f02000a;
-        public static final int layout_bg=0x7f02000b;
-        public static final int listitem_my_bg=0x7f02000c;
-        public static final int section_div=0x7f02000d;
-        public static final int wheel_bg=0x7f02000e;
-        public static final int wheel_val=0x7f02000f;
+        public static final int afternoon=0x7f020000;
+        public static final int appdrawer=0x7f020001;
+        public static final int background_main=0x7f020002;
+        public static final int background_result=0x7f020003;
+        public static final int banner=0x7f020004;
+        public static final int banner_main=0x7f020005;
+        public static final int banner_small=0x7f020006;
+        public static final int banner_small_press=0x7f020007;
+        public static final int bg_handle=0x7f020008;
+        public static final int bg_handle_section1=0x7f020009;
+        public static final int bg_handle_section1_selector=0x7f02000a;
+        public static final int bg_handle_section2=0x7f02000b;
+        public static final int bg_handle_section2_selector=0x7f02000c;
+        public static final int button_main=0x7f02000d;
+        public static final int button_main_press=0x7f02000e;
+        public static final int button_style_main=0x7f02000f;
+        public static final int delete_x=0x7f020010;
+        public static final int dinner=0x7f020011;
+        public static final int drag=0x7f020012;
+        public static final int evening=0x7f020013;
+        public static final int ic_launcher=0x7f020014;
+        public static final int launch=0x7f020015;
+        public static final int layout_bg=0x7f020016;
+        public static final int listitem_my_bg=0x7f020017;
+        public static final int login=0x7f020018;
+        public static final int login_press=0x7f020019;
+        public static final int morning=0x7f02001a;
+        public static final int section_div=0x7f02001b;
+        public static final int settings=0x7f02001c;
+        public static final int settings_press=0x7f02001d;
+        public static final int wheel_bg=0x7f02001e;
+        public static final int wheel_val=0x7f02001f;
     }
     public static final class id {
         public static final int NumberOfPerson=0x7f040008;

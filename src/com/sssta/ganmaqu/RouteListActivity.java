@@ -36,7 +36,7 @@ public class RouteListActivity extends Activity {
 		/**
 		 * 由于现在数据库User是 (1,1)，so，k从1开始，因为已经加了1，所以k从2开始，终止值是getRoute_num
 		 */
-
+		
 		for (int k = 2; k <= route_num; k++) {
 			detailString = null;
 			detailString = new StringBuffer();
@@ -72,11 +72,8 @@ public class RouteListActivity extends Activity {
 				intent.setClass(getApplicationContext(), WarpDSLV.class);
 				List<place> places_temp = db.findAllByWhere(place.class,
 						"route_id = " + String.valueOf(arg2+2));
-				
 				intent.putExtra("places",(Serializable)places_temp);
 				startActivity(intent);
-			
-
 			}
 		});
 	}

@@ -13,6 +13,7 @@ import org.json.JSONException;
 import android.R.integer;
 import android.app.ListActivity;
 import android.content.Intent;
+import android.drm.DrmStore.RightsStatus;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -23,6 +24,8 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,6 +40,7 @@ public class WarpDSLV extends ListActivity {
 	private String jsonString;
 	private String[] array;
 	private ArrayList<String> list;
+	private ArrayList<String> list_time;
 	private List<place> places;
 	private Button button_toMap, button_saveToDB;
 	private TextView textView_cost;
@@ -135,11 +139,13 @@ public class WarpDSLV extends ListActivity {
 		textView_cost = (TextView) findViewById(R.id.cost);
 
 		list = new ArrayList<String>();
+		list_time = new ArrayList<String>();
 		for (int i = 0; i < places.size(); i++) {
 
 			list.add(
 					 places.get(i).getDetailType() + "  人均"
 					+ String.valueOf(places.get(i).getCost()) + "元");
+			list_time.add(places.get(i).getTime());
 			cost += places.get(i).getCost();
 
 		}
@@ -211,6 +217,7 @@ public class WarpDSLV extends ListActivity {
 	 */
 	private class ViewHolder {
 		public TextView detailView;
+		public ImageView dragImageView;
 	}
 
 	private class placeAdapter extends ArrayAdapter<place> {
@@ -227,16 +234,31 @@ public class WarpDSLV extends ListActivity {
 				ViewHolder holder = new ViewHolder();
 
 				TextView tv = (TextView) v.findViewById(R.id.text_detail);
+				ImageView iv = (ImageView) v.findViewById(R.id.drag_handle);
 				holder.detailView = tv;
-
+				holder.dragImageView=iv;
 				v.setTag(holder);
 			}
 
 			ViewHolder holder = (ViewHolder) v.getTag();
 			//String detail = places.get(position).getAddress();
-
+			
 			holder.detailView.setText(list.get(position).toString());
-
+			if (list_time.get(position).toString().equals("上午")) {
+				holder.dragImageView.setImageResource(R.drawable.morning);
+			}
+			if (list_time.get(position).toString().equals("中午")) {
+				holder.dragImageView.setImageResource(R.drawable.launch);
+			}
+			if (list_time.get(position).toString().equals("下午")) {
+				holder.dragImageView.setImageResource(R.drawable.afternoon);
+			}
+			if (list_time.get(position).toString().equals("晚餐")) {
+				holder.dragImageView.setImageResource(R.drawable.dinner);
+			}
+			if (list_time.get(position).toString().equals("晚上")) {
+				holder.dragImageView.setImageResource(R.drawable.evening);
+			}
 			return v;
 		}
 	}
