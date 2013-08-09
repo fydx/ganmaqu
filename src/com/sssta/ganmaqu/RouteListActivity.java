@@ -34,7 +34,7 @@ public class RouteListActivity extends Activity {
 		User user = db_user.findById(1, User.class);
 		int route_num = user.getRoute_num() ;
 		/**
-		 * 由于现在数据库User是 (1,1)，so，k从1开始，因为已经加了1，所以k从2开始，终止值是getRoute_num+1
+		 * 由于现在数据库User是 (1,1)，so，k从1开始，因为已经加了1，所以k从2开始，终止值是getRoute_num
 		 */
 
 		for (int k = 2; k <= route_num; k++) {
@@ -60,7 +60,7 @@ public class RouteListActivity extends Activity {
 				// ListItem TextView ID
 				new int[] { R.id.text_time, R.id.text_detail });
 		//
-
+		listView_route.setDividerHeight(0); // no divider
 		listView_route.setAdapter(mSchedule);
 		listView_route.setOnItemClickListener(new OnItemClickListener() {
 
