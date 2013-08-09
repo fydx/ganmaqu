@@ -10,6 +10,7 @@ import net.tsz.afinal.FinalDb;
 import org.apache.http.util.EncodingUtils;
 import org.json.JSONException;
 
+import android.R.integer;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -192,11 +193,16 @@ public class WarpDSLV extends ListActivity {
 	public void saveToDB(List<place> places) {
 		User user = db_user.findById(1, User.class);
 		int route_num = user.getRoute_num();
+		Log.i("user get route_num", String.valueOf(route_num));
 		for (int i = 0; i < places.size(); i++) {
-			places.get(i).setRoute_id(route_num + 1);
+			places.get(i).setRoute_id(route_num+1);
 			db.save(places.get(i));
 			Log.i("DBsave", String.valueOf(i));
 		}
+        int num = user.getRoute_num()+1;
+		user.setRoute_num(num);
+		Log.i("user set route_num", String.valueOf(user.getRoute_num()));
+		db_user.update(user);
 	}
 
 	/**
