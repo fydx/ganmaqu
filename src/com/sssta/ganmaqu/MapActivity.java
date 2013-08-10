@@ -17,6 +17,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Looper;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.Menu;
@@ -62,6 +63,7 @@ public class MapActivity extends Activity {
 				// 表示调用listener的周期，第3个参数为米,表示位置移动指定距离后就调用listener
 				locationManager.requestLocationUpdates(provider, 2000, 10,
 						locationListener);
+				
 		final TextView routeTextView;
 		routeTextView = (TextView)findViewById(R.id.text_route);
 		data= new dataFromJs();
@@ -99,6 +101,9 @@ public class MapActivity extends Activity {
 		TimerTask task = new TimerTask() {
 			@Override
 			public void run() {
+				getApplicationContext().getMainLooper();
+				Looper.prepare();
+				
 				mapView.loadUrl("javascript:calcRoute2("+String.valueOf(places.get(0).getPos_y())+","+
 						String.valueOf(places.get(0).getPos_x()+")"));
 				
@@ -111,6 +116,9 @@ public class MapActivity extends Activity {
 							String.valueOf(places.get(i).getPos_x()+ "," +  "\"" +  contentString + "\""+")");
 					Log.i("load String", loadString);
 					mapView.loadUrl(loadString);
+					//地图加载完毕后 update location
+					updateWithNewLocation(location);
+					//mapView.loadUrl("javascript:addLocation(34.139,108.84199)");
 				}
 			}
 		};
@@ -131,8 +139,7 @@ public class MapActivity extends Activity {
 			}
 		};
 		timer_2.schedule(task_2, 1000 * 1);
-		//地图加载完毕后 update location
-		updateWithNewLocation(location);
+		
 		//mapView.loadUrl("javascript:getRouteInfo()");
 		jsButton.setText("run");
 		jsButton.setOnClickListener(new OnClickListener() {
@@ -231,14 +238,18 @@ public class MapActivity extends Activity {
 //			TextView myLocationText = (TextView) findViewById(R.id.text_location);
 			if (location != null) {
 				 lat = location.getLatitude();
-				lng = location.getLongitude();
-				latLongString = "纬度:" + lat + "\n经度:" + lng;
+				 lng = location.getLongitude();
+				 latLongString = "纬度:" + lat + "\n经度:" + lng;
 			} else {
 				latLongString = "无法获取地理信息";
 			}
 			Toast.makeText(getApplicationContext(), "您当前的位置是: " + "\n" + latLongString + "\n"
 					, Toast.LENGTH_LONG).show();
-			mapView.loadUrl("javascript:addmarker("+String.valueOf(lat)+ ","+String.valueOf(lng) +" )");
+		//	mapView.loadUrl("javascript:deleteLocation()");
+		mapView.loadUrl("javascript:addLocation(34.139,108.84199)");
+		//	mapView.loadUrl("javascript:addLocation(" +String.valueOf(lat)+ ","+String.valueOf(lng) +")");
+			Log.i("addLocation", "javascript:addLocation(" +String.valueOf(lat)+ ","+String.valueOf(lng) +")");
+			
 			
 //			myLocationText.setText("您当前的位置是:/n" + latLongString + "/n"
 //					+ getAddressbyGeoPoint(location));

@@ -182,7 +182,7 @@ public class MainActivity extends Activity {
 		} else {
 			latLongString = "无法获取地理信息";
 		}
-		Toast.makeText(getApplicationContext(), "您当前的位置是: " + "\n" + latLongString + "\n"
+		Toast.makeText(getApplicationContext(), "(main)您当前的位置是: " + "\n" + latLongString + "\n"
 				+ getAddressbyGeoPoint(location), Toast.LENGTH_LONG).show();
 //		myLocationText.setText("您当前的位置是:/n" + latLongString + "/n"
 //				+ getAddressbyGeoPoint(location));

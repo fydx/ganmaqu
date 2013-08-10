@@ -21,6 +21,8 @@
       var des = new google.maps.LatLng(34.2224, 108.9468);
       var status_net;
       var infowindow = new google.maps.InfoWindow();
+      var marker_location;
+
      function StringBuilder(){
       this.__string__ = new Array();
       }
@@ -78,12 +80,14 @@
          directionsDisplay = new google.maps.DirectionsRenderer();
         var mapOptions = {
           center: new google.maps.LatLng(34.2595, 108.9476),
-          zoom: 12,
+          zoom: 10,
           mapTypeId: google.maps.MapTypeId.ROADMAP
         };
        map = new google.maps.Map(document.getElementById("map_canvas"),
             mapOptions);
         directionsDisplay.setMap(map);
+       // addLocation(34.139,108.84199833333332)
+       // addLocation(34.139,108.842);
         //console.log("主地图加载完成");
         //calcRoute2(34.260230,108.943180);
 
@@ -108,18 +112,29 @@
        
        });
       }
+       
+       function addLocation(pos_x,pos_y)
+       {
+           marker_location = new google.maps.Marker({
+           position: new google.maps.LatLng(pos_x,pos_y),
+           map: map,
+           title: 'My location',
+         });
+       }
+
+       function deleteLocation()
+       {
+          marker_location.setMap(null);
+       }
         function addmarker(pos_x,pos_y)
        {
           
          marker = new google.maps.Marker({
            position: new google.maps.LatLng(pos_x,pos_y),
            map: map,
-           title: 'My location',
+           title: 'here',
          });
-
           //addInfo(marker);
-        
-       
       }
        function addmarker(pos_x,pos_y,info)
        {
