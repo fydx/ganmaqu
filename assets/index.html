@@ -11,7 +11,7 @@
     <script type="text/javascript"
       src="http://maps.googleapis.com/maps/api/js?key=AIzaSyD5LGXb8bgnTOhSjSZAxldP8kzTkmf3YQ0&sensor=true&language=zh-cn">
     </script>
-    <div id='b'><a onclick="window.dataFromJs.showMessage()">数据接收中…</a></div>
+    <div id='b'><a onclick="window.dataFromJs.showMessage()">数据接收中…请稍后</a></div>
     <script type="text/javascript">
  
       var directionsDisplay;
@@ -38,12 +38,22 @@
           var marker = new google.maps.Marker({
            position: new google.maps.LatLng(arguments[i], arguments[i+1]),
            map: map,
-           title: "in"
+           title: "in",
+            // draggable:true,
+            animation: google.maps.Animation.DROP
          });
          attachSecretMessage(marker,i/3,arguments[i+2]);
 
        };
      }
+//      function toggleBounce() {
+
+//   if (marker.getAnimation() != null) {
+//     marker.setAnimation(null);
+//   } else {
+//     marker.setAnimation(google.maps.Animation.BOUNCE);
+//   }
+// }
       function refresh()
       {
          
@@ -104,7 +114,7 @@
          marker = new google.maps.Marker({
            position: new google.maps.LatLng(pos_x,pos_y),
            map: map,
-           title: 'Click to zoom',
+           title: 'My location',
          });
 
           //addInfo(marker);
