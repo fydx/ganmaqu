@@ -67,7 +67,7 @@ public class MainActivity extends Activity {
 		// findViewById(R.id.NumberOfPerson);
 		// String Numbers[] = new String[] {"1", "2", "3",
 		// "4","5","6","7","8","9","10"};
-		String Types[] = new String[] { "亲子出行", "朋友聚会", "情侣约会" };
+		String Types[] = new String[] { "亲子出行", "朋友出行", "情侣出行" };
 		final WheelView numberWheel = (WheelView) findViewById(R.id.NumberOfPerson);
 		String countries[] = new String[] { "2", "3", "4", "5", "6", "7", "8" };
 		numberWheel.setVisibleItems(5);
