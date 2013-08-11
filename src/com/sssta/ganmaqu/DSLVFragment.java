@@ -1,18 +1,19 @@
 package com.sssta.ganmaqu;
 
-import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Arrays;
 
-import android.support.v4.app.ListFragment;
 import android.app.Activity;
+import android.os.Bundle;
+import android.support.v4.app.ListFragment;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.LayoutInflater;
-import android.os.Bundle;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
-import com.mobeta.android.dslv.DragSortListView;
+
 import com.mobeta.android.dslv.DragSortController;
+import com.mobeta.android.dslv.DragSortListView;
 
 
 public class DSLVFragment extends ListFragment {

@@ -1,18 +1,16 @@
 package com.sssta.ganmaqu;
 
-import java.util.List;
 import java.util.ArrayList;
-
-import com.mobeta.android.dslv.DragSortListView;
-import com.mobeta.android.dslv.DragSortController;
+import java.util.List;
 
 import android.app.ListActivity;
 import android.os.Bundle;
-import android.widget.ArrayAdapter;
-import android.widget.TextView;
-import android.widget.ListView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.TextView;
+
+import com.mobeta.android.dslv.DragSortListView;
 
 
 public class ArbItemSizeDSLV extends ListActivity {

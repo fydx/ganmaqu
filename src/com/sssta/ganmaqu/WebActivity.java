@@ -1,9 +1,7 @@
 package com.sssta.ganmaqu;
 
-import java.net.URL;
-
-import android.os.Bundle;
 import android.app.Activity;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.Window;

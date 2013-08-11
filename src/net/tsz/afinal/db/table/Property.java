@@ -15,13 +15,14 @@
  */
 package net.tsz.afinal.db.table;
 
-import android.annotation.SuppressLint;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import android.annotation.SuppressLint;
 
 /**
  * @title 属性

@@ -1,9 +1,9 @@
 package com.sssta.ganmaqu;
 
+import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.os.Bundle;
 import android.widget.Toast;
 
 public class DSLVFragmentClicks extends DSLVFragment {

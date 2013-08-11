@@ -1,16 +1,16 @@
 package com.sssta.ganmaqu;
 
-import com.mobeta.android.dslv.DragSortListView;
-import com.mobeta.android.dslv.SimpleDragSortCursorAdapter;
-
+import android.content.Context;
+import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
-import android.database.Cursor;
 import android.widget.Toast;
+
+import com.mobeta.android.dslv.DragSortListView;
+import com.mobeta.android.dslv.SimpleDragSortCursorAdapter;
 
 public class CursorDSLV extends FragmentActivity {
 

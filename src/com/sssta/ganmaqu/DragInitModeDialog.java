@@ -1,12 +1,10 @@
 package com.sssta.ganmaqu;
 
-import com.mobeta.android.dslv.DragSortController;
-
-import android.support.v4.app.DialogFragment;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 
 import com.mobeta.android.dslv.DragSortController;
 

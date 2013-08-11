@@ -18,7 +18,6 @@ package net.tsz.afinal.bitmap.core;
 import java.lang.ref.SoftReference;
 
 import net.tsz.afinal.utils.Utils;
-
 import android.graphics.Bitmap;
 
 public class SoftMemoryCacheImpl implements IMemoryCache {

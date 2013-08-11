@@ -3,15 +3,12 @@ package com.sssta.ganmaqu;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.tsz.afinal.FinalDb;
-
-import com.mobeta.android.dslv.DragSortListView;
-
-import android.os.Bundle;
-import android.app.Activity;
 import android.app.ListActivity;
+import android.os.Bundle;
 import android.view.Menu;
 import android.widget.ArrayAdapter;
+
+import com.mobeta.android.dslv.DragSortListView;
 
 public class RouteReviewActivity extends ListActivity {
 	 private ArrayAdapter<String> adapter;

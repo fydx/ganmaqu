@@ -4,13 +4,12 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import net.tsz.afinal.FinalDb;
-
-import android.os.Bundle;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.Window;

@@ -1,10 +1,24 @@
 package com.sssta.ganmaqu;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Serializable;
 import java.util.List;
 import java.util.Locale;
 
 import kankan.wheel.widget.ArrayWheelAdapter;
 import kankan.wheel.widget.WheelView;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpHost;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONException;
+
+import android.R.integer;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -14,15 +28,17 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Looper;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends Activity {
@@ -30,6 +46,7 @@ public class MainActivity extends Activity {
 	private Location location;
 	private String provider;
 	private Address address;
+	private List<place> places;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -97,10 +114,8 @@ public class MainActivity extends Activity {
 						String.valueOf(numberWheel.getCurrentItem() + 2)
 								+ "人  " + typeWheel.getCurrentItem(),
 						Toast.LENGTH_SHORT).show();
-				Intent intent = new Intent();
-				intent.setClass(getApplicationContext(), WarpDSLV.class);
-				startActivity(intent);
-
+				new RequestTask().execute();
+			
 			}
 		});
 		numberWheel.setCurrentItem(3);
@@ -205,5 +220,115 @@ public class MainActivity extends Activity {
 			e.printStackTrace();
 		}
 		return result;
+	}
+	public class RequestTask extends AsyncTask<Void, integer, String>
+	{
+
+		@Override
+		protected String doInBackground(Void... params) {
+			// TODO Auto-generated method stub
+			
+			try {
+				return RequestToServer("亲子出行", 34.259203,108.947039);
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return null;
+		}
+		@Override
+		 protected void onPostExecute(String result) {
+			decodeJson objdecodeJson = null;
+			try {
+				objdecodeJson = new decodeJson(result);
+			} catch (JSONException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			try {
+				Log.i("top", objdecodeJson.getTop());
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			places = objdecodeJson.JsonToPlaceList(objdecodeJson
+					.getJsonArray());
+			for (int i = 0; i < places.size(); i++) {
+				Log.i("places info", places.get(i).getShopName());
+				
+			}
+			
+			Intent intent = new Intent();
+			intent.setClass(getApplicationContext(), WarpDSLV.class);
+			intent.putExtra("places", (Serializable)places);
+			startActivity(intent);
+	     }
+		
+	}
+		
+	
+	public String RequestToServer(String typeString, double pos_x ,double pos_y) throws JSONException
+	{
+		DefaultHttpClient httpclient = new DefaultHttpClient();
+		try
+		{
+			getApplicationContext().getMainLooper();
+			Looper.prepare();
+			Toast.makeText(getApplicationContext(), "正在请求服务器", Toast.LENGTH_SHORT).show();
+			HttpHost target = new HttpHost("192.168.1.135", 8080, "http");
+			//String request="/?type=情侣出行&pos_x=108.947039&pos_y=34.259203";
+			String request = "/?type=" + typeString + "&pos_x=" + String.valueOf(pos_x) + 
+					"&pos_y=" + String.valueOf(pos_y) ; 
+			HttpGet req = new HttpGet(request);
+			System.out.println("executing request to " + target);
+			HttpResponse rsp = httpclient.execute(target, req);
+			HttpEntity entity = rsp.getEntity();
+			InputStreamReader isr = new InputStreamReader(entity.getContent(), "utf-8");
+			BufferedReader br = new BufferedReader(isr);
+			String line=null;
+			line=br.readLine();
+			if (line!=null) {
+				Toast.makeText(getApplicationContext(), "请求完毕", Toast.LENGTH_SHORT).show();
+				return line;
+//				decodeJson objdecodeJson = new decodeJson(line);
+//				Log.i("top", objdecodeJson.getTop());
+//				places = objdecodeJson.JsonToPlaceList(objdecodeJson
+//						.getJsonArray());
+//				for (int i = 0; i < places.size(); i++) {
+//					Log.i("places info", places.get(i).getShopName());
+//					
+//				}
+				
+				/*Intent intent = new Intent();
+				intent.setClass(getApplicationContext(), WarpDSLV.class);
+				intent.putExtra("places", (Serializable)places);
+				startActivity(intent);*/
+			}
+			/*while((line=br.readLine())!=null)
+			{
+				
+			}*/
+		}
+		catch (ClientProtocolException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			Toast.makeText(getApplicationContext(), "无法连接服务器", Toast.LENGTH_SHORT).show();
+			
+		}
+		catch (IOException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		finally
+		{
+			// When HttpClient instance is no longer needed,
+			// shut down the connection manager to ensure
+			// immediate deallocation of all system resources
+			httpclient.getConnectionManager().shutdown();
+		}
+		return null;
+		
 	}
 }
