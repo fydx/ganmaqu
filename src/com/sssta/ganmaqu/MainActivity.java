@@ -47,6 +47,7 @@ public class MainActivity extends Activity {
 	private String provider;
 	private Address address;
 	private List<place> places;
+	private final String ipString = "192.168.137.14";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -84,7 +85,7 @@ public class MainActivity extends Activity {
 		// findViewById(R.id.NumberOfPerson);
 		// String Numbers[] = new String[] {"1", "2", "3",
 		// "4","5","6","7","8","9","10"};
-		String Types[] = new String[] { "亲子出行", "朋友出行", "情侣出行" };
+		final String Types[] = new String[] { "亲子出行", "朋友出行", "情侣出行" };
 		final WheelView numberWheel = (WheelView) findViewById(R.id.NumberOfPerson);
 		String countries[] = new String[] { "2", "3", "4", "5", "6", "7", "8" };
 		numberWheel.setVisibleItems(5);
@@ -109,13 +110,19 @@ public class MainActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				Toast.makeText(
-						getApplicationContext(),
-						String.valueOf(numberWheel.getCurrentItem() + 2)
-								+ "人  " + typeWheel.getCurrentItem(),
-						Toast.LENGTH_SHORT).show();
-				new RequestTask().execute();
-			
+				Toast.makeText(getApplicationContext(),
+						Types[typeWheel.getCurrentItem()], Toast.LENGTH_SHORT)
+						.show();
+				Log.i("Current Item", Types[typeWheel.getCurrentItem()]);
+				if (location == null) {
+					new RequestTask().execute(Types[typeWheel.getCurrentItem()]);
+				} else {
+					new RequestTask().execute(
+							Types[typeWheel.getCurrentItem()],
+							String.valueOf(location.getLongitude()),
+							String.valueOf(location.getLatitude()));
+				}
+
 			}
 		});
 		numberWheel.setCurrentItem(3);
@@ -189,7 +196,8 @@ public class MainActivity extends Activity {
 	// Gps监听器调用，处理位置信息
 	private void updateWithNewLocation(Location location) {
 		String latLongString;
-//		TextView myLocationText = (TextView) findViewById(R.id.text_location);
+		// TextView myLocationText = (TextView)
+		// findViewById(R.id.text_location);
 		if (location != null) {
 			double lat = location.getLatitude();
 			double lng = location.getLongitude();
@@ -197,11 +205,14 @@ public class MainActivity extends Activity {
 		} else {
 			latLongString = "无法获取地理信息";
 		}
-		Toast.makeText(getApplicationContext(), "(main)您当前的位置是: " + "\n" + latLongString + "\n"
-				+ getAddressbyGeoPoint(location), Toast.LENGTH_LONG).show();
-//		myLocationText.setText("您当前的位置是:/n" + latLongString + "/n"
-//				+ getAddressbyGeoPoint(location));
-		
+		Toast.makeText(
+				getApplicationContext(),
+				"(main)您当前的位置是: " + "\n" + latLongString + "\n"
+						+ getAddressbyGeoPoint(location), Toast.LENGTH_LONG)
+				.show();
+		// myLocationText.setText("您当前的位置是:/n" + latLongString + "/n"
+		// + getAddressbyGeoPoint(location));
+
 	}
 
 	// 获取地址信息
@@ -221,23 +232,34 @@ public class MainActivity extends Activity {
 		}
 		return result;
 	}
-	public class RequestTask extends AsyncTask<Void, integer, String>
-	{
+
+	public class RequestTask extends AsyncTask<String, integer, String> {
 
 		@Override
-		protected String doInBackground(Void... params) {
+		protected String doInBackground(String... params) {
 			// TODO Auto-generated method stub
-			
+			double pos_x = 108.947039, pos_y = 34.259203;
+
+			if (params[1] != null && params[2] != null) {
+				pos_x = Double.parseDouble(params[1]);
+				pos_y = Double.parseDouble(params[2]);
+			}
 			try {
-				return RequestToServer("亲子出行", 34.259203,108.947039);
+				return RequestToServer(params[0], pos_x, pos_y);
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			return null;
 		}
+
+		protected void onProgressUpdate(Integer... progress) {// 在调用publishProgress之后被调用，在ui线程执行
+			// mProgressBar.setProgress(progress[0]);
+			Log.i("Progress", String.valueOf(progress[0]));
+		}
+
 		@Override
-		 protected void onPostExecute(String result) {
+		protected void onPostExecute(String result) {
 			decodeJson objdecodeJson = null;
 			try {
 				objdecodeJson = new decodeJson(result);
@@ -251,84 +273,66 @@ public class MainActivity extends Activity {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			places = objdecodeJson.JsonToPlaceList(objdecodeJson
-					.getJsonArray());
+			places = objdecodeJson
+					.JsonToPlaceList(objdecodeJson.getJsonArray());
 			for (int i = 0; i < places.size(); i++) {
 				Log.i("places info", places.get(i).getShopName());
-				
+
 			}
-			
+
 			Intent intent = new Intent();
 			intent.setClass(getApplicationContext(), WarpDSLV.class);
-			intent.putExtra("places", (Serializable)places);
+			intent.putExtra("places", (Serializable) places);
 			startActivity(intent);
-	     }
-		
+		}
+
 	}
-		
-	
-	public String RequestToServer(String typeString, double pos_x ,double pos_y) throws JSONException
-	{
+
+	public String RequestToServer(String typeString, double pos_x, double pos_y)
+			throws JSONException {
 		DefaultHttpClient httpclient = new DefaultHttpClient();
-		try
-		{
+		try {
 			getApplicationContext().getMainLooper();
 			Looper.prepare();
-			Toast.makeText(getApplicationContext(), "正在请求服务器", Toast.LENGTH_SHORT).show();
-			HttpHost target = new HttpHost("192.168.1.135", 8080, "http");
-			//String request="/?type=情侣出行&pos_x=108.947039&pos_y=34.259203";
-			String request = "/?type=" + typeString + "&pos_x=" + String.valueOf(pos_x) + 
-					"&pos_y=" + String.valueOf(pos_y) ; 
+			Toast.makeText(getApplicationContext(), "正在请求服务器",
+					Toast.LENGTH_SHORT).show();
+			HttpHost target = new HttpHost(ipString, 8080, "http");
+			// String request="/?type=情侣出行&pos_x=108.947039&pos_y=34.259203";
+			String request = "/?type=" + typeString + "&pos_x="
+					+ String.valueOf(pos_x) + "&pos_y=" + String.valueOf(pos_y);
+			Log.i("request string",request);
 			HttpGet req = new HttpGet(request);
 			System.out.println("executing request to " + target);
 			HttpResponse rsp = httpclient.execute(target, req);
 			HttpEntity entity = rsp.getEntity();
-			InputStreamReader isr = new InputStreamReader(entity.getContent(), "utf-8");
+			InputStreamReader isr = new InputStreamReader(entity.getContent(),
+					"utf-8");
 			BufferedReader br = new BufferedReader(isr);
-			String line=null;
-			line=br.readLine();
-			if (line!=null) {
-				Toast.makeText(getApplicationContext(), "请求完毕", Toast.LENGTH_SHORT).show();
+			String line = null;
+			line = br.readLine();
+			if (line != null) {
+				Toast.makeText(getApplicationContext(), "请求完毕",
+						Toast.LENGTH_SHORT).show();
 				return line;
-//				decodeJson objdecodeJson = new decodeJson(line);
-//				Log.i("top", objdecodeJson.getTop());
-//				places = objdecodeJson.JsonToPlaceList(objdecodeJson
-//						.getJsonArray());
-//				for (int i = 0; i < places.size(); i++) {
-//					Log.i("places info", places.get(i).getShopName());
-//					
-//				}
 				
-				/*Intent intent = new Intent();
-				intent.setClass(getApplicationContext(), WarpDSLV.class);
-				intent.putExtra("places", (Serializable)places);
-				startActivity(intent);*/
 			}
-			/*while((line=br.readLine())!=null)
-			{
-				
-			}*/
-		}
-		catch (ClientProtocolException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			Toast.makeText(getApplicationContext(), "无法连接服务器", Toast.LENGTH_SHORT).show();
 			
-		}
-		catch (IOException e)
-		{
+		} catch (ClientProtocolException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
-		finally
-		{
+			Toast.makeText(getApplicationContext(), "无法连接服务器",
+					Toast.LENGTH_SHORT).show();
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
 			// When HttpClient instance is no longer needed,
 			// shut down the connection manager to ensure
 			// immediate deallocation of all system resources
 			httpclient.getConnectionManager().shutdown();
 		}
 		return null;
-		
+
 	}
 }
