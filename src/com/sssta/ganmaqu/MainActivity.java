@@ -47,7 +47,7 @@ public class MainActivity extends Activity {
 	private String provider;
 	private Address address;
 	private List<place> places;
-	private final String ipString = "192.168.137.14";
+	private final String ipString = "192.168.22.10";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -239,8 +239,8 @@ public class MainActivity extends Activity {
 		protected String doInBackground(String... params) {
 			// TODO Auto-generated method stub
 			double pos_x = 108.947039, pos_y = 34.259203;
-
-			if (params[1] != null && params[2] != null) {
+		
+			if (params.length>1) {
 				pos_x = Double.parseDouble(params[1]);
 				pos_y = Double.parseDouble(params[2]);
 			}
