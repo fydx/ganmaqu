@@ -80,7 +80,7 @@ public class MapActivity extends Activity {
 	        });
 	   // mapView.addJavascriptInterface(data, "mapView");
 	    mapView.addJavascriptInterface(data, "dataFromJs");
-		mapView.loadUrl("file:///android_asset/index.html");
+		mapView.loadUrl("file:///android_asset/test_baidu.html");
 		// mapView.loadUrl("file:///android_asset/js.html");
 //		Log.i("route", "javascript:calcRoute2("+String.valueOf(places.get(0).getPos_y())+","+
 //		String.valueOf(places.get(0).getPos_x()+")"));
@@ -96,9 +96,9 @@ public class MapActivity extends Activity {
 			public void run() {
 				getApplicationContext().getMainLooper();
 				Looper.prepare();
-				
-				mapView.loadUrl("javascript:calcRoute2("+String.valueOf(places.get(0).getPos_y())+","+
-						String.valueOf(places.get(0).getPos_x()+")"));
+//				
+//				mapView.loadUrl("javascript:calcRoute("+String.valueOf(places.get(0).getPos_y())+","+
+//						String.valueOf(places.get(0).getPos_x()+")"));
 				
 					for (int i = 0; i < places.size(); i++) {
 					String	contentString ;
@@ -107,8 +107,9 @@ public class MapActivity extends Activity {
 							String.valueOf(places.get(i).getId()) + ">" + "详细信息>></a>" ;
 //					String loadString = "javascript:addMessage(" +String.valueOf(places.get(i).getPos_y())+","+
 //							String.valueOf(places.get(i).getPos_x()+ "," +  "\"" +  contentString + "\""+")");
-					String loadString = "javascript:codeAddress(" + "\"" +  places.get(i).getAddress() +"\"" + "," +  "\"" +  contentString + "\"" +  "," +String.valueOf(places.get(i).getPos_y())+","+
-							String.valueOf(places.get(i).getPos_x())+ ")" ; 
+//					String loadString = "javascript:codeAddress(" + "\"" +  places.get(i).getShopName() +"\"" + "," +  "\"" +  contentString + "\"" +  "," +String.valueOf(places.get(i).getPos_x())+","+
+//							String.valueOf(places.get(i).getPos_y())+ ")" ; 
+					String loadString = "javascript:codeAddress(" + "\"" +  places.get(i).getShopName() +"\"" + "," +  "\"" +  contentString + "\"" +  ")" ; 
 					Log.i("load String", loadString);
 					mapView.loadUrl(loadString);
 					//地图加载完毕后 update location

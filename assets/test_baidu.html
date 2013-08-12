@@ -19,6 +19,7 @@ body{height:100%;margin:0px;padding:0px}
 
 var map;
  var pois = [];  //poi容器
+ var location_1 ; //当前位置
 function StringBuilder(){
       this.__string__ = new Array();
       }
@@ -33,8 +34,13 @@ function StringBuilder(){
 	var point = new BMap.Point(108.951733,34.269895);  // 创建点坐标
 	map.centerAndZoom(point, 15); // 初始化地图，设置中心点坐标和地图级别
  	map.enableScrollWheelZoom();   //启用滚轮放大缩小
+ 	//test location
+ 	setLocation_1(108.95479,34.22084);
 	//addMessage(108.908165,34.238526,"<p><b>金鹰国际(高新店)</b></p><p>高新区科技路37号金鹰国际购物中心1-4楼</p><p><a href=http://m.dianping.com/shop/1957927>详细信息>></a>");
 	//codeAddress("金鹰国际(高新店)","<p><b>金鹰国际(高新店)</b></p><p>高新区科技路37号金鹰国际购物中心1-4楼</p><p><a href=http://m.dianping.com/shop/1957927>详细信息>></a>");
+	
+	
+
 	
 }
 //创建marker并加入信息窗口      
@@ -56,7 +62,7 @@ function addMessage(){
 function addLocation(pos_x,pos_y)
 {
 	var marker = new BMap.Marker(new BMap.Point(pos_x, pos_y));  // 创建标注
-	map.addOverlay(marker1);  // 将标注添加到地图中  
+	map.addOverlay(marker);  // 将标注添加到地图中  
 }      
 //根据关键字搜索相应地理位置
 function codeAddress()
@@ -80,9 +86,10 @@ function codeAddress()
      }  
      //document.getElementById("log").innerHTML = s.join("<br />");  
    }
-   calcRoute(108.951733,34.269895);  
+    calcRoute();
  }  
 };
+
 	var local = new BMap.LocalSearch(map, options);    
       	local.search(shopname);
 
@@ -90,12 +97,18 @@ function codeAddress()
     };
    
 }
+//传递当前坐标
+function setLocation_1(pos_x,pos_y)
+{
+	location_1 = new BMap.Point(pos_x,pos_y);
+}
 //算路线！ 默认公交状况,参数为起点，终点在pois[0]中
-function calcRoute(pos_x,pos_y)
+function calcRoute()
 {	
     console.log("calcRoute start");
-    var ori = new BMap.Point(pos_x,pos_y);
     var transit = new BMap.TransitRoute("西安市");  
+  	// location_1 = new BMap.Point(108.951733,34.269895);
+   // var ori = new BMap.Point(pos_x,pos_y);
 	transit.setSearchCompleteCallback(function(results){  
 		console.log(transit.getStatus());
  	if (transit.getStatus() == BMAP_STATUS_SUCCESS){  
@@ -105,7 +118,7 @@ function calcRoute(pos_x,pos_y)
   	   var walk = firstPlan.getRoute(i);  
      if (walk.getDistance(false) > 0){  
        // 步行线路有可能为0
-       map.addOverlay(new BMap.Polyline(walk.getPath(), {lineColor: "green"}));  
+       map.addOverlay(new BMap.Polyline(walk.getPath(), {strokeColor: "green"}));  
      }  
    }  
   // 绘制公交线路 
@@ -121,10 +134,9 @@ function calcRoute(pos_x,pos_y)
   //document.getElementById("log").innerHTML = s.join("<br>");  
  }  
 })  
-transit.search(ori, pois[0]);  
+transit.search(location_1, pois[0]);  
 }
 </script>
-
 </body>
 <body onload="initialize()">
 </body>
