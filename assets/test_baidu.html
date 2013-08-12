@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+<title>Map Result</title>
+<style type="text/css">
+html{height:100%}
+body{height:100%;margin:0px;padding:0px}
+#container{height:100%}
+</style>
+<script type="text/javascript" src="http://api.map.baidu.com/api?v=1.5&ak=397c8e382ee8dcc520182990a807b1b9"></script> 
+ 
+ 
+<body>
+<div id="container"></div>
+<script type="text/javascript">
+
+var map;
+ var pois = [];  //poi容器
+function StringBuilder(){
+      this.__string__ = new Array();
+      }
+      StringBuilder.prototype.append = function(str){
+    this.__string__.push(str);
+      }
+      StringBuilder.prototype.toString = function(){
+    return this.__string__.join("");
+      }
+ function initialize() {
+ 	map = new BMap.Map("container");          // 创建地图实例
+	var point = new BMap.Point(108.951733,34.269895);  // 创建点坐标
+	map.centerAndZoom(point, 15); // 初始化地图，设置中心点坐标和地图级别
+ 	map.enableScrollWheelZoom();   //启用滚轮放大缩小
+	//addMessage(108.908165,34.238526,"<p><b>金鹰国际(高新店)</b></p><p>高新区科技路37号金鹰国际购物中心1-4楼</p><p><a href=http://m.dianping.com/shop/1957927>详细信息>></a>");
+	//codeAddress("金鹰国际(高新店)","<p><b>金鹰国际(高新店)</b></p><p>高新区科技路37号金鹰国际购物中心1-4楼</p><p><a href=http://m.dianping.com/shop/1957927>详细信息>></a>");
+	
+}
+//创建marker并加入信息窗口      
+function addMessage(){
+	
+	for (var i = 0; i <arguments.length; i+=3) {
+		 var marker1 = new BMap.Marker(new BMap.Point(arguments[i], arguments[i+1]));  // 创建标注
+		 map.addOverlay(marker1);              // 将标注添加到地图中
+		 //创建信息窗口
+		 var infoWindow1 = new BMap.InfoWindow(arguments[i+2]);
+		marker1.addEventListener("click", function(){this.openInfoWindow(infoWindow1);});
+		
+
+	};
+      
+	
+}
+ //将现在的位置加入到location中 （待加入百度地图变换）
+function addLocation(pos_x,pos_y)
+{
+	var marker = new BMap.Marker(new BMap.Point(pos_x, pos_y));  // 创建标注
+	map.addOverlay(marker1);  // 将标注添加到地图中  
+}      
+//根据关键字搜索相应地理位置
+function codeAddress()
+{
+	console.log("Code address start");
+	for (var i = 0; i <arguments.length ; i+=2) {
+        var shopname = arguments[i];
+        var info = arguments[i+1]; 
+	var options = {  
+ 			onSearchComplete: function(results){ 
+ 			console.log(local.getStatus()); 
+   if (local.getStatus() == BMAP_STATUS_SUCCESS){  
+     // 判断状态是否正确  
+     
+     for (var i = 0; i < 1; i ++){   //暂时取一个，可用i<results.getCurrentNumPois()
+       pois.push(results.getPoi(i));
+       console.log(results.getPoi(i).title + ", " + results.getPoi(i).address + " pos_x :" +results.getPoi(i).point.lng + "pos_y :" + results.getPoi(i).point.lat);
+       addMessage(results.getPoi(i).point.lng,results.getPoi(i).point.lat,info);
+       
+
+     }  
+     //document.getElementById("log").innerHTML = s.join("<br />");  
+   }
+   calcRoute(108.951733,34.269895);  
+ }  
+};
+	var local = new BMap.LocalSearch(map, options);    
+      	local.search(shopname);
+
+
+    };
+   
+}
+//算路线！ 默认公交状况,参数为起点，终点在pois[0]中
+function calcRoute(pos_x,pos_y)
+{	
+    console.log("calcRoute start");
+    var ori = new BMap.Point(pos_x,pos_y);
+    var transit = new BMap.TransitRoute("西安市");  
+	transit.setSearchCompleteCallback(function(results){  
+		console.log(transit.getStatus());
+ 	if (transit.getStatus() == BMAP_STATUS_SUCCESS){  
+  	 var firstPlan = results.getPlan(0);  
+  	 // 绘制步行线路  
+  	 for (var i = 0; i < firstPlan.getNumRoutes(); i ++){  
+  	   var walk = firstPlan.getRoute(i);  
+     if (walk.getDistance(false) > 0){  
+       // 步行线路有可能为0
+       map.addOverlay(new BMap.Polyline(walk.getPath(), {lineColor: "green"}));  
+     }  
+   }  
+  // 绘制公交线路 
+   for (i = 0; i < firstPlan.getNumLines(); i ++){  
+     var line = firstPlan.getLine(i);  
+     map.addOverlay(new BMap.Polyline(line.getPath()));  
+   }  
+   // 输出方案信息
+   var s = [];  
+   for (i = 0; i < results.getNumPlans(); i ++){  
+     console.log((i + 1) + ". " + results.getPlan(i).getDescription());  
+   }  
+  //document.getElementById("log").innerHTML = s.join("<br>");  
+ }  
+})  
+transit.search(ori, pois[0]);  
+}
+</script>
+
+</body>
+<body onload="initialize()">
+</body>
+</html>
