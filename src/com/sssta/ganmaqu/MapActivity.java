@@ -105,8 +105,10 @@ public class MapActivity extends Activity {
 					contentString ="<p><b>" + places.get(i).getShopName() + "</b></p>" + "<p>"
 					    + places.get(i).getAddress() + "</p>" + "<p><a href=http://m.dianping.com/shop/" + 
 							String.valueOf(places.get(i).getId()) + ">" + "详细信息>></a>" ;
-					String loadString = "javascript:addMessage(" +String.valueOf(places.get(i).getPos_y())+","+
-							String.valueOf(places.get(i).getPos_x()+ "," +  "\"" +  contentString + "\""+")");
+//					String loadString = "javascript:addMessage(" +String.valueOf(places.get(i).getPos_y())+","+
+//							String.valueOf(places.get(i).getPos_x()+ "," +  "\"" +  contentString + "\""+")");
+					String loadString = "javascript:codeAddress(" + "\"" +  places.get(i).getShopName() +"\"" + "," +  "\"" +  contentString + "\"" +  "," +String.valueOf(places.get(i).getPos_y())+","+
+							String.valueOf(places.get(i).getPos_x())+ ")" ; 
 					Log.i("load String", loadString);
 					mapView.loadUrl(loadString);
 					//地图加载完毕后 update location
@@ -239,8 +241,8 @@ public class MapActivity extends Activity {
 			Toast.makeText(getApplicationContext(), "您当前的位置是: " + "\n" + latLongString + "\n"
 					, Toast.LENGTH_LONG).show();
 		//	mapView.loadUrl("javascript:deleteLocation()");
-		mapView.loadUrl("javascript:addLocation(34.139,108.84199)");
-		//	mapView.loadUrl("javascript:addLocation(" +String.valueOf(lat)+ ","+String.valueOf(lng) +")");
+		//mapView.loadUrl("javascript:addLocation(34.139,108.84199)");f
+			mapView.loadUrl("javascript:addLocation(" +String.valueOf(lat)+ ","+String.valueOf(lng) +")");
 			Log.i("addLocation", "javascript:addLocation(" +String.valueOf(lat)+ ","+String.valueOf(lng) +")");
 			
 			
