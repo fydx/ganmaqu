@@ -51,11 +51,12 @@
  // var address = document.getElementById('address').value;
       
       for (var i = 0; i <arguments.length ; i+=4) {
+        var shopname = arguments[i];
         var info = arguments[i+1]; 
         var pos_x = arguments[i+2];
         var pos_y = arguments[i+3];
-      geocoder.geocode( { 'address': arguments[i]}, function(results, status) {
-          console.log('Geocode was not successful for the following reason: ' + status);
+      geocoder.geocode( { 'address': shopname}, function(results, status) {
+          console.log('Geocode Status: ' + status);
          if (status == google.maps.GeocoderStatus.OK) {
          //map.setCenter(results[0].geometry.location);
          var marker_address = new google.maps.Marker({
@@ -65,7 +66,7 @@
            animation: google.maps.Animation.DROP
       });
      
-      console.log("Success get!" + " "+ marker_address.getPosition().toString());
+      console.log("Success get!"+shopname+ " "+ marker_address.getPosition().toString());
       attachSecretMessage(marker_address,info);
     } 
     else  {
@@ -76,8 +77,8 @@
            title: "in",
             animation: google.maps.Animation.DROP
          });
-      console.log("arg2"+ pos_x+ "  arg3" + pos_y );
-      //console.log("ZERO" + " "  + marker_address_2.getPosition().toString());
+      //console.log("arg2"+ pos_x+ "  arg3" + pos_y );
+      console.log("ZERO" +shopname + " "  + marker_address_2.getPosition().toString());
       attachSecretMessage(marker_address_2,info);
 
     }
@@ -123,8 +124,9 @@
        // addLocation(34.139,108.84199833333332)
       // addLocation(34.139,108.842);
         console.log("主地图加载完成");
-      codeAddress("世纪金花(南大街店)","<p><b>世纪金花(南大街店)</b></p><p>碑林区南大街8号</p><p><a href=http://m.dianping.com/shop/2761825>详细信息>></a>",34.25743,108.94326);
-      codeAddress("西安儿童公园","<p><b>西安儿童公园</b></p><p>碑林区西大街西举院巷东口</p><p><a href=http://m.dianping.com/shop/1925236>详细信息>></a>",34.26061,108.94091);
+
+      // codeAddress("世纪金花(南大街店)","<p><b>世纪金花(南大街店)</b></p><p>碑林区南大街8号</p><p><a href=http://m.dianping.com/shop/2761825>详细信息>></a>",34.25743,108.94326);
+      // codeAddress("西安儿童公园","<p><b>西安儿童公园</b></p><p>碑林区西大街西举院巷东口</p><p><a href=http://m.dianping.com/shop/1925236>详细信息>></a>",34.26061,108.94091);
        // codeAddress("陕西省 西安市 西安电子科技大学新校区","xidian");
         //calcRoute2(34.260230,108.943180);
 

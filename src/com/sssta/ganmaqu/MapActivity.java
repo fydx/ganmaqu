@@ -107,7 +107,7 @@ public class MapActivity extends Activity {
 							String.valueOf(places.get(i).getId()) + ">" + "详细信息>></a>" ;
 //					String loadString = "javascript:addMessage(" +String.valueOf(places.get(i).getPos_y())+","+
 //							String.valueOf(places.get(i).getPos_x()+ "," +  "\"" +  contentString + "\""+")");
-					String loadString = "javascript:codeAddress(" + "\"" +  places.get(i).getShopName() +"\"" + "," +  "\"" +  contentString + "\"" +  "," +String.valueOf(places.get(i).getPos_y())+","+
+					String loadString = "javascript:codeAddress(" + "\"" +  places.get(i).getAddress() +"\"" + "," +  "\"" +  contentString + "\"" +  "," +String.valueOf(places.get(i).getPos_y())+","+
 							String.valueOf(places.get(i).getPos_x())+ ")" ; 
 					Log.i("load String", loadString);
 					mapView.loadUrl(loadString);
