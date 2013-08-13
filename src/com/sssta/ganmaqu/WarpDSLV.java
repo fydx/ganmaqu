@@ -12,6 +12,7 @@ import org.json.JSONException;
 
 import android.app.ListActivity;
 import android.content.Intent;
+import android.hardware.Camera.Size;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -146,8 +147,9 @@ public class WarpDSLV extends ListActivity {
 			cost += places.get(i).getCost();
 
 		}
+		cost-= places.get(places.size()-1).getCost();
 		Log.i("cost", "人均消费" + String.valueOf(cost));
-		textView_cost.setText("人均消费总计 : " + String.valueOf(cost) + "元");
+		textView_cost.setText("预计人均消费(未算购物) : " + String.valueOf(cost) + "元");
 
 		lv.setOnItemClickListener(new OnItemClickListener() {
 

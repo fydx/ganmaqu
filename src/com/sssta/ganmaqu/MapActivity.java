@@ -99,7 +99,7 @@ public class MapActivity extends Activity {
 //				
 //				mapView.loadUrl("javascript:calcRoute("+String.valueOf(places.get(0).getPos_y())+","+
 //						String.valueOf(places.get(0).getPos_x()+")"));
-				
+					updateWithNewLocation(location);
 					for (int i = 0; i < places.size(); i++) {
 					String	contentString ;
 					contentString ="<p><b>" + places.get(i).getShopName() + "</b></p>" + "<p>"
@@ -113,7 +113,7 @@ public class MapActivity extends Activity {
 					Log.i("load String", loadString);
 					mapView.loadUrl(loadString);
 					//地图加载完毕后 update location
-					updateWithNewLocation(location);
+					
 					//mapView.loadUrl("javascript:addLocation(34.139,108.84199)");
 				}
 			}
@@ -243,9 +243,9 @@ public class MapActivity extends Activity {
 					, Toast.LENGTH_LONG).show();
 		//	mapView.loadUrl("javascript:deleteLocation()");
 		//mapView.loadUrl("javascript:addLocation(34.139,108.84199)");f
-			mapView.loadUrl("javascript:addLocation(" +String.valueOf(lat)+ ","+String.valueOf(lng) +")");
-			Log.i("addLocation", "javascript:addLocation(" +String.valueOf(lat)+ ","+String.valueOf(lng) +")");
-			
+			//mapView.loadUrl("javascript:addLocation(" +String.valueOf(lng)+ ","+String.valueOf(lat) +")");
+			Log.i("addLocation", "javascript:setLocation_1(" +String.valueOf(lng)+ ","+String.valueOf(lat) +")");
+			mapView.loadUrl("javascript:setLocation_1(" +String.valueOf(lng)+ ","+String.valueOf(lat) +")");
 			
 //			myLocationText.setText("您当前的位置是:/n" + latLongString + "/n"
 //					+ getAddressbyGeoPoint(location));
