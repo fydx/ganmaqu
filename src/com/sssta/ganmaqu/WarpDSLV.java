@@ -172,8 +172,10 @@ public class WarpDSLV extends ListActivity {
 		// R.layout.list_item_handle_left, R.id.text, list);
 		ArrayList<place> places_arraylist = new ArrayList<place>();
 		places_arraylist.addAll(places);
+		
 		adapter = new placeAdapter(places_arraylist);
 		setListAdapter(adapter);
+		lv.setDividerHeight(0);
 
 	}
 

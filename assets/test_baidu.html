@@ -36,6 +36,10 @@ function StringBuilder(){
 	var point = new BMap.Point(108.951733,34.269895);  // 创建点坐标
 	map.centerAndZoom(point, 15); // 初始化地图，设置中心点坐标和地图级别
  	map.enableScrollWheelZoom();   //启用滚轮放大缩小
+  map.addControl(new BMap.NavigationControl());  //添加默认缩放平移控件
+// map.addControl(new BMap.NavigationControl({anchor: BMAP_ANCHOR_TOP_RIGHT, type: BMAP_NAVIGATION_CONTROL_SMALL}));  //右上角，仅包含平移和缩放按钮
+// map.addControl(new BMap.NavigationControl({anchor: BMAP_ANCHOR_BOTTOM_LEFT, type: BMAP_NAVIGATION_CONTROL_PAN}));  //左下角，仅包含平移按钮
+map.addControl(new BMap.NavigationControl({anchor: BMAP_ANCHOR_BOTTOM_RIGHT, type: BMAP_NAVIGATION_CONTROL_ZOOM}));  //右下角，仅包含缩放按钮
   //初始化icons集合
   for (var i = 1 ; i <=5; i++) {
       var myIcon = new BMap.Icon("http://fydx.pw/pictures/"+i+".png",new BMap.Size(25,30)); //创建Icon
@@ -152,5 +156,10 @@ transit.search(location_1, pois[0]);
 </script>
 </body>
 <body onload="initialize()">
+   <div>
+    <input id="address" type="textbox" value="Sydney, NSW">
+    <input type="button" value="Encode" onclick="" >
+  </div>
 </body>
+
 </html>
