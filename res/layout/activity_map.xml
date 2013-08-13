@@ -12,14 +12,6 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true" />
 
-    <Button
-        android:id="@+id/test_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignRight="@+id/mapView"
-        android:text="test js" />
-
     <TextView
         android:id="@+id/text_route"
         android:layout_width="wrap_content"
@@ -29,5 +21,13 @@
         android:background = "#FFFFFF"
         android:visibility="gone"
         android:text="RouteText" />
+
+    <Button
+        android:id="@+id/test_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:text="test js" />
 
 </RelativeLayout>
