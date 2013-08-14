@@ -47,7 +47,7 @@ public class MainActivity extends Activity {
 	private String provider;
 	private Address address;
 	private List<place> places;
-	private final String ipString = "192.168.1.135";
+	private final String ipString = "192.168.23.10";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -294,11 +294,10 @@ public class MainActivity extends Activity {
 		try {
 			getApplicationContext().getMainLooper();
 			Looper.prepare();
-			Toast.makeText(getApplicationContext(), "正在请求服务器",
-					Toast.LENGTH_SHORT).show();
+		
 			HttpHost target = new HttpHost(ipString, 8080, "http");
 			// String request="/?type=情侣出行&pos_x=108.947039&pos_y=34.259203";
-			String request = "/?type=" + typeString + "&pos_x="
+			String request = "/?command=full&type=" + typeString + "&pos_x="
 					+ String.valueOf(pos_x) + "&pos_y=" + String.valueOf(pos_y);
 			Log.i("request string",request);
 			HttpGet req = new HttpGet(request);
@@ -311,8 +310,7 @@ public class MainActivity extends Activity {
 			String line = null;
 			line = br.readLine();
 			if (line != null) {
-				Toast.makeText(getApplicationContext(), "请求完毕",
-						Toast.LENGTH_SHORT).show();
+				
 				return line;
 				
 			}
@@ -320,9 +318,7 @@ public class MainActivity extends Activity {
 		} catch (ClientProtocolException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			Toast.makeText(getApplicationContext(), "无法连接服务器",
-					Toast.LENGTH_SHORT).show();
-
+			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

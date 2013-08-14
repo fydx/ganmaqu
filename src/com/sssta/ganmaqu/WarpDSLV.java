@@ -1,18 +1,29 @@
 package com.sssta.ganmaqu;
 
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import net.tsz.afinal.FinalDb;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpHost;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EncodingUtils;
 import org.json.JSONException;
 
+import android.R.integer;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.hardware.Camera.Size;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -32,6 +43,7 @@ import com.mobeta.android.dslv.DragSortListView;
 public class WarpDSLV extends ListActivity {
 
 	// private ArrayAdapter<String> adapter;
+	private final String ipString = "192.168.23.10"; 
 	private FinalDb db, db_user;
 	private int cost = 0;
 	private ArrayAdapter<place> adapter;
@@ -268,5 +280,74 @@ public class WarpDSLV extends ListActivity {
 			}
 			return v;
 		}
+	}
+	public class changeTask extends AsyncTask<String, integer, String> {
+
+		@Override
+		protected String doInBackground(String... param) {
+			// TODO Auto-generated method stub
+			
+			return null;
+		}
+		
+	}
+	public String requestChangeStringToServer(String type,String pos_x,String pos_y,String time,String shopname)
+	{
+		DefaultHttpClient httpclient = new DefaultHttpClient();
+		try
+		{
+			HttpHost target = new HttpHost(ipString, 8080, "http");
+			
+			String request="/?command=change&type=" +type +"&pos_x=" + pos_x+
+					 "&pos_y=" +pos_y+ "&time=" +time +"&shopName=" 
+					+ shopname;
+			HttpGet req = new HttpGet(request);
+			Log.i("excute","executing request to " + target);
+			HttpResponse rsp = httpclient.execute(target, req);
+			HttpEntity entity = rsp.getEntity();
+			InputStreamReader isr = new InputStreamReader(entity.getContent(), "utf-8");
+			BufferedReader br = new BufferedReader(isr);
+			String line=null;
+			while((line=br.readLine())!=null)
+			{
+				System.out.println(line);
+			}
+//			System.out.println(entity.getContent());
+			/*System.out.println("----------------------------------------");
+			System.out.println(rsp.getStatusLine());
+			Header[] headers = rsp.getAllHeaders();
+			for (int i = 0; i < headers.length; i++)
+			{
+				System.out.println(headers[i]);
+			}
+			System.out.println("----------------------------------------");
+			BufferedWriter fout = new BufferedWriter(new FileWriter("E:\\JavaProject\\output.txt"));
+			if (entity != null)
+			{
+//				System.out.println(EntityUtils.toString(entity));
+				fout.write(EntityUtils.toString(entity));
+				fout.newLine();
+			}
+			fout.flush();
+			fout.close();*/
+		}
+		catch (ClientProtocolException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		catch (IOException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		finally
+		{
+			// When HttpClient instance is no longer needed,
+			// shut down the connection manager to ensure
+			// immediate deallocation of all system resources
+			httpclient.getConnectionManager().shutdown();
+		}
+		return null;
 	}
 }
