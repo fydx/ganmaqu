@@ -47,7 +47,7 @@ public class MainActivity extends Activity {
 	private String provider;
 	private Address address;
 	private List<place> places;
-	private final String ipString = "192.168.23.1";
+	private final String ipString = "192.168.1.135";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

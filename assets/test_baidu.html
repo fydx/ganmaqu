@@ -21,6 +21,7 @@ var map;
  var pois = [];  //poi容器
  var location_1 ; //当前位置
  var icons = []; //icon集合
+ 
  var x=0;
 var myIcon = new BMap.Icon("http://fydx.pw/pictures/start_ori.png",new BMap.Size(25,30));// 创建 Test Icon
 var point_location; //通过浏览器获取的当前位置
@@ -35,6 +36,8 @@ function StringBuilder(){
     return this.__string__.join("");
       }
  function initialize() {
+  //var count  = 0;
+  count = 0;
  	map = new BMap.Map("container");          // 创建地图实例
 	var point = new BMap.Point(108.951733,34.269895);  // 创建点坐标
 	map.centerAndZoom(point, 15); // 初始化地图，设置中心点坐标和地图级别
@@ -70,6 +73,7 @@ function addMessage(){
       //console.log("i :"+i);
      
      var marker_1 = new BMap.Marker(new BMap.Point(arguments[i], arguments[i+1]),{icon:icons[x]});  // 创建标注
+     //console.log("count in addMessage" + count);
       x=x+1;
 		 map.addOverlay(marker_1);              // 将标注添加到地图中
 		 //创建信息窗口
@@ -102,36 +106,37 @@ function addLocation(pos_x,pos_y)
 //根据关键字搜索相应地理位置
 function codeAddress()
 {
-	console.log("Code address start");
-	for (var i = 0; i <arguments.length ; i+=2) {
+      	for (var i = 0; i < arguments.length; i+=2) {
+         
+        
         var shopname = arguments[i];
         var info = arguments[i+1]; 
+        
+       
+        console.log("这是第" + i + "次启动codeAddress" + ". 查询对象为：" + shopname );
+        
 	     var options = {  
  			  onSearchComplete: function(results){ 
- 			  console.log(local.getStatus()); 
+        console.log(shopname + " 状态："+ local.getStatus() );
+ 			 // console.log(); 
     if (local.getStatus() == BMAP_STATUS_SUCCESS){  
      // 判断状态是否正确  
       
      for (var i = 0; i < 1; i ++){   //暂时取一个，可用i<results.getCurrentNumPois()
        pois.push(results.getPoi(i).point);
        // console.log(results.getPoi(i).title + ", " + results.getPoi(i).address + " pos_x :" +results.getPoi(i).point.lng + "pos_y :" + results.getPoi(i).point.lat);
-
        addMessage(results.getPoi(i).point.lng,results.getPoi(i).point.lat,info);
-       
-
      }  
      //document.getElementById("log").innerHTML = s.join("<br />");  
    }
-    calcRoute();
+    // if (count==1) {
+    // calcRoute();
+    // };
  }  
 };
-
 	var local = new BMap.LocalSearch(map, options);    
-      	local.search(shopname);
-
-
-    };
-   
+  local.search(shopname);
+  };
 }
 //传递当前坐标
 function setLocation_1(pos_x,pos_y)
@@ -152,10 +157,11 @@ function calcRoute()
 {	
     console.log("calcRoute start");
     var transit = new BMap.TransitRoute("西安市");  
+    map.centerAndZoom(location_1, 15);
   	// location_1 = new BMap.Point(108.951733,34.269895);
    // var ori = new BMap.Point(pos_x,pos_y);
 	transit.setSearchCompleteCallback(function(results){  
-		console.log(transit.getStatus());
+		console.log("公交查询状态： " + transit.getStatus());
  	if (transit.getStatus() == BMAP_STATUS_SUCCESS){  
   	 var firstPlan = results.getPlan(0);  
   	 // 绘制步行线路  

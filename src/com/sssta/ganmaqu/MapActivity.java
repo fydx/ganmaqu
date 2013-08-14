@@ -109,6 +109,12 @@ public class MapActivity extends Activity {
 //							String.valueOf(places.get(i).getPos_x()+ "," +  "\"" +  contentString + "\""+")");
 //					String loadString = "javascript:codeAddress(" + "\"" +  places.get(i).getShopName() +"\"" + "," +  "\"" +  contentString + "\"" +  "," +String.valueOf(places.get(i).getPos_x())+","+
 //							String.valueOf(places.get(i).getPos_y())+ ")" ; 
+//					try {
+//						Thread.sleep(1000);
+//					} catch (InterruptedException e) {
+//						// TODO Auto-generated catch block
+//						e.printStackTrace();
+//					}
 					String loadString = "javascript:codeAddress(" + "\"" +  places.get(i).getShopName() +"\"" + "," +  "\"" +  contentString + "\"" +  ")" ; 
 					Log.i("load String", loadString);
 					mapView.loadUrl(loadString);

@@ -144,7 +144,13 @@ public class WarpDSLV extends ListActivity {
 					 places.get(i).getDetailType() + "  人均"
 					+ String.valueOf(places.get(i).getCost()) + "元");
 			list_time.add(places.get(i).getTime());
-			cost += places.get(i).getCost();
+			if(places.get(i).getDetailType().equals("综合商场"))
+			{
+			//cost += places.get(i).getCost();
+			}
+			else {
+				cost += places.get(i).getCost();
+			}
 
 		}
 		cost-= places.get(places.size()-1).getCost();
