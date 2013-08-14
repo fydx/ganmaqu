@@ -157,7 +157,7 @@ function calcRoute()
 {	
     console.log("calcRoute start");
     var transit = new BMap.TransitRoute("西安市");  
-    map.centerAndZoom(location_1, 15);
+    map.centerAndZoom(pois[0], 15);
   	// location_1 = new BMap.Point(108.951733,34.269895);
    // var ori = new BMap.Point(pos_x,pos_y);
 	transit.setSearchCompleteCallback(function(results){  

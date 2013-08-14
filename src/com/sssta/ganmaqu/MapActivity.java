@@ -119,8 +119,14 @@ public class MapActivity extends Activity {
 					Log.i("load String", loadString);
 					mapView.loadUrl(loadString);
 					//地图加载完毕后 update location
-					
+					try {
+						Thread.sleep(300);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					//mapView.loadUrl("javascript:addLocation(34.139,108.84199)");
+					mapView.loadUrl("javascript:calcRoute()");
 				}
 			}
 		};

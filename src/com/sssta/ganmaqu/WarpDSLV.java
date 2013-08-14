@@ -144,7 +144,7 @@ public class WarpDSLV extends ListActivity {
 					 places.get(i).getDetailType() + "  人均"
 					+ String.valueOf(places.get(i).getCost()) + "元");
 			list_time.add(places.get(i).getTime());
-			if(places.get(i).getDetailType().equals("综合商场"))
+			if(places.get(i).getMainType().equals("购物"))
 			{
 			//cost += places.get(i).getCost();
 			}
@@ -153,7 +153,7 @@ public class WarpDSLV extends ListActivity {
 			}
 
 		}
-		cost-= places.get(places.size()-1).getCost();
+	
 		Log.i("cost", "人均消费" + String.valueOf(cost));
 		textView_cost.setText("预计人均消费(未算购物) : " + String.valueOf(cost) + "元");
 
