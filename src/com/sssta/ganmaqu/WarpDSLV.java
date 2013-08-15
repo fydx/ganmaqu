@@ -17,7 +17,9 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EncodingUtils;
+import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.R.integer;
 import android.app.ListActivity;
@@ -43,7 +45,7 @@ import com.mobeta.android.dslv.DragSortListView;
 public class WarpDSLV extends ListActivity {
 
 	// private ArrayAdapter<String> adapter;
-	private final String ipString = "192.168.23.10"; 
+	private String ipString;
 	private FinalDb db, db_user;
 	private int cost = 0;
 	private ArrayAdapter<place> adapter;
@@ -54,14 +56,16 @@ public class WarpDSLV extends ListActivity {
 	private List<place> places;
 	private Button button_toMap, button_saveToDB;
 	private TextView textView_cost;
+	private ArrayList<place> places_arraylist;
+	private String type;
 	private DragSortListView.DropListener onDrop = new DragSortListView.DropListener() {
 		@Override
 		public void drop(int from, int to) {
 			place item = adapter.getItem(from);
-
-			adapter.notifyDataSetChanged();
-			adapter.remove(item);
-			adapter.insert(item, to);
+			// new changeTask(type,places)
+			// adapter.notifyDataSetChanged();
+			// adapter.remove(item);
+			// adapter.insert(item, to);
 		}
 	};
 
@@ -69,21 +73,27 @@ public class WarpDSLV extends ListActivity {
 		@Override
 		public void remove(int which) {
 			// adapter.remove(adapter.getItem(which));
-			adapter.notifyDataSetChanged();
+			// adapter.notifyDataSetChanged();
+			Log.i("Remove Which", String.valueOf(which));
+			new changeTask().execute(type, String.valueOf(places.get(which)
+					.getPos_x()), String.valueOf(places.get(which).getPos_y()),
+					places.get(which).getTime(), places.get(which)
+							.getShopName(), String.valueOf(which));
 		}
 	};
 
-//	private DragSortListView.DragScrollProfile ssProfile = new DragSortListView.DragScrollProfile() {
-//		@Override
-//		public float getSpeed(float w, long t) {
-//			if (w > 0.8f) {
-//				// Traverse all views in a millisecond
-//				return ((float) adapter.getCount()) / 0.001f;
-//			} else {
-//				return 10.0f * w;
-//			}
-//		}
-//	};
+	// private DragSortListView.DragScrollProfile ssProfile = new
+	// DragSortListView.DragScrollProfile() {
+	// @Override
+	// public float getSpeed(float w, long t) {
+	// if (w > 0.8f) {
+	// // Traverse all views in a millisecond
+	// return ((float) adapter.getCount()) / 0.001f;
+	// } else {
+	// return 10.0f * w;
+	// }
+	// }
+	// };
 
 	/** Called when the activity is first created. */
 	@Override
@@ -91,13 +101,14 @@ public class WarpDSLV extends ListActivity {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.warp_main);
+		ipString = getResources().getString(R.string.ip);
 		db = FinalDb.create(this);
 		db_user = FinalDb.create(this);
 		DragSortListView lv = (DragSortListView) getListView();
-
+		type = getIntent().getStringExtra("type");
 		lv.setDropListener(onDrop);
 		lv.setRemoveListener(onRemove);
-//		lv.setDragScrollProfile(ssProfile);
+		// lv.setDragScrollProfile(ssProfile);
 		button_toMap = (Button) findViewById(R.id.button_toMap);
 		button_toMap.setOnClickListener(new OnClickListener() {
 
@@ -152,20 +163,17 @@ public class WarpDSLV extends ListActivity {
 		list_time = new ArrayList<String>();
 		for (int i = 0; i < places.size(); i++) {
 
-			list.add(
-					 places.get(i).getDetailType() + "  人均"
+			list.add(places.get(i).getDetailType() + "  人均"
 					+ String.valueOf(places.get(i).getCost()) + "元");
 			list_time.add(places.get(i).getTime());
-			if(places.get(i).getMainType().equals("购物"))
-			{
-			//cost += places.get(i).getCost();
-			}
-			else {
+			if (places.get(i).getMainType().equals("购物")) {
+				// cost += places.get(i).getCost();
+			} else {
 				cost += places.get(i).getCost();
 			}
 
 		}
-	
+
 		Log.i("cost", "人均消费" + String.valueOf(cost));
 		textView_cost.setText("预计人均消费(未算购物) : " + String.valueOf(cost) + "元");
 
@@ -188,9 +196,9 @@ public class WarpDSLV extends ListActivity {
 		});
 		// adapter = new ArrayAdapter<String>(this,
 		// R.layout.list_item_handle_left, R.id.text, list);
-		ArrayList<place> places_arraylist = new ArrayList<place>();
+		places_arraylist = new ArrayList<place>();
 		places_arraylist.addAll(places);
-		
+
 		adapter = new placeAdapter(places_arraylist);
 		setListAdapter(adapter);
 		lv.setDividerHeight(0);
@@ -220,11 +228,11 @@ public class WarpDSLV extends ListActivity {
 		int route_num = user.getRoute_num();
 		Log.i("user get route_num", String.valueOf(route_num));
 		for (int i = 0; i < places.size(); i++) {
-			places.get(i).setRoute_id(route_num+1);
+			places.get(i).setRoute_id(route_num + 1);
 			db.save(places.get(i));
 			Log.i("DBsave", String.valueOf(i));
 		}
-        int num = user.getRoute_num()+1;
+		int num = user.getRoute_num() + 1;
 		user.setRoute_num(num);
 		Log.i("user set route_num", String.valueOf(user.getRoute_num()));
 		db_user.update(user);
@@ -242,8 +250,8 @@ public class WarpDSLV extends ListActivity {
 	private class placeAdapter extends ArrayAdapter<place> {
 
 		public placeAdapter(List<place> places) {
-			super(WarpDSLV.this, R.layout.list_item_handle_left,
-					R.id.text, places);
+			super(WarpDSLV.this, R.layout.list_item_handle_left, R.id.text,
+					places);
 		}
 
 		public View getView(int position, View convertView, ViewGroup parent) {
@@ -255,94 +263,112 @@ public class WarpDSLV extends ListActivity {
 				TextView tv = (TextView) v.findViewById(R.id.text_detail);
 				ImageView iv = (ImageView) v.findViewById(R.id.drag_handle);
 				holder.detailView = tv;
-				holder.dragImageView=iv;
+				holder.dragImageView = iv;
 				v.setTag(holder);
 			}
 
 			ViewHolder holder = (ViewHolder) v.getTag();
-			//String detail = places.get(position).getAddress();
-			
-			holder.detailView.setText(list.get(position).toString());
-			if (list_time.get(position).toString().equals("上午")) {
+			// String detail = places.get(position).getAddress();
+			Log.i("position", String.valueOf(position));
+			holder.detailView.setText(places.get(position).getDetailType()
+					+ "    " + "人均"
+					+ String.valueOf(places.get(position).getCost()) + "元");
+			if (places.get(position).getTime().equals("上午")) {
 				holder.dragImageView.setImageResource(R.drawable.morning);
 			}
-			if (list_time.get(position).toString().equals("中午")) {
+			if (places.get(position).getTime().equals("中午")) {
 				holder.dragImageView.setImageResource(R.drawable.launch);
 			}
-			if (list_time.get(position).toString().equals("下午")) {
+			if (places.get(position).getTime().equals("下午")) {
 				holder.dragImageView.setImageResource(R.drawable.afternoon);
 			}
-			if (list_time.get(position).toString().equals("晚餐")) {
+			if (places.get(position).getTime().equals("晚餐")) {
 				holder.dragImageView.setImageResource(R.drawable.dinner);
 			}
-			if (list_time.get(position).toString().equals("晚上")) {
+			if (places.get(position).getTime().equals("晚上")) {
 				holder.dragImageView.setImageResource(R.drawable.evening);
 			}
 			return v;
 		}
 	}
+
 	public class changeTask extends AsyncTask<String, integer, String> {
+
+		String rankString;
 
 		@Override
 		protected String doInBackground(String... param) {
 			// TODO Auto-generated method stub
-			
-			return null;
+			rankString = param[5];
+			return requestChangeStringToServer(param[0], param[1], param[2],
+					param[3], param[4]);
 		}
-		
+
+		@Override
+		protected void onPostExecute(String result) {
+			try {
+				Log.i("jsonString Change", result);
+				decodeJson json = new decodeJson(result);
+				JSONArray jsonArray = json.getJsonArray();
+				List<place> tempList = json.JsonToPlaceList(jsonArray);
+				// JSONObject jsonObject = new JSONObject(result);
+				place changedPlace = tempList.get(0);
+				places.set(Integer.parseInt(rankString), changedPlace);
+				places_arraylist.clear();
+				places_arraylist.addAll(places);
+				Log.i("change item", changedPlace.getShopName());
+			//	Log.i(tag, msg)
+				adapter.notifyDataSetChanged();
+
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+		}
+
 	}
-	public String requestChangeStringToServer(String type,String pos_x,String pos_y,String time,String shopname)
-	{
+
+	public String requestChangeStringToServer(String type, String pos_x,
+			String pos_y, String time, String shopname) {
 		DefaultHttpClient httpclient = new DefaultHttpClient();
-		try
-		{
+		try {
 			HttpHost target = new HttpHost(ipString, 8080, "http");
-			
-			String request="/?command=change&type=" +type +"&pos_x=" + pos_x+
-					 "&pos_y=" +pos_y+ "&time=" +time +"&shopName=" 
-					+ shopname;
+
+			String request = "/?command=change&type=" + type + "&pos_x="
+					+ pos_x + "&pos_y=" + pos_y + "&time=" + time
+					+ "&shopName=" + shopname;
 			HttpGet req = new HttpGet(request);
-			Log.i("excute","executing request to " + target);
+			Log.i("excute", "executing request to " + target);
 			HttpResponse rsp = httpclient.execute(target, req);
 			HttpEntity entity = rsp.getEntity();
-			InputStreamReader isr = new InputStreamReader(entity.getContent(), "utf-8");
+			InputStreamReader isr = new InputStreamReader(entity.getContent(),
+					"utf-8");
 			BufferedReader br = new BufferedReader(isr);
-			String line=null;
-			while((line=br.readLine())!=null)
-			{
-				System.out.println(line);
+			String line = null;
+			while ((line = br.readLine()) != null) {
+				return line;
 			}
-//			System.out.println(entity.getContent());
-			/*System.out.println("----------------------------------------");
-			System.out.println(rsp.getStatusLine());
-			Header[] headers = rsp.getAllHeaders();
-			for (int i = 0; i < headers.length; i++)
-			{
-				System.out.println(headers[i]);
-			}
-			System.out.println("----------------------------------------");
-			BufferedWriter fout = new BufferedWriter(new FileWriter("E:\\JavaProject\\output.txt"));
-			if (entity != null)
-			{
-//				System.out.println(EntityUtils.toString(entity));
-				fout.write(EntityUtils.toString(entity));
-				fout.newLine();
-			}
-			fout.flush();
-			fout.close();*/
-		}
-		catch (ClientProtocolException e)
-		{
+			// System.out.println(entity.getContent());
+			/*
+			 * System.out.println("----------------------------------------");
+			 * System.out.println(rsp.getStatusLine()); Header[] headers =
+			 * rsp.getAllHeaders(); for (int i = 0; i < headers.length; i++) {
+			 * System.out.println(headers[i]); }
+			 * System.out.println("----------------------------------------");
+			 * BufferedWriter fout = new BufferedWriter(new
+			 * FileWriter("E:\\JavaProject\\output.txt")); if (entity != null) {
+			 * // System.out.println(EntityUtils.toString(entity));
+			 * fout.write(EntityUtils.toString(entity)); fout.newLine(); }
+			 * fout.flush(); fout.close();
+			 */
+		} catch (ClientProtocolException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
-		catch (IOException e)
-		{
+		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
-		finally
-		{
+		} finally {
 			// When HttpClient instance is no longer needed,
 			// shut down the connection manager to ensure
 			// immediate deallocation of all system resources

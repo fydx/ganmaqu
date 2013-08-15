@@ -47,13 +47,16 @@ public class MainActivity extends Activity {
 	private String provider;
 	private Address address;
 	private List<place> places;
-	private final String ipString = "192.168.23.10";
+	private String ipString;
+	final String Types[] = new String[] { "亲子出行", "朋友出行", "情侣出行" };
+	private WheelView typeWheel ;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_main);
+		ipString = getApplicationContext().getResources().getString(R.string.ip);
 		// 获取LocationManager服务
 		locationManager = (LocationManager) this
 				.getSystemService(Context.LOCATION_SERVICE);
@@ -85,7 +88,7 @@ public class MainActivity extends Activity {
 		// findViewById(R.id.NumberOfPerson);
 		// String Numbers[] = new String[] {"1", "2", "3",
 		// "4","5","6","7","8","9","10"};
-		final String Types[] = new String[] { "亲子出行", "朋友出行", "情侣出行" };
+		
 		final WheelView numberWheel = (WheelView) findViewById(R.id.NumberOfPerson);
 		String countries[] = new String[] { "2", "3", "4", "5", "6", "7", "8" };
 		numberWheel.setVisibleItems(5);
@@ -93,7 +96,7 @@ public class MainActivity extends Activity {
 		numberWheel.setAdapter(new ArrayWheelAdapter<String>(countries));
 		final String cities[][] = new String[][] { Types, Types, Types, Types,
 				Types, Types, Types };
-		final WheelView typeWheel = (WheelView) findViewById(R.id.Type);
+		typeWheel = (WheelView) findViewById(R.id.Type);
 		typeWheel.setAdapter(new ArrayWheelAdapter<String>(Types));
 		typeWheel.setVisibleItems(5);
 
@@ -283,6 +286,7 @@ public class MainActivity extends Activity {
 			Intent intent = new Intent();
 			intent.setClass(getApplicationContext(), WarpDSLV.class);
 			intent.putExtra("places", (Serializable) places);
+			intent.putExtra("type", Types[typeWheel.getCurrentItem()]);
 			startActivity(intent);
 		}
 

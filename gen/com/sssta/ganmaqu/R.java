@@ -343,6 +343,7 @@ containing a value of this type.
         public static final int app_name=0x7f070000;
         public static final int cancel=0x7f070006;
         public static final int hello_world=0x7f070002;
+        public static final int ip=0x7f070010;
         public static final int ok=0x7f070005;
         public static final int select_drag_init_mode=0x7f070008;
         public static final int select_enables=0x7f070009;
