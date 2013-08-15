@@ -8,6 +8,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.transform.Templates;
+
 import net.tsz.afinal.FinalDb;
 
 import org.apache.http.HttpEntity;
@@ -53,8 +55,9 @@ public class WarpDSLV extends ListActivity {
 	private String[] array;
 	private ArrayList<String> list;
 	private ArrayList<String> list_time;
+	private double loclat,loclng;
 	private List<place> places;
-	private Button button_toMap, button_saveToDB;
+	private Button button_toMap, button_saveToDB,button_up,button_low;
 	private TextView textView_cost;
 	private ArrayList<place> places_arraylist;
 	private String type;
@@ -106,6 +109,8 @@ public class WarpDSLV extends ListActivity {
 		db_user = FinalDb.create(this);
 		DragSortListView lv = (DragSortListView) getListView();
 		type = getIntent().getStringExtra("type");
+		loclat= getIntent().getDoubleExtra("loclat", 34.265733);
+		loclng= getIntent().getDoubleExtra("loclng", 108.953906);
 		lv.setDropListener(onDrop);
 		lv.setRemoveListener(onRemove);
 		// lv.setDragScrollProfile(ssProfile);
@@ -123,7 +128,8 @@ public class WarpDSLV extends ListActivity {
 			}
 		});
 		button_saveToDB = (Button) findViewById(R.id.button_SaveToDB);
-
+		button_low = (Button)findViewById(R.id.button_low);
+		button_up = (Button)findViewById(R.id.button_up);
 		/**
 		 * read from assets json files
 		 */
@@ -155,7 +161,37 @@ public class WarpDSLV extends ListActivity {
 				saveToDB(places);
 			}
 		});
-
+		button_low.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				int tempCost = 0 ;
+				for (int i = 0; i < places.size(); i++) {
+					if(places.get(i).getMainType().equals("美食"))
+					{
+						tempCost+= places.get(i).getCost();
+					}
+				}
+				
+				new lowerTask().execute(type,String.valueOf(loclng),String.valueOf(loclat),String.valueOf(tempCost));
+			}
+		});
+		button_up.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				int tempCost = 0 ;
+				for (int i = 0; i < places.size(); i++) {
+					if(places.get(i).getMainType().equals("美食"))
+					{
+						tempCost+= places.get(i).getCost();
+					}
+				}
+				
+				new upperTask().execute(type,String.valueOf(loclng),String.valueOf(loclat),String.valueOf(tempCost));
+			
+			}
+		});
 		// calculate cost
 		textView_cost = (TextView) findViewById(R.id.cost);
 
@@ -317,8 +353,22 @@ public class WarpDSLV extends ListActivity {
 				places_arraylist.clear();
 				places_arraylist.addAll(places);
 				Log.i("change item", changedPlace.getShopName());
-			//	Log.i(tag, msg)
+				//	Log.i(tag, msg)
 				adapter.notifyDataSetChanged();
+				cost = 0;
+				for (int i = 0; i < places.size(); i++) {
+					
+				
+					if (places.get(i).getMainType().equals("购物")) {
+						// cost += places.get(i).getCost();
+					} else {
+						cost += places.get(i).getCost();
+					}
+
+				}
+
+				Log.i("cost", "人均消费 new" + String.valueOf(cost));
+				textView_cost.setText("预计人均消费(未算购物) : " + String.valueOf(cost) + "元");
 
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
@@ -328,7 +378,97 @@ public class WarpDSLV extends ListActivity {
 		}
 
 	}
+	public class lowerTask extends AsyncTask<String, integer, String>{
 
+		@Override
+		protected String doInBackground(String... params) {
+			// TODO Auto-generated method stub
+			return requestLowerToServer(params[0], params[1], params[2], params[3]);
+		}
+		@Override
+		protected void onPostExecute(String result) {
+			try {
+				Log.i("Lower! jsonString Change! ", result);
+				decodeJson json = new decodeJson(result);
+				JSONArray jsonArray = json.getJsonArray();
+				places.clear();
+				places = json.JsonToPlaceList(jsonArray);
+				// JSONObject jsonObject = new JSONObject(result);
+				places_arraylist.clear();
+				
+				places_arraylist.addAll(places);
+				Log.i("Lower item Sum", String.valueOf(places.size()));
+				
+				//	Log.i(tag, msg)
+				adapter.notifyDataSetChanged();
+				cost = 0;
+				for (int i = 0; i < places.size(); i++) {
+					
+				
+					if (places.get(i).getMainType().equals("购物")) {
+						// cost += places.get(i).getCost();
+					} else {
+						cost += places.get(i).getCost();
+					}
+
+				}
+
+				Log.i("cost", "人均消费 new" + String.valueOf(cost));
+				textView_cost.setText("预计人均消费(未算购物) : " + String.valueOf(cost) + "元");
+
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+		}
+	}
+	public class upperTask extends AsyncTask<String, integer, String>
+	{
+
+		@Override
+		protected String doInBackground(String... params) {
+			// TODO Auto-generated method stub
+			return requestUpperToServer(params[0], params[1], params[2], params[3]);
+		}
+		@Override
+		protected void onPostExecute(String result) {
+			try {
+				Log.i("Upper! jsonString Change! ", result);
+				decodeJson json = new decodeJson(result);
+				JSONArray jsonArray = json.getJsonArray();
+				places.clear();
+				places = json.JsonToPlaceList(jsonArray);
+				// JSONObject jsonObject = new JSONObject(result);
+				places_arraylist.clear();
+				places_arraylist.addAll(places);
+				Log.i("Upper item Sum", String.valueOf(places.size()));
+				
+				//	Log.i(tag, msg)
+				adapter.notifyDataSetChanged();
+				cost = 0;
+				for (int i = 0; i < places.size(); i++) {
+					
+				
+					if (places.get(i).getMainType().equals("购物")) {
+						// cost += places.get(i).getCost();
+					} else {
+						cost += places.get(i).getCost();
+					}
+
+				}
+
+				Log.i("cost", "人均消费 new" + String.valueOf(cost));
+				textView_cost.setText("预计人均消费(未算购物) : " + String.valueOf(cost) + "元");
+
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+		}
+		
+	}
 	public String requestChangeStringToServer(String type, String pos_x,
 			String pos_y, String time, String shopname) {
 		DefaultHttpClient httpclient = new DefaultHttpClient();
@@ -338,6 +478,7 @@ public class WarpDSLV extends ListActivity {
 			String request = "/?command=change&type=" + type + "&pos_x="
 					+ pos_x + "&pos_y=" + pos_y + "&time=" + time
 					+ "&shopName=" + shopname;
+			Log.i("changeRequest",request);
 			HttpGet req = new HttpGet(request);
 			Log.i("excute", "executing request to " + target);
 			HttpResponse rsp = httpclient.execute(target, req);
@@ -376,4 +517,98 @@ public class WarpDSLV extends ListActivity {
 		}
 		return null;
 	}
+	public String requestLowerToServer(String type, String pos_x,
+			String pos_y, String cost) {
+		DefaultHttpClient httpclient = new DefaultHttpClient();
+		try {
+			HttpHost target = new HttpHost(ipString, 8080, "http");
+
+			String request = "/?command=lower&type=" + type + "&pos_x="
+					+ pos_x + "&pos_y=" + pos_y + "&cost=" + cost;
+			Log.i("changeRequest",request);
+			HttpGet req = new HttpGet(request);
+			Log.i("excute", "executing request to " + target);
+			HttpResponse rsp = httpclient.execute(target, req);
+			HttpEntity entity = rsp.getEntity();
+			InputStreamReader isr = new InputStreamReader(entity.getContent(),
+					"utf-8");
+			BufferedReader br = new BufferedReader(isr);
+			String line = null;
+			while ((line = br.readLine()) != null) {
+				return line;
+			}
+			// System.out.println(entity.getContent());
+			/*
+			 * System.out.println("----------------------------------------");
+			 * System.out.println(rsp.getStatusLine()); Header[] headers =
+			 * rsp.getAllHeaders(); for (int i = 0; i < headers.length; i++) {
+			 * System.out.println(headers[i]); }
+			 * System.out.println("----------------------------------------");
+			 * BufferedWriter fout = new BufferedWriter(new
+			 * FileWriter("E:\\JavaProject\\output.txt")); if (entity != null) {
+			 * // System.out.println(EntityUtils.toString(entity));
+			 * fout.write(EntityUtils.toString(entity)); fout.newLine(); }
+			 * fout.flush(); fout.close();
+			 */
+		} catch (ClientProtocolException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			// When HttpClient instance is no longer needed,
+			// shut down the connection manager to ensure
+			// immediate deallocation of all system resources
+			httpclient.getConnectionManager().shutdown();
+		}
+		return null;
+	} 
+	public String requestUpperToServer(String type, String pos_x,
+			String pos_y, String cost) {
+		DefaultHttpClient httpclient = new DefaultHttpClient();
+		try {
+			HttpHost target = new HttpHost(ipString, 8080, "http");
+
+			String request = "/?command=upper&type=" + type + "&pos_x="
+					+ pos_x + "&pos_y=" + pos_y + "&cost=" + cost;
+			Log.i("changeRequest",request);
+			HttpGet req = new HttpGet(request);
+			Log.i("excute", "executing request to " + target);
+			HttpResponse rsp = httpclient.execute(target, req);
+			HttpEntity entity = rsp.getEntity();
+			InputStreamReader isr = new InputStreamReader(entity.getContent(),
+					"utf-8");
+			BufferedReader br = new BufferedReader(isr);
+			String line = null;
+			while ((line = br.readLine()) != null) {
+				return line;
+			}
+			// System.out.println(entity.getContent());
+			/*
+			 * System.out.println("----------------------------------------");
+			 * System.out.println(rsp.getStatusLine()); Header[] headers =
+			 * rsp.getAllHeaders(); for (int i = 0; i < headers.length; i++) {
+			 * System.out.println(headers[i]); }
+			 * System.out.println("----------------------------------------");
+			 * BufferedWriter fout = new BufferedWriter(new
+			 * FileWriter("E:\\JavaProject\\output.txt")); if (entity != null) {
+			 * // System.out.println(EntityUtils.toString(entity));
+			 * fout.write(EntityUtils.toString(entity)); fout.newLine(); }
+			 * fout.flush(); fout.close();
+			 */
+		} catch (ClientProtocolException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			// When HttpClient instance is no longer needed,
+			// shut down the connection manager to ensure
+			// immediate deallocation of all system resources
+			httpclient.getConnectionManager().shutdown();
+		}
+		return null;
+	} 
 }

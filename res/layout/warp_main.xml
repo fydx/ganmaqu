@@ -84,4 +84,20 @@
         dslv:use_default_controller="true" >
     </com.mobeta.android.dslv.DragSortListView>
 
+    <Button
+        android:id="@+id/button_low"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/cost"
+        android:layout_alignParentRight="true"
+        android:text="便宜点" />
+
+    <Button
+        android:id="@+id/button_up"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/button_low"
+        android:layout_alignParentRight="true"
+        android:text="奢侈点" />
+
 </RelativeLayout>

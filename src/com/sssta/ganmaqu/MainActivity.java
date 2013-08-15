@@ -50,6 +50,8 @@ public class MainActivity extends Activity {
 	private String ipString;
 	final String Types[] = new String[] { "亲子出行", "朋友出行", "情侣出行" };
 	private WheelView typeWheel ;
+	private double lat;
+	private double lng;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -202,8 +204,8 @@ public class MainActivity extends Activity {
 		// TextView myLocationText = (TextView)
 		// findViewById(R.id.text_location);
 		if (location != null) {
-			double lat = location.getLatitude();
-			double lng = location.getLongitude();
+			lat = location.getLatitude();
+			lng = location.getLongitude();
 			latLongString = "纬度:" + lat + "\n经度:" + lng;
 		} else {
 			latLongString = "无法获取地理信息";
@@ -287,6 +289,8 @@ public class MainActivity extends Activity {
 			intent.setClass(getApplicationContext(), WarpDSLV.class);
 			intent.putExtra("places", (Serializable) places);
 			intent.putExtra("type", Types[typeWheel.getCurrentItem()]);
+			intent.putExtra("loclat", lat);
+			intent.putExtra("loclng", lng);
 			startActivity(intent);
 		}
 
@@ -296,8 +300,8 @@ public class MainActivity extends Activity {
 			throws JSONException {
 		DefaultHttpClient httpclient = new DefaultHttpClient();
 		try {
-			getApplicationContext().getMainLooper();
-			Looper.prepare();
+//			getApplicationContext().getMainLooper();
+//			Looper.prepare();
 		
 			HttpHost target = new HttpHost(ipString, 8080, "http");
 			// String request="/?type=情侣出行&pos_x=108.947039&pos_y=34.259203";

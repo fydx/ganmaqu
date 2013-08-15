@@ -7,6 +7,7 @@ import java.util.TimerTask;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources.Theme;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -81,6 +82,12 @@ public class MapActivity extends Activity {
 	   // mapView.addJavascriptInterface(data, "mapView");
 	    mapView.addJavascriptInterface(data, "dataFromJs");
 		mapView.loadUrl("file:///android_asset/test_baidu.html");
+		try {
+			Thread.sleep(300);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		// mapView.loadUrl("file:///android_asset/js.html");
 //		Log.i("route", "javascript:calcRoute2("+String.valueOf(places.get(0).getPos_y())+","+
 //		String.valueOf(places.get(0).getPos_x()+")"));
@@ -119,18 +126,18 @@ public class MapActivity extends Activity {
 					Log.i("load String", loadString);
 					mapView.loadUrl(loadString);
 					//地图加载完毕后 update location
-					try {
-						Thread.sleep(300);
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+//					try {
+//						Thread.sleep(300);
+//					} catch (InterruptedException e) {
+//						// TODO Auto-generated catch block
+//						e.printStackTrace();
+//					}
 					//mapView.loadUrl("javascript:addLocation(34.139,108.84199)");
-					mapView.loadUrl("javascript:calcRoute()");
+					//mapView.loadUrl("javascript:calcRoute()");
 				}
 			}
 		};
-		timer.schedule(task, 1000 * 1);
+		timer.schedule(task, 1500 * 1);
 		
 		Timer timer_2 = new Timer(); //设置Timer
 		TimerTask task_2 = new TimerTask() {
@@ -174,12 +181,12 @@ public class MapActivity extends Activity {
 		 */
 	}
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.map, menu);
-		return true;
-	}
+//	@Override
+//	public boolean onCreateOptionsMenu(Menu menu) {
+//		// Inflate the menu; this adds items to the action bar if it is present.
+//		getMenuInflater().inflate(R.menu.map, menu);
+//		return true;
+//	}
 	// 判断是否开启GPS，若未开启，打开GPS设置界面
 		private void openGPS() {
 			if (locationManager

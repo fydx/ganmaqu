@@ -234,11 +234,11 @@ containing a value of this type.
     public static final class id {
         public static final int NumberOfPerson=0x7f04000b;
         public static final int Type=0x7f04000c;
-        public static final int action_settings=0x7f040033;
+        public static final int action_settings=0x7f040035;
         public static final int activity_desc=0x7f040021;
         public static final int activity_title=0x7f040020;
-        public static final int add_footer=0x7f040038;
-        public static final int add_header=0x7f040037;
+        public static final int add_footer=0x7f04003a;
+        public static final int add_header=0x7f040039;
         public static final int artist_albums_textview=0x7f04001f;
         public static final int artist_name_textview=0x7f04001e;
         public static final int bg_handle=0x7f040018;
@@ -247,8 +247,10 @@ containing a value of this type.
         public static final int button1=0x7f040015;
         public static final int button_SaveToDB=0x7f040030;
         public static final int button_back=0x7f040007;
+        public static final int button_low=0x7f040033;
         public static final int button_right=0x7f040009;
         public static final int button_toMap=0x7f040016;
+        public static final int button_up=0x7f040034;
         public static final int button_yes=0x7f04000f;
         public static final int city=0x7f04001a;
         public static final int clickRemove=0x7f040000;
@@ -274,9 +276,9 @@ containing a value of this type.
         public static final int pwd_status=0x7f040029;
         public static final int routeList=0x7f040010;
         public static final int section_div=0x7f04002b;
-        public static final int select_drag_init_mode=0x7f040035;
-        public static final int select_enables=0x7f040036;
-        public static final int select_remove_mode=0x7f040034;
+        public static final int select_drag_init_mode=0x7f040037;
+        public static final int select_enables=0x7f040038;
+        public static final int select_remove_mode=0x7f040036;
         public static final int test_bed=0x7f04002c;
         public static final int test_button=0x7f040013;
         public static final int text=0x7f04001d;
@@ -337,23 +339,23 @@ containing a value of this type.
         public static final int welcome=0x7f0a0006;
     }
     public static final class string {
-        public static final int action_settings=0x7f070001;
-        public static final int add_footer=0x7f07000b;
-        public static final int add_header=0x7f07000a;
-        public static final int app_name=0x7f070000;
-        public static final int cancel=0x7f070006;
-        public static final int hello_world=0x7f070002;
-        public static final int ip=0x7f070010;
-        public static final int ok=0x7f070005;
-        public static final int select_drag_init_mode=0x7f070008;
-        public static final int select_enables=0x7f070009;
-        public static final int select_remove_mode=0x7f070007;
-        public static final int title_activity_main=0x7f070003;
-        public static final int title_activity_map=0x7f07000c;
-        public static final int title_activity_result=0x7f070004;
-        public static final int title_activity_route_list=0x7f07000e;
-        public static final int title_activity_route_review=0x7f07000f;
-        public static final int title_activity_web=0x7f07000d;
+        public static final int action_settings=0x7f070002;
+        public static final int add_footer=0x7f07000c;
+        public static final int add_header=0x7f07000b;
+        public static final int app_name=0x7f070001;
+        public static final int cancel=0x7f070007;
+        public static final int hello_world=0x7f070003;
+        public static final int ip=0x7f070000;
+        public static final int ok=0x7f070006;
+        public static final int select_drag_init_mode=0x7f070009;
+        public static final int select_enables=0x7f07000a;
+        public static final int select_remove_mode=0x7f070008;
+        public static final int title_activity_main=0x7f070004;
+        public static final int title_activity_map=0x7f07000d;
+        public static final int title_activity_result=0x7f070005;
+        public static final int title_activity_route_list=0x7f07000f;
+        public static final int title_activity_route_review=0x7f070010;
+        public static final int title_activity_web=0x7f07000e;
     }
     public static final class style {
         /** 
