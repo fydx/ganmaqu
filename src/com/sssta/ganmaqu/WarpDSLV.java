@@ -305,7 +305,7 @@ public class WarpDSLV extends ListActivity {
 
 			ViewHolder holder = (ViewHolder) v.getTag();
 			// String detail = places.get(position).getAddress();
-			Log.i("position", String.valueOf(position));
+		//	Log.i("position", String.valueOf(position));
 			holder.detailView.setText(places.get(position).getDetailType()
 					+ "    " + "人均"
 					+ String.valueOf(places.get(position).getCost()) + "元");
@@ -388,6 +388,11 @@ public class WarpDSLV extends ListActivity {
 		@Override
 		protected void onPostExecute(String result) {
 			try {
+				Log.i("result", result);
+				if (result.equals("Can not find") ) {
+					Toast.makeText(getApplicationContext(), "Can not find", Toast.LENGTH_SHORT).show();
+				}
+				else{
 				Log.i("Lower! jsonString Change! ", result);
 				decodeJson json = new decodeJson(result);
 				JSONArray jsonArray = json.getJsonArray();
@@ -414,7 +419,7 @@ public class WarpDSLV extends ListActivity {
 				}
 
 				Log.i("cost", "人均消费 new" + String.valueOf(cost));
-				textView_cost.setText("预计人均消费(未算购物) : " + String.valueOf(cost) + "元");
+				textView_cost.setText("预计人均消费(未算购物) : " + String.valueOf(cost) + "元");}
 
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
@@ -434,6 +439,10 @@ public class WarpDSLV extends ListActivity {
 		@Override
 		protected void onPostExecute(String result) {
 			try {
+				if (result.equals("Can not find") ) {
+					Toast.makeText(getApplicationContext(), "Can not find", Toast.LENGTH_SHORT).show();
+				}
+				else{
 				Log.i("Upper! jsonString Change! ", result);
 				decodeJson json = new decodeJson(result);
 				JSONArray jsonArray = json.getJsonArray();
@@ -459,7 +468,7 @@ public class WarpDSLV extends ListActivity {
 				}
 
 				Log.i("cost", "人均消费 new" + String.valueOf(cost));
-				textView_cost.setText("预计人均消费(未算购物) : " + String.valueOf(cost) + "元");
+				textView_cost.setText("预计人均消费(未算购物) : " + String.valueOf(cost) + "元");}
 
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
@@ -474,7 +483,6 @@ public class WarpDSLV extends ListActivity {
 		DefaultHttpClient httpclient = new DefaultHttpClient();
 		try {
 			HttpHost target = new HttpHost(ipString, 8080, "http");
-
 			String request = "/?command=change&type=" + type + "&pos_x="
 					+ pos_x + "&pos_y=" + pos_y + "&time=" + time
 					+ "&shopName=" + shopname;

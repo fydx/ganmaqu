@@ -24,6 +24,7 @@ var map;
  var infos = []; //info信息聚合
  var count = 0 ;
  var positions=[]; // Position集合
+ var positions2=[] //用于坐标重合时的处理
  var shops=[];    //shops集合
  var x=0;
  var count2 = 0;
@@ -60,7 +61,13 @@ function StringBuilder(){
   };
 
 
-   setLocation_1(108.95326,34.229); //默认设置初始位置为钟楼
+   setLocation_1(108.953457,34.265808); //默认设置初始位置为钟楼
+   //**********TEST AREA*****************
+   codeAddress("豪邦购物广场","<p><b>豪邦购物广场</b></p><p>雁塔区长安中路177号小寨沃尔玛地下</p><p><a href=http://m.dianping.com/shop/2464546>详细信息>></a>");
+   codeAddress("大厨快餐厅","<p><b>大厨快餐厅</b></p><p>雁塔区长安中路22号旺角广场3楼</p><p><a href=http://m.dianping.com/shop/8968397>详细信息>></a>");
+   codeAddress("大兴善寺","<p><b>大兴善寺</b></p><p>雁塔区兴善寺西街</p><p><a href=http://m.dianping.com/shop/2624641>详细信息>></a>");
+   codeAddress("大兴善寺宝严素食坊","<p><b>大兴善寺宝严素食坊</b></p><p>雁塔区兴善西街55号大兴善寺内</p><p><a href=http://m.dianping.com/shop/550437>详细信息>></a>");
+   codeAddress("海港城","<p><b>海港城</b></p><p>雁塔区长安中路177号</p><p><a href=http://m.dianping.com/shop/2492659>详细信息>></a>");
    // codeAddress("人人乐(解放路店)","<p><b>人人乐(解放路店)</b></p><p>新城区解放路63号民乐新都会2-3楼</p><p><a href=http://m.dianping.com/shop/1800628>详细信息>></a>");
    // codeAddress("省军区军人服务社","<p><b>省军区军人服务社</b></p><p>雁塔区小寨十字西南角</p><p><a href=http://m.dianping.com/shop/2504203>详细信息>></a>");
    // codeAddress("六婆古法香串坊","<p><b>六婆古法香串坊</b></p><p>雁塔区长安中路92号飞炫广场</p><p><a href=http://m.dianping.com/shop/8847135>详细信息>></a>");
@@ -90,25 +97,7 @@ function shop(shopname,infomation)
   this.infomation = infomation;
 }
 
-//创建marker并加入信息窗口      
-function addMessage(){
-	 
-	for (var i = 0; i <arguments.length; i+=3) {
-      //console.log("i :"+i);
-     
-     var marker_1 = new BMap.Marker(new BMap.Point(arguments[i], arguments[i+1]),{icon:icons[x]});  // 创建标注
-     //console.log("count in addMessage" + count);
-      x=x+1;
-		 map.addOverlay(marker_1);              // 将标注添加到地图中
-		 //创建信息窗口
-		 var infoWindow1 = new BMap.InfoWindow(arguments[i+2]);
-		marker_1.addEventListener("click", function(){this.openInfoWindow(infoWindow1);});
-		
 
-	};
-      
-	
-}
 function addMarker()
 {
 
@@ -169,14 +158,29 @@ function codeAddress()
 function setPois()
 {
   console.log("length of shops in setPois  " + shops.length);
+  positions2 = positions;
+  //测试坐标是否重合，若重合，lng + 0.003
+  // for (var i = 0; i < positions.length; i++) {
+  //    for (var k = 0; i < positions2.length; k++) {
+  //      if(positions2[k] == positions[i])
+  //      {
+  //       console.log("origin positions" + positions[i].pos_x);
+  //       positions[i].pos_x =  positions[i].pos_x + 0.003;
+  //       console.log("find!" + i  + "  " + positions[i].pos_x);
+  //      }
+  //    };
+  // };
   for (var i = 0; i < shops.length; i++) {
      for (var k = 0; k < positions.length; k++) {
 
        if(shops[i].shopname == positions[k].shopname)
-        addMessage(positions[k].pos_x,positions[k].pos_y,shops[i].infomation
-          );
+        {console.log("第" + (i+1) +"地点: " + shops[i].shopname + "匹配成功！");
+        addMessage(positions[k].pos_x ,  positions[k].pos_y ,  shops[i].infomation);
+        console.log("send to addMessage :" + positions[k].pos_x +  "  " + positions[k].pos_y +"  " + shops[i].infomation )}
+
       if (i==0&&shops[i].shopname == positions[k].shopname) {
         firstPoi = new BMap.Point(positions[k].pos_x,positions[k].pos_y);
+        console.log("(firstPoi)第一地点 " + shops[i].shopname + "匹配成功！");
       };
      };
     //addMessage(pois[i].lng,pois[i].lat,infos[i]);
@@ -184,11 +188,31 @@ function setPois()
   
   calcRoute();
 }
+//创建marker并加入信息窗口      
+function addMessage(){
+   
+  for (var i = 0; i <arguments.length; i+=3) {
+      //console.log("i :"+i);
+      console.log("x" + x);
+     console.log(arguments[2]);
+     var marker_1 = new BMap.Marker(new BMap.Point(arguments[i], arguments[i+1]),{icon:icons[x]});  // 创建标注
+     //console.log("count in addMessage" + count);
+      x=x+1;
+     map.addOverlay(marker_1);              // 将标注添加到地图中
+     //创建信息窗口
+     var infoWindow1 = new BMap.InfoWindow(arguments[i+2]);
+    marker_1.addEventListener("click", function(){this.openInfoWindow(infoWindow1);});
+    
 
+  };
+      
+  
+}
 //传递当前坐标
 function setLocation_1(pos_x,pos_y)
 {
 	location_1 = new BMap.Point(pos_x,pos_y);
+  console.log("The Location has been set !");
   if (marker_location==null) {
      marker_location = new BMap.Marker(location_1,{icon:myIcon});  // 创建标注
      map.addOverlay(marker_location);  // 将标注添加到地图中  
@@ -236,7 +260,7 @@ function calcRoute()
    // 输出方案信息
    var s = [];  
    for (i = 0; i < results.getNumPlans(); i ++){  
-     console.log((i + 1) + ". " + results.getPlan(i).getDescription());  
+  //   console.log((i + 1) + ". " + results.getPlan(i).getDescription());  
    }  
   //document.getElementById("log").innerHTML = s.join("<br>");  
  }  
