@@ -29,12 +29,12 @@
         android:paddingRight="12dp"
          >
 
-        <kankan.wheel.widget.WheelView
+     <!--  <kankan.wheel.widget.WheelView
             android:id="@+id/NumberOfPerson"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_weight="1" />
+            android:layout_weight="1" />  -->   
 
         <kankan.wheel.widget.WheelView
             android:id="@+id/Type"
@@ -53,7 +53,7 @@
         android:layout_marginLeft="20dp"
         android:paddingTop= "20dp"
         android:textSize= "21dp"
-        android:text="请选择出行人数和类型" />
+        android:text="请选择出行的类型" />
 
     <TextView
         android:id="@+id/textView2"

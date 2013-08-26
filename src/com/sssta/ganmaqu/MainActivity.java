@@ -91,11 +91,11 @@ public class MainActivity extends Activity {
 		// String Numbers[] = new String[] {"1", "2", "3",
 		// "4","5","6","7","8","9","10"};
 		
-		final WheelView numberWheel = (WheelView) findViewById(R.id.NumberOfPerson);
-		String countries[] = new String[] { "2", "3", "4", "5", "6", "7", "8" };
-		numberWheel.setVisibleItems(5);
-		numberWheel.setCyclic(false);//
-		numberWheel.setAdapter(new ArrayWheelAdapter<String>(countries));
+	//	final WheelView numberWheel = (WheelView) findViewById(R.id.NumberOfPerson);
+//		String countries[] = new String[] { "2", "3", "4", "5", "6", "7", "8" };
+//		numberWheel.setVisibleItems(5);
+//		numberWheel.setCyclic(false);
+//		numberWheel.setAdapter(new ArrayWheelAdapter<String>(countries));
 		final String cities[][] = new String[][] { Types, Types, Types, Types,
 				Types, Types, Types };
 		typeWheel = (WheelView) findViewById(R.id.Type);
@@ -130,7 +130,7 @@ public class MainActivity extends Activity {
 
 			}
 		});
-		numberWheel.setCurrentItem(3);
+	//	numberWheel.setCurrentItem(3);
 	}
 
 	@Override
