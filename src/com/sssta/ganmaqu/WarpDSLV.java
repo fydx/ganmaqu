@@ -267,7 +267,7 @@ public class WarpDSLV extends ListActivity {
 		for (int i = 0; i < places.size(); i++) {
 			places.get(i).setRoute_id(route_num + 1);
 			db.save(places.get(i));
-			new sendArriveTask().execute(String.valueOf(places.get(i).get_id()),"123");
+			new sendArriveTask().execute(String.valueOf(places.get(i).getId()),"123");
 			Log.i("DBsave", String.valueOf(i));
 		}
 		int num = user.getRoute_num() + 1;
