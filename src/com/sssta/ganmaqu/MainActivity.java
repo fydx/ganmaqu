@@ -309,7 +309,7 @@ public class MainActivity extends Activity {
 					+ String.valueOf(pos_x) + "&pos_y=" + String.valueOf(pos_y);
 			Log.i("request string",request);
 			HttpGet req = new HttpGet(request);
-			System.out.println("executing request to " + target);
+			//System.out.println("executing request to " + target);
 			HttpResponse rsp = httpclient.execute(target, req);
 			HttpEntity entity = rsp.getEntity();
 			InputStreamReader isr = new InputStreamReader(entity.getContent(),
@@ -319,8 +319,12 @@ public class MainActivity extends Activity {
 			line = br.readLine();
 			if (line != null) {
 				
+				System.out.println(line);
 				return line;
 				
+			}
+			else {
+				System.out.println("line is null");
 			}
 			
 		} catch (ClientProtocolException e) {

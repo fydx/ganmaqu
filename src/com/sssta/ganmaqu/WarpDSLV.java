@@ -82,6 +82,7 @@ public class WarpDSLV extends ListActivity {
 					.getPos_x()), String.valueOf(places.get(which).getPos_y()),
 					places.get(which).getTime(), places.get(which)
 							.getShopName(), String.valueOf(which));
+			new sendDeleteTask().execute(String.valueOf(places.get(which).getId()),"123");
 		}
 	};
 
@@ -266,6 +267,7 @@ public class WarpDSLV extends ListActivity {
 		for (int i = 0; i < places.size(); i++) {
 			places.get(i).setRoute_id(route_num + 1);
 			db.save(places.get(i));
+			new sendArriveTask().execute(String.valueOf(places.get(i).get_id()),"123");
 			Log.i("DBsave", String.valueOf(i));
 		}
 		int num = user.getRoute_num() + 1;
@@ -477,6 +479,46 @@ public class WarpDSLV extends ListActivity {
 
 		}
 		
+		
+	}
+	public class sendArriveTask extends AsyncTask<String, integer, String>
+	{
+
+		@Override
+		protected String doInBackground(String... params) {
+			// TODO Auto-generated method stub
+			
+			return sendArrive(params[0], params[1]);
+		}
+		@Override
+		protected void onPostExecute(String result) {
+			if (result.equals("arrive info has been recorded")) {
+				Log.i("SendArrive",result);
+			}
+			else {
+				Log.e("SendArrive", "Error in Send Arrive");
+			}
+		}
+		
+	}
+	public class sendDeleteTask extends AsyncTask<String, integer, String> {
+		@Override
+		protected String doInBackground(String... params) {
+			// TODO Auto-generated method stub
+			
+			return sendDelete(params[0], params[1]);
+		}
+		@Override
+		protected void onPostExecute(String result) {
+			Log.i("result in Send Delete", result);
+			if (result.equals("delete info has been recorded")) {
+				Log.i("SendDelete",result);
+			}
+			else {
+				Log.e("SendDelete", "Error in Send Delete");
+			}
+		}
+		
 	}
 	public String requestChangeStringToServer(String type, String pos_x,
 			String pos_y, String time, String shopname) {
@@ -619,4 +661,68 @@ public class WarpDSLV extends ListActivity {
 		}
 		return null;
 	} 
+	public String sendArrive(String shopId,String userId)
+	{
+		
+		DefaultHttpClient httpclient = new DefaultHttpClient();
+		try
+		{
+			HttpHost target = new HttpHost(ipString, 8080, "http");
+			String request = "/?command=arrive&shopId="+shopId+"&userId="+userId;
+			HttpGet req = new HttpGet(request);
+			System.out.println("executing request to " + target);
+			HttpResponse rsp = httpclient.execute(target, req);
+			HttpEntity entity = rsp.getEntity();
+			InputStreamReader isr = new InputStreamReader(entity.getContent(), "utf-8");
+			BufferedReader br = new BufferedReader(isr);
+			String line = null;
+			while ((line = br.readLine()) != null)
+			{
+				return line;
+			}
+		}
+		catch (Exception e)
+		{
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		finally
+		{
+			httpclient.getConnectionManager().shutdown();
+		}
+		return null;
+		
+	}
+	public String sendDelete(String shopId,String userId){
+		
+		Log.i("shopId + userId", shopId + " " + userId);
+		DefaultHttpClient httpclient = new DefaultHttpClient();
+		try
+		{
+			HttpHost target = new HttpHost(ipString, 8080, "http");
+			String request = "/?command=delete&shopId="+shopId+"&userId="+userId;
+			HttpGet req = new HttpGet(request);
+			System.out.println("executing request to " + target);
+			HttpResponse rsp = httpclient.execute(target, req);
+			HttpEntity entity = rsp.getEntity();
+			InputStreamReader isr = new InputStreamReader(entity.getContent(), "utf-8");
+			BufferedReader br = new BufferedReader(isr);
+			String line = null;
+			while ((line = br.readLine()) != null)
+			{
+				System.out.println(line);
+				return line;
+			}
+		}
+		catch (Exception e)
+		{
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		finally
+		{
+			httpclient.getConnectionManager().shutdown();
+		}
+		return null;
+	}
 }
