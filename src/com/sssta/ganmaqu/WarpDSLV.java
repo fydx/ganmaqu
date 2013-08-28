@@ -23,6 +23,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import android.R.integer;
+import android.app.Dialog;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -166,6 +167,7 @@ public class WarpDSLV extends ListActivity {
 				intent.setClass(getApplicationContext(), MapActivity.class);
 				intent.putExtra("places", (Serializable) places);
 				startActivity(intent);
+				overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);    
 
 			}
 		});
@@ -224,15 +226,18 @@ public class WarpDSLV extends ListActivity {
 			
 			@Override
 			public void onClick(View v) {
-				int tempCost = 0 ;
-				for (int i = 0; i < places.size(); i++) {
-					if(places.get(i).getMainType().equals("美食"))
-					{
-						tempCost+= places.get(i).getCost();
-					}
-				}
-				
-				new upperTask().execute(type,String.valueOf(loclng),String.valueOf(loclat),String.valueOf(tempCost));
+				Dialog dialog = new Dialog(WarpDSLV.this, R.style.activity_translucent);
+                dialog.setContentView(R.layout.dialog_layout);
+                dialog.show();
+//				int tempCost = 0 ;
+//				for (int i = 0; i < places.size(); i++) {
+//					if(places.get(i).getMainType().equals("美食"))
+//					{
+//						tempCost+= places.get(i).getCost();
+//					}
+//				}
+//				
+//				new upperTask().execute(type,String.valueOf(loclng),String.valueOf(loclat),String.valueOf(tempCost));
 			
 			}
 		});

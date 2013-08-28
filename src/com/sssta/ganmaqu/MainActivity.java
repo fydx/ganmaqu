@@ -20,6 +20,7 @@ import org.json.JSONException;
 
 import android.R.integer;
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Address;
@@ -30,7 +31,6 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Looper;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.Menu;
@@ -52,6 +52,7 @@ public class MainActivity extends Activity {
 	private WheelView typeWheel ;
 	private double lat;
 	private double lng;
+	private Dialog dialog;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -115,6 +116,9 @@ public class MainActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
+				dialog = new Dialog(MainActivity.this, R.style.activity_translucent);
+                dialog.setContentView(R.layout.dialog_connect);
+                dialog.show();
 				Toast.makeText(getApplicationContext(),
 						Types[typeWheel.getCurrentItem()], Toast.LENGTH_SHORT)
 						.show();
@@ -291,6 +295,7 @@ public class MainActivity extends Activity {
 			intent.putExtra("type", Types[typeWheel.getCurrentItem()]);
 			intent.putExtra("loclat", lat);
 			intent.putExtra("loclng", lng);
+			dialog.dismiss();
 			startActivity(intent);
 		}
 
