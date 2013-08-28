@@ -5,8 +5,6 @@
     android:layout_height="wrap_content" 
     android:background="@drawable/background_result">
 
- 
-
     <LinearLayout
         android:id="@+id/linearLayout1"
         android:layout_width="fill_parent"
@@ -14,6 +12,7 @@
         android:layout_alignParentBottom="true"
         android:orientation="horizontal" >
 
+      
         <Button
             android:id="@+id/button_toMap"
             android:layout_width="fill_parent"
@@ -25,14 +24,15 @@
             android:text="Go to Map Page" />
 
         <Button
-            android:id="@+id/button_SaveToDB"
+            android:id="@+id/button_savetoDB"
             android:layout_width="fill_parent"
             android:layout_height="50dp"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
-               android:background="@drawable/button_style_main"
+             android:background="@drawable/button_style_main"
             android:layout_weight="1"
             android:text="Save To DB" />
+        
     </LinearLayout>
     <TextView
         android:id="@+id/cost"
@@ -99,5 +99,12 @@
         android:layout_above="@+id/button_low"
         android:layout_alignParentRight="true"
         android:text="奢侈点" />
+
+    <geniuz.myPathbutton.composerLayout
+        android:id="@+id/test"
+        android:layout_width="20dp"
+        android:layout_height="wrap_content"
+      >
+    </geniuz.myPathbutton.composerLayout>
 
 </RelativeLayout>

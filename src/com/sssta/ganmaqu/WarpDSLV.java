@@ -1,5 +1,7 @@
 package com.sssta.ganmaqu;
 
+import geniuz.myPathbutton.composerLayout;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -7,8 +9,6 @@ import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.xml.transform.Templates;
 
 import net.tsz.afinal.FinalDb;
 
@@ -21,12 +21,10 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EncodingUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import android.R.integer;
 import android.app.ListActivity;
 import android.content.Intent;
-import android.hardware.Camera.Size;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -105,6 +103,49 @@ public class WarpDSLV extends ListActivity {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.warp_main);
+		/**
+		 * Set Path Button
+		 */
+		// 引用控件
+		composerLayout clayout = (composerLayout) findViewById(R.id.test);
+		clayout.init(new int[] { R.drawable.composer_music, R.drawable.composer_place,
+						R.drawable.composer_sleep}, R.drawable.composer_button,
+						R.drawable.composer_icn_plus, composerLayout.LEFTBOTTOM, 180,
+						300);
+		// 加個點擊監聽，100+0對應composer_camera，100+1對應composer_music……如此類推你有幾多個按鈕就加幾多個。
+		OnClickListener clickit = new OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						// TODO Auto-generated method stub
+						if (v.getId() == 100 + 0) {
+							System.out.println("奢侈点 Start");
+							int tempCost = 0 ;
+							for (int i = 0; i < places.size(); i++) {
+								if(places.get(i).getMainType().equals("美食"))
+								{
+									tempCost+= places.get(i).getCost();
+								}
+							}
+							
+							new upperTask().execute(type,String.valueOf(loclng),String.valueOf(loclat),String.valueOf(tempCost));
+						} else if (v.getId() == 100 + 1) {
+							System.out.println("便宜点 Start");
+							int tempCost = 0 ;
+							for (int i = 0; i < places.size(); i++) {
+								if(places.get(i).getMainType().equals("美食"))
+								{
+									tempCost+= places.get(i).getCost();
+								}
+							}
+							
+							new lowerTask().execute(type,String.valueOf(loclng),String.valueOf(loclat),String.valueOf(tempCost));
+							
+						} else if (v.getId() == 100 + 2) {
+							System.out.println("随心换 Start");
+						}
+					}
+				};
+				clayout.setButtonsOnClickListener(clickit);
 		ipString = getResources().getString(R.string.ip);
 		db = FinalDb.create(this);
 		db_user = FinalDb.create(this);
@@ -128,9 +169,11 @@ public class WarpDSLV extends ListActivity {
 
 			}
 		});
-		button_saveToDB = (Button) findViewById(R.id.button_SaveToDB);
+
 		button_low = (Button)findViewById(R.id.button_low);
 		button_up = (Button)findViewById(R.id.button_up);
+		button_saveToDB = (Button)findViewById(R.id.button_savetoDB);
+		
 		/**
 		 * read from assets json files
 		 */
