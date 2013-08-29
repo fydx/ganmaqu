@@ -7,7 +7,6 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Locale;
 
-import kankan.wheel.widget.ArrayWheelAdapter;
 import kankan.wheel.widget.WheelView;
 
 import org.apache.http.HttpEntity;
@@ -19,6 +18,8 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONException;
 
 import android.R.integer;
+import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
@@ -30,6 +31,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
@@ -37,7 +39,10 @@ import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.Button;
+import android.widget.Gallery;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -49,17 +54,19 @@ public class MainActivity extends Activity {
 	private List<place> places;
 	private String ipString;
 	final String Types[] = new String[] { "亲子出行", "朋友出行", "情侣出行" };
-	private WheelView typeWheel ;
+	private WheelView typeWheel;
 	private double lat;
 	private double lng;
 	private Dialog dialog;
+	private Gallery galleryFlow;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_main);
-		ipString = getApplicationContext().getResources().getString(R.string.ip);
+		ipString = getApplicationContext().getResources()
+				.getString(R.string.ip);
 		// 获取LocationManager服务
 		locationManager = (LocationManager) this
 				.getSystemService(Context.LOCATION_SERVICE);
@@ -75,6 +82,49 @@ public class MainActivity extends Activity {
 		// 表示调用listener的周期，第3个参数为米,表示位置移动指定距离后就调用listener
 		locationManager.requestLocationUpdates(provider, 2000, 10,
 				locationListener);
+		// set gallery
+		Integer[] images = { R.drawable.child, R.drawable.friend,
+				R.drawable.couple };
+
+		ImageAdapter adapter = new ImageAdapter(this, images);
+		adapter.createReflectedImages();
+
+		galleryFlow = (Gallery) findViewById(R.id.Gallery01);
+	   
+		galleryFlow.setAdapter(adapter);
+		galleryFlow.setOnItemSelectedListener(new OnItemSelectedListener() {
+
+	
+			@TargetApi(Build.VERSION_CODES.HONEYCOMB)
+			@Override
+			public void onItemSelected(AdapterView<?> parent, View view, int position,
+		              long id) {
+		         // 选中Gallery中某个图像时，放大显示该图像
+		          ImageView imageview = (ImageView)view;
+		    
+		         view.setLayoutParams(new Gallery.LayoutParams(570 / 3, 370 / 3));
+		       
+		          for(int i=0; i<parent.getChildCount();i++){
+		             //缩小选中图片旁边的图片
+		             ImageView local_imageview = (ImageView)parent.getChildAt(i);
+		           if(local_imageview!=imageview){
+		                 local_imageview.setLayoutParams(new Gallery.LayoutParams(520/4, 318/4));
+		                 local_imageview.setScaleType(ImageView.ScaleType.FIT_CENTER);
+		                 local_imageview.setAlpha(0.1f);
+		             }
+		           else {
+		        	   local_imageview.setAlpha(1f);
+				}
+		         }
+		     }
+
+			@Override
+			public void onNothingSelected(AdapterView<?> arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+
 		Button button_yes = (Button) findViewById(R.id.button_yes);
 		ImageView routeImageView = (ImageView) findViewById(R.id.routeList);
 		routeImageView.setOnClickListener(new OnClickListener() {
@@ -91,17 +141,20 @@ public class MainActivity extends Activity {
 		// findViewById(R.id.NumberOfPerson);
 		// String Numbers[] = new String[] {"1", "2", "3",
 		// "4","5","6","7","8","9","10"};
-		
-	//	final WheelView numberWheel = (WheelView) findViewById(R.id.NumberOfPerson);
-//		String countries[] = new String[] { "2", "3", "4", "5", "6", "7", "8" };
-//		numberWheel.setVisibleItems(5);
-//		numberWheel.setCyclic(false);
-//		numberWheel.setAdapter(new ArrayWheelAdapter<String>(countries));
+
+		// final WheelView numberWheel = (WheelView)
+		// findViewById(R.id.NumberOfPerson);
+		// String countries[] = new String[] { "2", "3", "4", "5", "6", "7", "8"
+		// };
+		// numberWheel.setVisibleItems(5);
+		// numberWheel.setCyclic(false);
+		// numberWheel.setAdapter(new ArrayWheelAdapter<String>(countries));
 		final String cities[][] = new String[][] { Types, Types, Types, Types,
 				Types, Types, Types };
-		typeWheel = (WheelView) findViewById(R.id.Type);
-		typeWheel.setAdapter(new ArrayWheelAdapter<String>(Types));
-		typeWheel.setVisibleItems(5);
+		// temp cancel wheel
+		// typeWheel = (WheelView) findViewById(R.id.Type);
+		// typeWheel.setAdapter(new ArrayWheelAdapter<String>(Types));
+		// typeWheel.setVisibleItems(5);
 
 		/*
 		 * numberWheel.addChangingListener(new OnWheelChangedListener() {
@@ -111,30 +164,34 @@ public class MainActivity extends Activity {
 		 * ArrayWheelAdapter<String>(cities[newValue]));
 		 * typeWheel.setCurrentItem(cities[newValue].length / 2); } });
 		 */
+
 		button_yes.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				dialog = new Dialog(MainActivity.this, R.style.activity_translucent);
-                dialog.setContentView(R.layout.dialog_connect);
-                dialog.show();
-				Toast.makeText(getApplicationContext(),
-						Types[typeWheel.getCurrentItem()], Toast.LENGTH_SHORT)
-						.show();
-				Log.i("Current Item", Types[typeWheel.getCurrentItem()]);
+				dialog = new Dialog(MainActivity.this,
+						R.style.activity_translucent);
+				dialog.setContentView(R.layout.dialog_connect);
+				dialog.show();
+				// Toast.makeText(getApplicationContext(),
+				// Types[typeWheel.getCurrentItem()], Toast.LENGTH_SHORT)
+				// .show();
+				// Log.i("Current Item", Types[typeWheel.getCurrentItem()]);
+
 				if (location == null) {
-					new RequestTask().execute(Types[typeWheel.getCurrentItem()]);
+					new RequestTask().execute(Types[galleryFlow
+							.getSelectedItemPosition()]);
 				} else {
 					new RequestTask().execute(
-							Types[typeWheel.getCurrentItem()],
+							Types[galleryFlow.getSelectedItemPosition()],
 							String.valueOf(location.getLongitude()),
 							String.valueOf(location.getLatitude()));
 				}
 
 			}
 		});
-	//	numberWheel.setCurrentItem(3);
+		// numberWheel.setCurrentItem(3);
 	}
 
 	@Override
@@ -248,8 +305,8 @@ public class MainActivity extends Activity {
 		protected String doInBackground(String... params) {
 			// TODO Auto-generated method stub
 			double pos_x = 108.947039, pos_y = 34.259203;
-		
-			if (params.length>1) {
+
+			if (params.length > 1) {
 				pos_x = Double.parseDouble(params[1]);
 				pos_y = Double.parseDouble(params[2]);
 			}
@@ -292,7 +349,8 @@ public class MainActivity extends Activity {
 			Intent intent = new Intent();
 			intent.setClass(getApplicationContext(), WarpDSLV.class);
 			intent.putExtra("places", (Serializable) places);
-			intent.putExtra("type", Types[typeWheel.getCurrentItem()]);
+			intent.putExtra("type",
+					Types[galleryFlow.getSelectedItemPosition()]);
 			intent.putExtra("loclat", lat);
 			intent.putExtra("loclng", lng);
 			dialog.dismiss();
@@ -305,16 +363,16 @@ public class MainActivity extends Activity {
 			throws JSONException {
 		DefaultHttpClient httpclient = new DefaultHttpClient();
 		try {
-//			getApplicationContext().getMainLooper();
-//			Looper.prepare();
-		
+			// getApplicationContext().getMainLooper();
+			// Looper.prepare();
+
 			HttpHost target = new HttpHost(ipString, 8080, "http");
 			// String request="/?type=情侣出行&pos_x=108.947039&pos_y=34.259203";
 			String request = "/?command=full&type=" + typeString + "&pos_x="
 					+ String.valueOf(pos_x) + "&pos_y=" + String.valueOf(pos_y);
-			Log.i("request string",request);
+			Log.i("request string", request);
 			HttpGet req = new HttpGet(request);
-			//System.out.println("executing request to " + target);
+			// System.out.println("executing request to " + target);
 			HttpResponse rsp = httpclient.execute(target, req);
 			HttpEntity entity = rsp.getEntity();
 			InputStreamReader isr = new InputStreamReader(entity.getContent(),
@@ -323,19 +381,18 @@ public class MainActivity extends Activity {
 			String line = null;
 			line = br.readLine();
 			if (line != null) {
-				
+
 				System.out.println(line);
 				return line;
-				
-			}
-			else {
+
+			} else {
 				System.out.println("line is null");
 			}
-			
+
 		} catch (ClientProtocolException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			
+
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

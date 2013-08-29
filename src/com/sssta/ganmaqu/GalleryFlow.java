@@ -1,21 +1,27 @@
 package com.sssta.ganmaqu;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Camera;
 import android.graphics.Matrix;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.animation.Transformation;
+import android.widget.AdapterView;
 import android.widget.Gallery;
 import android.widget.ImageView;
 
+@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 public class GalleryFlow extends Gallery {
 
     private Camera mCamera = new Camera();
     private int mMaxRotationAngle = 60;
     private int mMaxZoom = -120;
     private int mCoveflowCenter;
-
+    
+  
     public GalleryFlow(Context context) {
             super(context);
             this.setStaticTransformationsEnabled(true);
@@ -58,22 +64,28 @@ public class GalleryFlow extends Gallery {
 
     protected boolean getChildStaticTransformation(View child, Transformation t) {
 
-            final int childCenter = getCenterOfView(child);
+           
+    		final int childCenter = getCenterOfView(child);
             final int childWidth = child.getWidth();
             int rotationAngle = 0;
+         
 
             t.clear();
             t.setTransformationType(Transformation.TYPE_MATRIX);
 
             if (childCenter == mCoveflowCenter) {
-                    transformImageBitmap((ImageView) child, t, 0);
+            		ImageView imageView = (ImageView)child;
+            		imageView.setAlpha(255);
+                    transformImageBitmap(imageView, t, 0);
             } else {
                     rotationAngle = (int) (((float) (mCoveflowCenter - childCenter) / childWidth) * mMaxRotationAngle);
                     if (Math.abs(rotationAngle) > mMaxRotationAngle) {
                             rotationAngle = (rotationAngle < 0) ? -mMaxRotationAngle
                                             : mMaxRotationAngle;
                     }
-                    transformImageBitmap((ImageView) child, t, rotationAngle);
+                    ImageView imageView = (ImageView)child;
+                    imageView.setAlpha(255);
+                    transformImageBitmap(imageView, t, rotationAngle);
             }
 
             return true;
