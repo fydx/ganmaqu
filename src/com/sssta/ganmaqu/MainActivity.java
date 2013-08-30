@@ -17,6 +17,8 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONException;
 
+import com.sssta.ganmaqu.GifView.GifImageType;
+
 import android.R.integer;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
@@ -59,6 +61,7 @@ public class MainActivity extends Activity {
 	private double lng;
 	private Dialog dialog;
 	private Gallery galleryFlow;
+	private GifView gifView;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -88,7 +91,10 @@ public class MainActivity extends Activity {
 
 		ImageAdapter adapter = new ImageAdapter(this, images);
 		adapter.createReflectedImages();
-
+		gifView = (GifView)findViewById(R.id.gifview);
+		gifView.setGifImage(R.drawable.locgif);
+		
+		gifView.setGifImageType(GifImageType.COVER);
 		galleryFlow = (Gallery) findViewById(R.id.Gallery01);
 	   
 		galleryFlow.setAdapter(adapter);
