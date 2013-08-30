@@ -16,6 +16,7 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import com.sssta.ganmaqu.GifView.GifImageType;
 
@@ -62,14 +63,17 @@ public class MainActivity extends Activity {
 	private Dialog dialog;
 	private Gallery galleryFlow;
 	private GifView gifView;
+	private int count ;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_main);
+		
 		ipString = getApplicationContext().getResources()
 				.getString(R.string.ip);
+		count = 0;
 		// 获取LocationManager服务
 		locationManager = (LocationManager) this
 				.getSystemService(Context.LOCATION_SERVICE);
@@ -137,7 +141,7 @@ public class MainActivity extends Activity {
 
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
+				
 				Intent intent2 = new Intent();
 				intent2.setClass(MainActivity.this, RouteListActivity.class);
 				startActivity(intent2);
@@ -175,7 +179,7 @@ public class MainActivity extends Activity {
 
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
+				
 				dialog = new Dialog(MainActivity.this,
 						R.style.activity_translucent);
 				dialog.setContentView(R.layout.dialog_connect);
@@ -274,9 +278,18 @@ public class MainActivity extends Activity {
 			lat = location.getLatitude();
 			lng = location.getLongitude();
 			latLongString = "纬度:" + lat + "\n经度:" + lng;
+			
 		} else {
 			latLongString = "无法获取地理信息";
 		}
+		if(count==0)
+		{
+			Log.i("address request start", "execute");
+			// TODO 修改坐标
+			new AddressRequestTask().execute("34.238225","108.924703");
+			
+		}
+		count++;
 		Toast.makeText(
 				getApplicationContext(),
 				"(main)您当前的位置是: " + "\n" + latLongString + "\n"
@@ -309,7 +322,7 @@ public class MainActivity extends Activity {
 
 		@Override
 		protected String doInBackground(String... params) {
-			// TODO Auto-generated method stub
+			
 			double pos_x = 108.947039, pos_y = 34.259203;
 
 			if (params.length > 1) {
@@ -319,7 +332,7 @@ public class MainActivity extends Activity {
 			try {
 				return RequestToServer(params[0], pos_x, pos_y);
 			} catch (JSONException e) {
-				// TODO Auto-generated catch block
+				
 				e.printStackTrace();
 			}
 			return null;
@@ -364,7 +377,28 @@ public class MainActivity extends Activity {
 		}
 
 	}
+	public class AddressRequestTask extends AsyncTask<String, integer, String>
+	{
 
+		@Override
+		protected String doInBackground(String... params) {
+			// TODO Auto-generated method stub
+			return AddressRequset(params[0], params[1]);
+		}
+		@Override
+		protected void onPostExecute(String result)
+		{
+			try {
+				JSONObject jsonObject = new JSONObject(result);
+				JSONObject jsonResult = new JSONObject(jsonObject.getString("result"));
+				Toast.makeText(getApplicationContext(), jsonResult.getString("formatted_address"), Toast.LENGTH_LONG).show();
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		}
+	}
 	public String RequestToServer(String typeString, double pos_x, double pos_y)
 			throws JSONException {
 		DefaultHttpClient httpclient = new DefaultHttpClient();
@@ -411,4 +445,48 @@ public class MainActivity extends Activity {
 		return null;
 
 	}
+	public static String AddressRequset(String pos_x_add,String pos_y_add)
+	 {
+	DefaultHttpClient httpclient = new DefaultHttpClient();
+	try {
+
+		
+		HttpHost target = new HttpHost("api.map.baidu.com", 80, "http");
+		// String request="/?type=情侣出行&pos_x=108.947039&pos_y=34.259203";
+		String request = "/geocoder?output=json&location=" + pos_x_add+ "," + pos_y_add +"&key=APP_KEY";
+		//Log.i("request string",request);
+		HttpGet req = new HttpGet(request);
+		System.out.println("executing request to " + target);
+		HttpResponse rsp = httpclient.execute(target, req);
+		HttpEntity entity = rsp.getEntity();
+		InputStreamReader isr = new InputStreamReader(entity.getContent(),
+				"utf-8");
+		BufferedReader br = new BufferedReader(isr);
+		String line = null;
+		StringBuilder output = new StringBuilder();
+		//line = br.readLine();
+		while ((line = br.readLine()) != null)
+		{
+			output.append(line);
+			
+		}
+		System.out.println(output);
+		return output.toString();
+		
+	} catch (ClientProtocolException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+		
+	} catch (IOException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	} finally {
+		// When HttpClient instance is no longer needed,
+		// shut down the connection manager to ensure
+		// immediate deallocation of all system resources
+		httpclient.getConnectionManager().shutdown();
+	}
+	return null;
+
+}
 }
