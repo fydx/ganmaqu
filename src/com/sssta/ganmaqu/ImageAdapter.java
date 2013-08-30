@@ -15,6 +15,7 @@ import android.graphics.Shader.TileMode;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Gallery;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 
@@ -74,7 +75,7 @@ public class ImageAdapter extends BaseAdapter {
 
 			ImageView imageView = new ImageView(mContext);
 			imageView.setImageBitmap(bitmapWithReflection);
-			imageView.setLayoutParams(new GalleryFlow.LayoutParams(180, 240));
+			imageView.setLayoutParams(new Gallery.LayoutParams(180, 240));
 //			imageView.setScaleType(ScaleType.MATRIX);
 			mImages[index++] = imageView;
 		}
