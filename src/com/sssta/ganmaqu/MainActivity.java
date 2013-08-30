@@ -47,6 +47,7 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.Button;
 import android.widget.Gallery;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends Activity {
@@ -64,13 +65,13 @@ public class MainActivity extends Activity {
 	private Gallery galleryFlow;
 	private GifView gifView;
 	private int count ;
-
+	private TextView locTextView;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_main);
-		
+		locTextView = (TextView)findViewById(R.id.text_location);
 		ipString = getApplicationContext().getResources()
 				.getString(R.string.ip);
 		count = 0;
@@ -392,6 +393,7 @@ public class MainActivity extends Activity {
 				JSONObject jsonObject = new JSONObject(result);
 				JSONObject jsonResult = new JSONObject(jsonObject.getString("result"));
 				Toast.makeText(getApplicationContext(), jsonResult.getString("formatted_address"), Toast.LENGTH_LONG).show();
+				locTextView.setText(jsonResult.getString("formatted_address"));
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
