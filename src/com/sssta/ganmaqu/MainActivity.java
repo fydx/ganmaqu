@@ -287,7 +287,8 @@ public class MainActivity extends Activity {
 		{
 			Log.i("address request start", "execute");
 			// TODO 修改坐标
-			new AddressRequestTask().execute("34.238225","108.924703");
+			//new AddressRequestTask().execute("34.238225","108.924703"); //Test
+			new AddressRequestTask().execute(String.valueOf(lat),String.valueOf(lng));
 			
 		}
 		count++;
@@ -389,15 +390,21 @@ public class MainActivity extends Activity {
 		@Override
 		protected void onPostExecute(String result)
 		{
-			try {
-				JSONObject jsonObject = new JSONObject(result);
-				JSONObject jsonResult = new JSONObject(jsonObject.getString("result"));
-				Toast.makeText(getApplicationContext(), jsonResult.getString("formatted_address"), Toast.LENGTH_LONG).show();
-				locTextView.setText(jsonResult.getString("formatted_address"));
-			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			if (result==null) {
+				locTextView.setText("暂时无法获取位置");
 			}
+			else {
+				try {
+					JSONObject jsonObject = new JSONObject(result);
+					JSONObject jsonResult = new JSONObject(jsonObject.getString("result"));
+					//Toast.makeText(getApplicationContext(), jsonResult.getString("formatted_address"), Toast.LENGTH_LONG).show();
+					locTextView.setText(jsonResult.getString("formatted_address"));
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			
 			
 		}
 	}
@@ -449,7 +456,10 @@ public class MainActivity extends Activity {
 	}
 	public static String AddressRequset(String pos_x_add,String pos_y_add)
 	 {
-	DefaultHttpClient httpclient = new DefaultHttpClient();
+	if (pos_x_add==null||pos_y_add==null) {
+		return null;
+	}
+		DefaultHttpClient httpclient = new DefaultHttpClient();
 	try {
 
 		

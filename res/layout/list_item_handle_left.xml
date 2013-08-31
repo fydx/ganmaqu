@@ -4,6 +4,7 @@
   android:layout_width="fill_parent"
   android:layout_height="@dimen/item_height"
   android:orientation="horizontal"
+  android:background="@drawable/background_item"
  >
 
   <ImageView
@@ -11,6 +12,7 @@
       android:layout_width="60dp"
       android:layout_height="@dimen/item_height"
       android:layout_weight="0"
+      android:paddingLeft="15dp"
       android:src="@drawable/morning" />
 
   <TextView
@@ -22,7 +24,7 @@
       android:layout_weight="1"
       android:paddingBottom= "16dp"
       android:gravity="center_vertical"
-      android:paddingLeft="8dp"
+      android:paddingLeft="43dp"
       android:text="text_shopName"
       android:textSize="15dp" />
 
@@ -33,7 +35,7 @@
       android:layout_alignLeft="@+id/text"
       android:layout_alignParentBottom="true"
       android:text="Text_detail" 
-       android:paddingLeft="8dp"
+    android:paddingLeft="43dp"
        android:paddingBottom="10dp"
       android:textColor="#AFAFAF"/>
 
