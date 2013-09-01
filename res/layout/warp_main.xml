@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/relativelayout1"
     xmlns:app="http://schemas.android.com/apk/res/com.sssta.ganmaqu"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
@@ -34,6 +35,7 @@
         dslv:track_drag_sort="false"
         dslv:use_default_controller="true" >
     </com.mobeta.android.dslv.DragSortListView>
+    
     <TextView
         android:id="@+id/textView1"
         android:layout_width="wrap_content"
@@ -80,18 +82,28 @@
         android:id="@+id/test"
         android:layout_width="20dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="15dp"
-        android:layout_marginLeft="15dp" >
+        android:layout_marginBottom="21dp"
+        android:layout_marginLeft="21dp" >
     </geniuz.myPathbutton.composerLayout>
 
     <Button
         android:id="@+id/button_toMap"
-        android:layout_width="20dp"
-        android:layout_height="50dp"
+        android:layout_width="14dp"
+        android:layout_height="70dp"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:layout_weight="1"
-        android:background="@drawable/button_style_main"
-        android:text="Map" />
+        android:background="@drawable/button_map"
+        android:text="  " />
+
+    <TextView
+        android:id="@+id/text_type"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/cost"
+        android:layout_alignParentLeft="true"
+        android:paddingLeft="15dp"
+        android:text="type" 
+        android:textColor="#FFFFFF"/>
 
 </RelativeLayout>

@@ -319,10 +319,10 @@ public class MainActivity extends Activity {
 	}
 
 	public class RequestTask extends AsyncTask<String, integer, String> {
-
+		private String typeString;
 		@Override
 		protected String doInBackground(String... params) {
-			
+			typeString= params[0];
 			double pos_x = 108.947039, pos_y = 34.259203;
 
 			if (params.length > 1) {
@@ -372,6 +372,7 @@ public class MainActivity extends Activity {
 					Types[galleryFlow.getSelectedItemPosition()]);
 			intent.putExtra("loclat", lat);
 			intent.putExtra("loclng", lng);
+			intent.putExtra("type", typeString);
 			dialog.dismiss();
 			startActivity(intent);
 		}

@@ -59,6 +59,7 @@ public class WarpDSLV extends ListActivity {
 	private TextView textView_cost;
 	private ArrayList<place> places_arraylist;
 	private String type;
+	
 	private DragSortListView.DropListener onDrop = new DragSortListView.DropListener() {
 		@Override
 		public void drop(int from, int to) {
@@ -155,6 +156,8 @@ public class WarpDSLV extends ListActivity {
 		loclng= getIntent().getDoubleExtra("loclng", 108.953906);
 		lv.setDropListener(onDrop);
 		lv.setRemoveListener(onRemove);
+		TextView textView_type = (TextView)findViewById(R.id.text_type);
+		textView_type.setText(type);
 		// lv.setDragScrollProfile(ssProfile);
 		button_toMap = (Button) findViewById(R.id.button_toMap);
 		button_toMap.setOnClickListener(new OnClickListener() {
@@ -468,7 +471,7 @@ public class WarpDSLV extends ListActivity {
 				}
 
 				Log.i("cost", "人均消费 new" + String.valueOf(cost));
-				textView_cost.setText("预计人均消费(未算购物) : " + String.valueOf(cost) + "元");}
+				textView_cost.setText("预计人均消费:" + String.valueOf(cost) + "元");}
 
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
@@ -517,7 +520,7 @@ public class WarpDSLV extends ListActivity {
 				}
 
 				Log.i("cost", "人均消费 new" + String.valueOf(cost));
-				textView_cost.setText("预计人均消费(未算购物) : " + String.valueOf(cost) + "元");}
+				textView_cost.setText("预计人均消费:" + String.valueOf(cost) + "元");}
 
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
