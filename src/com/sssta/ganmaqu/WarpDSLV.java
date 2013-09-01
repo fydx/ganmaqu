@@ -23,7 +23,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import android.R.integer;
-import android.app.Dialog;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -110,7 +109,7 @@ public class WarpDSLV extends ListActivity {
 		// 引用控件
 		composerLayout clayout = (composerLayout) findViewById(R.id.test);
 		clayout.init(new int[] { R.drawable.composer_music, R.drawable.composer_place,
-						R.drawable.composer_sleep}, R.drawable.composer_button,
+						R.drawable.composer_sleep}, R.drawable.button_change,
 						R.drawable.composer_icn_plus, composerLayout.LEFTBOTTOM, 180,
 						300);
 		// 加個點擊監聽，100+0對應composer_camera，100+1對應composer_music……如此類推你有幾多個按鈕就加幾多個。
@@ -172,8 +171,8 @@ public class WarpDSLV extends ListActivity {
 			}
 		});
 
-		button_low = (Button)findViewById(R.id.button_low);
-		button_up = (Button)findViewById(R.id.button_up);
+//		button_low = (Button)findViewById(R.id.button_low);
+//		button_up = (Button)findViewById(R.id.button_up);
 		button_saveToDB = (Button)findViewById(R.id.button_savetoDB);
 		
 		/**
@@ -207,28 +206,28 @@ public class WarpDSLV extends ListActivity {
 				saveToDB(places);
 			}
 		});
-		button_low.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				int tempCost = 0 ;
-				for (int i = 0; i < places.size(); i++) {
-					if(places.get(i).getMainType().equals("美食"))
-					{
-						tempCost+= places.get(i).getCost();
-					}
-				}
-				
-				new lowerTask().execute(type,String.valueOf(loclng),String.valueOf(loclat),String.valueOf(tempCost));
-			}
-		});
-		button_up.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				Dialog dialog = new Dialog(WarpDSLV.this, R.style.activity_translucent);
-                dialog.setContentView(R.layout.dialog_layout);
-                dialog.show();
+//		button_low.setOnClickListener(new OnClickListener() {
+//			
+//			@Override
+//			public void onClick(View v) {
+//				int tempCost = 0 ;
+//				for (int i = 0; i < places.size(); i++) {
+//					if(places.get(i).getMainType().equals("美食"))
+//					{
+//						tempCost+= places.get(i).getCost();
+//					}
+//				}
+//				
+//				new lowerTask().execute(type,String.valueOf(loclng),String.valueOf(loclat),String.valueOf(tempCost));
+//			}
+//		});
+//		button_up.setOnClickListener(new OnClickListener() {
+//			
+//			@Override
+//			public void onClick(View v) {
+//				Dialog dialog = new Dialog(WarpDSLV.this, R.style.activity_translucent);
+//                dialog.setContentView(R.layout.dialog_layout);
+//                dialog.show();
 //				int tempCost = 0 ;
 //				for (int i = 0; i < places.size(); i++) {
 //					if(places.get(i).getMainType().equals("美食"))
@@ -238,9 +237,9 @@ public class WarpDSLV extends ListActivity {
 //				}
 //				
 //				new upperTask().execute(type,String.valueOf(loclng),String.valueOf(loclat),String.valueOf(tempCost));
-			
-			}
-		});
+//			
+//			}
+//		});
 		// calculate cost
 		textView_cost = (TextView) findViewById(R.id.cost);
 
@@ -260,7 +259,7 @@ public class WarpDSLV extends ListActivity {
 		}
 
 		Log.i("cost", "人均消费" + String.valueOf(cost));
-		textView_cost.setText("预计人均消费(未算购物) : " + String.valueOf(cost) + "元");
+		textView_cost.setText("预计人均消费 :" + String.valueOf(cost) + "元");
 
 		lv.setOnItemClickListener(new OnItemClickListener() {
 
@@ -418,7 +417,7 @@ public class WarpDSLV extends ListActivity {
 				}
 
 				Log.i("cost", "人均消费 new" + String.valueOf(cost));
-				textView_cost.setText("预计人均消费(未算购物) : " + String.valueOf(cost) + "元");
+				textView_cost.setText("预计人均消费:" + String.valueOf(cost) + "元");
 
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block

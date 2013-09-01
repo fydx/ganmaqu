@@ -112,9 +112,7 @@ public class MainActivity extends Activity {
 		              long id) {
 		         // 选中Gallery中某个图像时，放大显示该图像
 		          ImageView imageview = (ImageView)view;
-		    
-		         view.setLayoutParams(new Gallery.LayoutParams(570 / 3, 370 / 3));
-		       
+		          view.setLayoutParams(new Gallery.LayoutParams(570 / 3, 370 / 3));
 		          for(int i=0; i<parent.getChildCount();i++){
 		             //缩小选中图片旁边的图片
 		             ImageView local_imageview = (ImageView)parent.getChildAt(i);
