@@ -27,6 +27,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.location.Address;
 import android.location.Criteria;
 import android.location.Geocoder;
@@ -96,10 +97,10 @@ public class MainActivity extends Activity {
 
 		ImageAdapter adapter = new ImageAdapter(this, images);
 		adapter.createReflectedImages();
-		gifView = (GifView)findViewById(R.id.gifview);
-		gifView.setGifImage(R.drawable.locgif);
-		
-		gifView.setGifImageType(GifImageType.COVER);
+//		gifView = (GifView)findViewById(R.id.gifview);
+//		gifView.setGifImage(R.drawable.locgif);
+//		
+//		gifView.setGifImageType(GifImageType.COVER);
 		galleryFlow = (Gallery) findViewById(R.id.Gallery01);
 	   
 		galleryFlow.setAdapter(adapter);
@@ -119,9 +120,12 @@ public class MainActivity extends Activity {
 		           if(local_imageview!=imageview){
 		                 local_imageview.setLayoutParams(new Gallery.LayoutParams(520/4, 318/4));
 		                 local_imageview.setScaleType(ImageView.ScaleType.FIT_CENTER);
+		                 local_imageview.setColorFilter(Color.parseColor("#000000"));
 		                 local_imageview.setAlpha(0.1f);
+		             
 		             }
 		           else {
+		        	    local_imageview.setColorFilter(Color.parseColor("#c70102"));
 		        	   local_imageview.setAlpha(1f);
 				}
 		         }
