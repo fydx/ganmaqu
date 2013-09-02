@@ -21,6 +21,15 @@ public class place implements Serializable {
 	private String suitType;
 	private String telNumber;
 	private String time;
+	private String routeType;
+
+	public String getRouteType() {
+		return routeType;
+	}
+
+	public void setRouteType(String routeType) {
+		this.routeType = routeType;
+	}
 
 	public int get_id() {
 		return _id;

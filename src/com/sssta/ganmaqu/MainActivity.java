@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Locale;
 
 import kankan.wheel.widget.WheelView;
-
 import net.tsz.afinal.FinalDb;
 
 import org.apache.http.HttpEntity;
@@ -23,13 +22,13 @@ import org.json.JSONObject;
 import com.sssta.ganmaqu.GifView.GifImageType;
 
 import android.R.integer;
-import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.location.Address;
 import android.location.Criteria;
 import android.location.Geocoder;
@@ -95,10 +94,12 @@ public class MainActivity extends Activity {
 		// 表示调用listener的周期，第3个参数为米,表示位置移动指定距离后就调用listener
 		locationManager.requestLocationUpdates(provider, 2000, 10,
 				locationListener);
-//		gifView = (GifView)findViewById(R.id.gifview);
-//		gifView.setGifImage(R.drawable.locgif);
-//		
-//		gifView.setGifImageType(GifImageType.COVER);
+	
+		
+		gifView = (GifView)findViewById(R.id.gifview);		
+		gifView.setGifImage(R.drawable.locgif);
+		
+		gifView.setGifImageType(GifImageType.COVER);
 		// set gallery
 		Integer[] images = { R.drawable.child, R.drawable.friend,
 				R.drawable.couple };
@@ -125,12 +126,12 @@ public class MainActivity extends Activity {
 		           if(local_imageview!=imageview){
 		                 local_imageview.setLayoutParams(new Gallery.LayoutParams(520/4, 318/4));
 		                 local_imageview.setScaleType(ImageView.ScaleType.FIT_CENTER);
-		                 local_imageview.setColorFilter(Color.parseColor("#000000"));
+		               //  local_imageview.setColorFilter(Color.parseColor("#000000"));
 		                 local_imageview.setAlpha(0.1f);
 		             
 		             }
 		           else {
-		        	    local_imageview.setColorFilter(Color.parseColor("#c70102"));
+		        	    //local_imageview.setColorFilter(Color.parseColor("#c70102"));
 		        	   local_imageview.setAlpha(1f);
 				}
 		         }
@@ -149,15 +150,24 @@ public class MainActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
+				
 				List<place> placeList = db.findAll(place.class);
-				int route_id = placeList.get(placeList.size()-1).getRoute_id();
-				List<place> lastLine =  db.findAllByWhere(place.class, "route_id = " + String.valueOf(route_id));
-				Intent intent = new Intent();
-				intent.setClass(getApplicationContext(), WarpDSLV.class);
-				intent.putExtra("places", (Serializable)lastLine);
-				startActivity(intent);
+				if (placeList.isEmpty()) {
+					Toast.makeText(getApplicationContext(), "啊哦，你还没有保存过路线", Toast.LENGTH_SHORT).show();
+				}
+				else {
+					int route_id = placeList.get(placeList.size()-1).getRoute_id();
+					List<place> lastLine =  db.findAllByWhere(place.class, "route_id = " + String.valueOf(route_id));
+					Intent intent = new Intent();
+					intent.setClass(getApplicationContext(), WarpDSLV.class);
+					intent.putExtra("places", (Serializable)lastLine);
+					intent.putExtra("type", lastLine.get(0).getRouteType());
+					startActivity(intent);
+				}
+				
 			}
 		});
+		
 		Button button_yes = (Button) findViewById(R.id.button_yes);
 		ImageView routeImageView = (ImageView) findViewById(R.id.routeList);
 		routeImageView.setOnClickListener(new OnClickListener() {

@@ -33,7 +33,7 @@ public class ImageAdapter extends BaseAdapter {
 	}
 
 	public boolean createReflectedImages() {
-		final int reflectionGap = 4;
+		final int reflectionGap = 0;
 		int index = 0;
 
 		for (int imageId : mImageIds) {
