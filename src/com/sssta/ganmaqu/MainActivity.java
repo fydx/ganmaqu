@@ -9,6 +9,8 @@ import java.util.Locale;
 
 import kankan.wheel.widget.WheelView;
 
+import net.tsz.afinal.FinalDb;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
@@ -67,11 +69,13 @@ public class MainActivity extends Activity {
 	private GifView gifView;
 	private int count ;
 	private TextView locTextView;
+	private FinalDb db;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_main);
+		db = FinalDb.create(this);
 		locTextView = (TextView)findViewById(R.id.text_location);
 		ipString = getApplicationContext().getResources()
 				.getString(R.string.ip);
@@ -91,16 +95,17 @@ public class MainActivity extends Activity {
 		// 表示调用listener的周期，第3个参数为米,表示位置移动指定距离后就调用listener
 		locationManager.requestLocationUpdates(provider, 2000, 10,
 				locationListener);
+//		gifView = (GifView)findViewById(R.id.gifview);
+//		gifView.setGifImage(R.drawable.locgif);
+//		
+//		gifView.setGifImageType(GifImageType.COVER);
 		// set gallery
 		Integer[] images = { R.drawable.child, R.drawable.friend,
 				R.drawable.couple };
 
 		ImageAdapter adapter = new ImageAdapter(this, images);
 		adapter.createReflectedImages();
-//		gifView = (GifView)findViewById(R.id.gifview);
-//		gifView.setGifImage(R.drawable.locgif);
-//		
-//		gifView.setGifImageType(GifImageType.COVER);
+
 		galleryFlow = (Gallery) findViewById(R.id.Gallery01);
 	   
 		galleryFlow.setAdapter(adapter);
@@ -137,7 +142,22 @@ public class MainActivity extends Activity {
 				
 			}
 		});
-
+		//set Button last
+		Button button_last = (Button)findViewById(R.id.button_last);
+		button_last.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				List<place> placeList = db.findAll(place.class);
+				int route_id = placeList.get(placeList.size()-1).getRoute_id();
+				List<place> lastLine =  db.findAllByWhere(place.class, "route_id = " + String.valueOf(route_id));
+				Intent intent = new Intent();
+				intent.setClass(getApplicationContext(), WarpDSLV.class);
+				intent.putExtra("places", (Serializable)lastLine);
+				startActivity(intent);
+			}
+		});
 		Button button_yes = (Button) findViewById(R.id.button_yes);
 		ImageView routeImageView = (ImageView) findViewById(R.id.routeList);
 		routeImageView.setOnClickListener(new OnClickListener() {
@@ -213,7 +233,8 @@ public class MainActivity extends Activity {
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
 	}
-
+	
+	
 	// 判断是否开启GPS，若未开启，打开GPS设置界面
 	private void openGPS() {
 		if (locationManager
