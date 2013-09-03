@@ -2,15 +2,94 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".DislikeActivity" >
-
+ 
+    tools:context=".DislikeActivity" 
+    android:background="@drawable/background_dislike"
+    >
+	
     <TextView
+        android:id="@+id/textView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/hello_world" />
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:paddingLeft="28dp"
+        android:paddingTop="8dp"
+        android:text="请选择您不喜欢的类型:"
+        android:textColor="#A98457" 
+        android:textSize="19dp"/>
+ 
+ <ScrollView
+        android:id="@+id/scrollView1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+   		android:layout_marginTop="45dp"
+        android:layout_alignTop="@+id/textView2" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical" >
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="82dp"
+        android:layout_height="30dp"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/textView1"
+       
+        android:background="@drawable/marker_small"
+        android:text="地点" 
+        android:textSize="19dp"
+        android:gravity="center_horizontal|center_vertical"
+        android:textColor="#FFFFFF"/>
+
+    <com.sssta.ganmaqu.myGridView
+        android:id="@+id/gridView_dislike"
+        android:layout_width="match_parent"
+        android:layout_height="240dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="3dp"
+        android:layout_below="@+id/textView2"
+        android:numColumns="3" >
+    </com.sssta.ganmaqu.myGridView>
+
+    <TextView
+        android:id="@+id/textView3"
+      	android:layout_width="82dp"
+        android:layout_height="30dp"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/gridView_dislike"
+        android:gravity="center_horizontal|center_vertical"
+        android:layout_marginTop="10dp"
+        android:textSize="19dp"
+        android:text="类型" 
+        android:background="@drawable/marker_small"
+        android:textColor="#FFFFFF"/>
+
+    <com.sssta.ganmaqu.myGridView
+        android:id="@+id/gridView_dislike_type"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/textView3"
+        android:numColumns="3" >
+    </com.sssta.ganmaqu.myGridView>
+<Button
+     android:id="@+id/button_dislike_confirm"
+     android:layout_width="match_parent"
+     android:layout_height="45dp"
+     android:layout_margin="5dp"
+   	android:layout_alignParentBottom="true"
+     android:layout_centerHorizontal="true"
+     android:textSize="19dp"
+     android:text="确定"
+     android:textColor="#FFFFFF"
+     android:background="@drawable/button_style_save" />
+   
+            
+        </LinearLayout>
+    </ScrollView>
+
+ 
 
 </RelativeLayout>

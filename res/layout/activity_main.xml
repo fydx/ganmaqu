@@ -114,7 +114,7 @@
         </LinearLayout>
     </HorizontalScrollView>-->
 
-    <com.sssta.ganmaqu.GifView
+  <!--    <com.sssta.ganmaqu.GifView
         android:id="@+id/gifview"
         android:layout_width="30dp"
         android:layout_height="55dp"
@@ -122,7 +122,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="153dp"
         
-         />
+         />-->
 
     <TextView
         android:id="@+id/text_location"
@@ -170,14 +170,24 @@
         android:textColor="#FFC074"
         />
 
-  <!--   <ImageView
-        android:id="@+id/imageView_location"
-        android:layout_width="62dp"
-        android:layout_height="62dp"
-        android:layout_alignTop="@+id/gifview"
+     <ImageView
+        android:id="@+id/gifview"
+        android:layout_width="30dp"
+        android:layout_height="55dp"
+        android:layout_below="@+id/routeList"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="153dp"
       
-        android:src="@drawable/marker_location" />--> 
+        android:src="@drawable/marker_location" />
+
+    <Button
+        android:id="@+id/button_settings"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:text="   "
+        android:background="@drawable/button_settings" 
+        android:layout_margin="5dp"/>
 
 </RelativeLayout>

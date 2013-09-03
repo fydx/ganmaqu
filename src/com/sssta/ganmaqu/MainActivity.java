@@ -96,10 +96,22 @@ public class MainActivity extends Activity {
 				locationListener);
 	
 		
-		gifView = (GifView)findViewById(R.id.gifview);		
-		gifView.setGifImage(R.drawable.locgif);
-		
-		gifView.setGifImageType(GifImageType.COVER);
+//		gifView = (GifView)findViewById(R.id.gifview);		
+//		gifView.setGifImage(R.drawable.locgif);
+//		
+//		gifView.setGifImageType(GifImageType.COVER);
+		//set settings button
+		Button button_settings = (Button)findViewById(R.id.button_settings);
+		button_settings.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				Intent intent = new Intent();
+				intent.setClass(getApplicationContext(), DislikeActivity.class);
+				startActivity(intent);
+			}
+		});
 		// set gallery
 		Integer[] images = { R.drawable.child, R.drawable.friend,
 				R.drawable.couple };
