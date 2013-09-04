@@ -69,6 +69,10 @@
             android:name="com.sssta.ganmaqu.DislikeActivity"
             android:label="@string/title_activity_dislike" >
         </activity>
+        <activity
+            android:name="com.sssta.ganmaqu.SettingsActivity"
+            android:label="@string/title_activity_settings" >
+        </activity>
     </application>
 
 </manifest>

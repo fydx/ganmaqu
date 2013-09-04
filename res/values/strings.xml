@@ -7,9 +7,10 @@
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_main">MainActivity</string>
     <string name="title_activity_result">ResultActivity</string>
+
     <string-array name="activity_titles">
-     <item>Basic usage playground</item>
-      <item>Heteroheight</item>
+        <item>Basic usage playground</item>
+        <item>Heteroheight</item>
         <item>Warp</item>
         <item>Background handle</item>
         <item>Sections</item>
@@ -102,5 +103,6 @@
     <string name="title_activity_route_list">RouteListActivity</string>
     <string name="title_activity_route_review">RouteReviewActivity</string>
     <string name="title_activity_dislike">DislikeActivity</string>
+    <string name="title_activity_settings">设置</string>
 
 </resources>

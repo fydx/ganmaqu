@@ -193,6 +193,7 @@ public class DislikeActivity extends Activity {
 			else {
 				Toast.makeText(getApplicationContext(), result, Toast.LENGTH_SHORT).show();
 			}
+			finish();
 		}
 	}
 	public String ConvertDislikeToJson(List<String> list) throws JSONException

@@ -1,21 +1,18 @@
 package geniuz.myPathbutton;
 
-import com.nineoldandroids.animation.Animator;
-import com.nineoldandroids.animation.Animator.AnimatorListener;
-import com.nineoldandroids.view.ViewPropertyAnimator;
 
-import android.R;
+import com.sssta.ganmaqu.R;
+
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.AttributeSet;
 import android.view.View;
-import android.view.animation.ScaleAnimation;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import static com.nineoldandroids.view.ViewPropertyAnimator.animate;
 
 @SuppressLint("ViewConstructor")
 public class composerLayout extends RelativeLayout {
@@ -225,9 +222,14 @@ public class composerLayout extends RelativeLayout {
 	 * ´òé_
 	 */
 	public void expand() {
+		
 		myani.startAnimationsIn(duretime);
 		cross.startAnimation(myAnimations.getRotateAnimation(0, -270, duretime));
 		areButtonsShowing = true;
+		Dialog dialog = new Dialog(mycontext,
+				R.style.activity_translucent);
+		dialog.setContentView(R.layout.dialog_connect);
+		dialog.show();
 	}
 
 	/**

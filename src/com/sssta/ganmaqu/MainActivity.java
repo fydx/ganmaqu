@@ -58,7 +58,7 @@ public class MainActivity extends Activity {
 	private String provider;
 	private Address address;
 	private List<place> places;
-	private String ipString;
+	private static String ipString;
 	final String Types[] = new String[] { "亲子出行", "朋友出行", "情侣出行" };
 	private WheelView typeWheel;
 	private double lat;
@@ -337,11 +337,11 @@ public class MainActivity extends Activity {
 			
 		}
 		count++;
-		Toast.makeText(
-				getApplicationContext(),
-				"(main)您当前的位置是: " + "\n" + latLongString + "\n"
-						+ getAddressbyGeoPoint(location), Toast.LENGTH_LONG)
-				.show();
+//		Toast.makeText(
+//				getApplicationContext(),
+//				"(main)您当前的位置是: " + "\n" + latLongString + "\n"
+//						+ getAddressbyGeoPoint(location), Toast.LENGTH_LONG)
+//				.show();
 		// myLocationText.setText("您当前的位置是:/n" + latLongString + "/n"
 		// + getAddressbyGeoPoint(location));
 
@@ -436,6 +436,7 @@ public class MainActivity extends Activity {
 		@Override
 		protected void onPostExecute(String result)
 		{
+			Log.i("ADDRESS REQUEST", result);
 			if (result==null) {
 				locTextView.setText("暂时无法获取位置");
 			}
@@ -454,7 +455,7 @@ public class MainActivity extends Activity {
 			
 		}
 	}
-	public String RequestToServer(String typeString, double pos_x, double pos_y)
+	public static String RequestToServer(String typeString, double pos_x, double pos_y)
 			throws JSONException {
 		DefaultHttpClient httpclient = new DefaultHttpClient();
 		try {

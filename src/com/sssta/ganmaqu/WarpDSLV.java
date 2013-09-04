@@ -23,6 +23,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import android.R.integer;
+import android.app.Dialog;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -53,13 +54,13 @@ public class WarpDSLV extends ListActivity {
 	private String[] array;
 	private ArrayList<String> list;
 	private ArrayList<String> list_time;
-	private double loclat,loclng;
+	private double loclat, loclng;
 	private List<place> places;
-	private Button button_toMap, button_saveToDB,button_up,button_low;
+	private Button button_toMap, button_saveToDB, button_up, button_low;
 	private TextView textView_cost;
 	private ArrayList<place> places_arraylist;
 	private String type;
-	
+
 	private DragSortListView.DropListener onDrop = new DragSortListView.DropListener() {
 		@Override
 		public void drop(int from, int to) {
@@ -80,8 +81,10 @@ public class WarpDSLV extends ListActivity {
 			new changeTask().execute(type, String.valueOf(places.get(which)
 					.getPos_x()), String.valueOf(places.get(which).getPos_y()),
 					places.get(which).getTime(), places.get(which)
-							.getShopName(), String.valueOf(which));
-			new sendDeleteTask().execute(String.valueOf(places.get(which).getId()),"123");
+							.getShopName(), String.valueOf(which), String
+							.valueOf(places.get(which).getCost()));
+			new sendDeleteTask().execute(
+					String.valueOf(places.get(which).getId()), "root");
 		}
 	};
 
@@ -108,55 +111,76 @@ public class WarpDSLV extends ListActivity {
 		 * Set Path Button
 		 */
 		// 引用控件
-		composerLayout clayout = (composerLayout) findViewById(R.id.test);
-		clayout.init(new int[] { R.drawable.composer_music, R.drawable.composer_place,
-						R.drawable.composer_sleep}, R.drawable.button_change,
-						R.drawable.composer_icn_plus, composerLayout.LEFTBOTTOM, 180,
-						300);
+		composerLayout clayout = new composerLayout(getApplicationContext());
+		clayout = (composerLayout) findViewById(R.id.test);
+		clayout.init(new int[] { R.drawable.random, R.drawable.far,
+				R.drawable.close, R.drawable.cheap, R.drawable.expensive },
+				R.drawable.button_change, R.drawable.composer_icn_plus,
+				composerLayout.LEFTBOTTOM, 180, 300);
 		// 加個點擊監聽，100+0對應composer_camera，100+1對應composer_music……如此類推你有幾多個按鈕就加幾多個。
 		OnClickListener clickit = new OnClickListener() {
-					@Override
-					public void onClick(View v) {
-						// TODO Auto-generated method stub
-						if (v.getId() == 100 + 0) {
-							System.out.println("奢侈点 Start");
-							int tempCost = 0 ;
-							for (int i = 0; i < places.size(); i++) {
-								if(places.get(i).getMainType().equals("美食"))
-								{
-									tempCost+= places.get(i).getCost();
-								}
-							}
-							
-							new upperTask().execute(type,String.valueOf(loclng),String.valueOf(loclat),String.valueOf(tempCost));
-						} else if (v.getId() == 100 + 1) {
-							System.out.println("便宜点 Start");
-							int tempCost = 0 ;
-							for (int i = 0; i < places.size(); i++) {
-								if(places.get(i).getMainType().equals("美食"))
-								{
-									tempCost+= places.get(i).getCost();
-								}
-							}
-							
-							new lowerTask().execute(type,String.valueOf(loclng),String.valueOf(loclat),String.valueOf(tempCost));
-							
-						} else if (v.getId() == 100 + 2) {
-							System.out.println("随心换 Start");
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+
+				if (v.getId() == 100 + 0) {
+					System.out.println("随心换 Start");
+					new randomTask().execute();
+
+				} else if (v.getId() == 100 + 1) {
+					System.out.println("远点 Start");
+					// String request =
+					// "/?command=changedis&id="+id+"&pos_x="+pos_x+
+					// "&pos_y="+pos_y+"&shop_x="+shop_x+"&shop_y="+shop_y+"&dis="+change+"&cost="+cost+"&type="+type;
+					new distanceTask().execute(
+							String.valueOf(places.get(0).getPos_x()),
+							String.valueOf(places.get(0).getPos_y()), "1",
+							String.valueOf(places.get(0).getCost()), "root",
+							type);
+				} else if (v.getId() == 100 + 2) {
+					System.out.println("近点 Start");
+					new distanceTask().execute(
+							String.valueOf(places.get(0).getPos_x()),
+							String.valueOf(places.get(0).getPos_y()), "-1",
+							String.valueOf(places.get(0).getCost()), "root",
+							type);
+				} else if (v.getId() == 100 + 3) {
+					System.out.println("便宜点 Start");
+					int tempCost = 0;
+					for (int i = 0; i < places.size(); i++) {
+						if (places.get(i).getMainType().equals("美食")) {
+							tempCost += places.get(i).getCost();
 						}
 					}
-				};
-				clayout.setButtonsOnClickListener(clickit);
+
+					new lowerTask().execute(type, String.valueOf(loclng),
+							String.valueOf(loclat), String.valueOf(tempCost));
+
+				} else if (v.getId() == 100 + 4) {
+					System.out.println("奢侈点 Start");
+					int tempCost = 0;
+					for (int i = 0; i < places.size(); i++) {
+						if (places.get(i).getMainType().equals("美食")) {
+							tempCost += places.get(i).getCost();
+						}
+					}
+
+					new upperTask().execute(type, String.valueOf(loclng),
+							String.valueOf(loclat), String.valueOf(tempCost));
+				}
+			}
+		};
+		clayout.setButtonsOnClickListener(clickit);
 		ipString = getResources().getString(R.string.ip);
 		db = FinalDb.create(this);
 		db_user = FinalDb.create(this);
 		DragSortListView lv = (DragSortListView) getListView();
 		type = getIntent().getStringExtra("type");
-		loclat= getIntent().getDoubleExtra("loclat", 34.265733);
-		loclng= getIntent().getDoubleExtra("loclng", 108.953906);
+		loclat = getIntent().getDoubleExtra("loclat", 34.265733);
+		loclng = getIntent().getDoubleExtra("loclng", 108.953906);
 		lv.setDropListener(onDrop);
 		lv.setRemoveListener(onRemove);
-		TextView textView_type = (TextView)findViewById(R.id.text_type);
+		TextView textView_type = (TextView) findViewById(R.id.text_type);
 		textView_type.setText(type);
 		// lv.setDragScrollProfile(ssProfile);
 		button_toMap = (Button) findViewById(R.id.button_toMap);
@@ -169,15 +193,16 @@ public class WarpDSLV extends ListActivity {
 				intent.setClass(getApplicationContext(), MapActivity.class);
 				intent.putExtra("places", (Serializable) places);
 				startActivity(intent);
-				overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);    
+				overridePendingTransition(android.R.anim.fade_in,
+						android.R.anim.fade_out);
 
 			}
 		});
 
-//		button_low = (Button)findViewById(R.id.button_low);
-//		button_up = (Button)findViewById(R.id.button_up);
-		button_saveToDB = (Button)findViewById(R.id.button_savetoDB);
-		
+		// button_low = (Button)findViewById(R.id.button_low);
+		// button_up = (Button)findViewById(R.id.button_up);
+		button_saveToDB = (Button) findViewById(R.id.button_savetoDB);
+
 		/**
 		 * read from assets json files
 		 */
@@ -209,40 +234,43 @@ public class WarpDSLV extends ListActivity {
 				saveToDB(places);
 			}
 		});
-//		button_low.setOnClickListener(new OnClickListener() {
-//			
-//			@Override
-//			public void onClick(View v) {
-//				int tempCost = 0 ;
-//				for (int i = 0; i < places.size(); i++) {
-//					if(places.get(i).getMainType().equals("美食"))
-//					{
-//						tempCost+= places.get(i).getCost();
-//					}
-//				}
-//				
-//				new lowerTask().execute(type,String.valueOf(loclng),String.valueOf(loclat),String.valueOf(tempCost));
-//			}
-//		});
-//		button_up.setOnClickListener(new OnClickListener() {
-//			
-//			@Override
-//			public void onClick(View v) {
-//				Dialog dialog = new Dialog(WarpDSLV.this, R.style.activity_translucent);
-//                dialog.setContentView(R.layout.dialog_layout);
-//                dialog.show();
-//				int tempCost = 0 ;
-//				for (int i = 0; i < places.size(); i++) {
-//					if(places.get(i).getMainType().equals("美食"))
-//					{
-//						tempCost+= places.get(i).getCost();
-//					}
-//				}
-//				
-//				new upperTask().execute(type,String.valueOf(loclng),String.valueOf(loclat),String.valueOf(tempCost));
-//			
-//			}
-//		});
+		// button_low.setOnClickListener(new OnClickListener() {
+		//
+		// @Override
+		// public void onClick(View v) {
+		// int tempCost = 0 ;
+		// for (int i = 0; i < places.size(); i++) {
+		// if(places.get(i).getMainType().equals("美食"))
+		// {
+		// tempCost+= places.get(i).getCost();
+		// }
+		// }
+		//
+		// new
+		// lowerTask().execute(type,String.valueOf(loclng),String.valueOf(loclat),String.valueOf(tempCost));
+		// }
+		// });
+		// button_up.setOnClickListener(new OnClickListener() {
+		//
+		// @Override
+		// public void onClick(View v) {
+		// Dialog dialog = new Dialog(WarpDSLV.this,
+		// R.style.activity_translucent);
+		// dialog.setContentView(R.layout.dialog_layout);
+		// dialog.show();
+		// int tempCost = 0 ;
+		// for (int i = 0; i < places.size(); i++) {
+		// if(places.get(i).getMainType().equals("美食"))
+		// {
+		// tempCost+= places.get(i).getCost();
+		// }
+		// }
+		//
+		// new
+		// upperTask().execute(type,String.valueOf(loclng),String.valueOf(loclat),String.valueOf(tempCost));
+		//
+		// }
+		// });
 		// calculate cost
 		textView_cost = (TextView) findViewById(R.id.cost);
 
@@ -318,7 +346,8 @@ public class WarpDSLV extends ListActivity {
 			places.get(i).setRoute_id(route_num + 1);
 			places.get(i).setRouteType(type);
 			db.save(places.get(i));
-			new sendArriveTask().execute(String.valueOf(places.get(i).getId()),"123");
+			new sendArriveTask().execute(String.valueOf(places.get(i).getId()),
+					"root");
 			Log.i("DBsave", String.valueOf(i));
 		}
 		int num = user.getRoute_num() + 1;
@@ -358,7 +387,7 @@ public class WarpDSLV extends ListActivity {
 
 			ViewHolder holder = (ViewHolder) v.getTag();
 			// String detail = places.get(position).getAddress();
-		//	Log.i("position", String.valueOf(position));
+			// Log.i("position", String.valueOf(position));
 			holder.detailView.setText(places.get(position).getDetailType()
 					+ "    " + "人均"
 					+ String.valueOf(places.get(position).getCost()) + "元");
@@ -381,16 +410,96 @@ public class WarpDSLV extends ListActivity {
 		}
 	}
 
+	public class distanceTask extends AsyncTask<String, Integer, String> {
+
+		@Override
+		protected String doInBackground(String... params) {
+			// TODO Auto-generated method stub
+			return ChangeDis(loclng, loclat, Double.parseDouble(params[0]),
+					Double.parseDouble(params[1]), Integer.parseInt(params[2]),
+					Integer.parseInt(params[3]), params[4], params[5]);
+		}
+
+		@Override
+		protected void onPostExecute(String result) {
+			decodeJson objdecodeJson = null;
+			try {
+				objdecodeJson = new decodeJson(result);
+			} catch (JSONException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			try {
+				Log.i("top", objdecodeJson.getTop());
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			places = objdecodeJson
+					.JsonToPlaceList(objdecodeJson.getJsonArray());
+			for (int i = 0; i < places.size(); i++) {
+				Log.i("places info", places.get(i).getShopName());
+			}
+			places_arraylist.clear();
+
+			places_arraylist.addAll(places);
+			adapter.notifyDataSetChanged();
+		}
+	}
+
+	public class randomTask extends AsyncTask<String, Integer, String> {
+
+		@Override
+		protected String doInBackground(String... params) {
+			// TODO Auto-generated method stub
+			try {
+				return MainActivity.RequestToServer(type, loclng, loclng);
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return null;
+
+		}
+
+		@Override
+		protected void onPostExecute(String result) {
+			decodeJson objdecodeJson = null;
+			try {
+				objdecodeJson = new decodeJson(result);
+			} catch (JSONException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			try {
+				Log.i("top", objdecodeJson.getTop());
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			places = objdecodeJson
+					.JsonToPlaceList(objdecodeJson.getJsonArray());
+			for (int i = 0; i < places.size(); i++) {
+				Log.i("places info", places.get(i).getShopName());
+			}
+			places_arraylist.clear();
+
+			places_arraylist.addAll(places);
+			adapter.notifyDataSetChanged();
+		}
+
+	}
+
 	public class changeTask extends AsyncTask<String, integer, String> {
 
 		String rankString;
 
 		@Override
 		protected String doInBackground(String... param) {
-			// TODO Auto-generated method stub
+
 			rankString = param[5];
 			return requestChangeStringToServer(param[0], param[1], param[2],
-					param[3], param[4]);
+					param[3], param[4], param[6]);
 		}
 
 		@Override
@@ -406,12 +515,11 @@ public class WarpDSLV extends ListActivity {
 				places_arraylist.clear();
 				places_arraylist.addAll(places);
 				Log.i("change item", changedPlace.getShopName());
-				//	Log.i(tag, msg)
+				// Log.i(tag, msg)
 				adapter.notifyDataSetChanged();
 				cost = 0;
 				for (int i = 0; i < places.size(); i++) {
-					
-				
+
 					if (places.get(i).getMainType().equals("购物")) {
 						// cost += places.get(i).getCost();
 					} else {
@@ -431,48 +539,52 @@ public class WarpDSLV extends ListActivity {
 		}
 
 	}
-	public class lowerTask extends AsyncTask<String, integer, String>{
+
+	public class lowerTask extends AsyncTask<String, integer, String> {
 
 		@Override
 		protected String doInBackground(String... params) {
 			// TODO Auto-generated method stub
-			return requestLowerToServer(params[0], params[1], params[2], params[3]);
+			return requestLowerToServer(params[0], params[1], params[2],
+					params[3]);
 		}
+
 		@Override
 		protected void onPostExecute(String result) {
 			try {
 				Log.i("result", result);
-				if (result.equals("Can not find") ) {
-					Toast.makeText(getApplicationContext(), "Can not find", Toast.LENGTH_SHORT).show();
-				}
-				else{
-				Log.i("Lower! jsonString Change! ", result);
-				decodeJson json = new decodeJson(result);
-				JSONArray jsonArray = json.getJsonArray();
-				places.clear();
-				places = json.JsonToPlaceList(jsonArray);
-				// JSONObject jsonObject = new JSONObject(result);
-				places_arraylist.clear();
-				
-				places_arraylist.addAll(places);
-				Log.i("Lower item Sum", String.valueOf(places.size()));
-				
-				//	Log.i(tag, msg)
-				adapter.notifyDataSetChanged();
-				cost = 0;
-				for (int i = 0; i < places.size(); i++) {
-					
-				
-					if (places.get(i).getMainType().equals("购物")) {
-						// cost += places.get(i).getCost();
-					} else {
-						cost += places.get(i).getCost();
+				if (result.equals("Can not find")) {
+					Toast.makeText(getApplicationContext(), "Can not find",
+							Toast.LENGTH_SHORT).show();
+				} else {
+					Log.i("Lower! jsonString Change! ", result);
+					decodeJson json = new decodeJson(result);
+					JSONArray jsonArray = json.getJsonArray();
+					places.clear();
+					places = json.JsonToPlaceList(jsonArray);
+					// JSONObject jsonObject = new JSONObject(result);
+					places_arraylist.clear();
+
+					places_arraylist.addAll(places);
+					Log.i("Lower item Sum", String.valueOf(places.size()));
+
+					// Log.i(tag, msg)
+					adapter.notifyDataSetChanged();
+					cost = 0;
+					for (int i = 0; i < places.size(); i++) {
+
+						if (places.get(i).getMainType().equals("购物")) {
+							// cost += places.get(i).getCost();
+						} else {
+							cost += places.get(i).getCost();
+						}
+
 					}
 
+					Log.i("cost", "人均消费 new" + String.valueOf(cost));
+					textView_cost.setText("预计人均消费:" + String.valueOf(cost)
+							+ "元");
 				}
-
-				Log.i("cost", "人均消费 new" + String.valueOf(cost));
-				textView_cost.setText("预计人均消费:" + String.valueOf(cost) + "元");}
 
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
@@ -481,47 +593,50 @@ public class WarpDSLV extends ListActivity {
 
 		}
 	}
-	public class upperTask extends AsyncTask<String, integer, String>
-	{
+
+	public class upperTask extends AsyncTask<String, integer, String> {
 
 		@Override
 		protected String doInBackground(String... params) {
 			// TODO Auto-generated method stub
-			return requestUpperToServer(params[0], params[1], params[2], params[3]);
+			return requestUpperToServer(params[0], params[1], params[2],
+					params[3]);
 		}
+
 		@Override
 		protected void onPostExecute(String result) {
 			try {
-				if (result.equals("Can not find") ) {
-					Toast.makeText(getApplicationContext(), "Can not find", Toast.LENGTH_SHORT).show();
-				}
-				else{
-				Log.i("Upper! jsonString Change! ", result);
-				decodeJson json = new decodeJson(result);
-				JSONArray jsonArray = json.getJsonArray();
-				places.clear();
-				places = json.JsonToPlaceList(jsonArray);
-				// JSONObject jsonObject = new JSONObject(result);
-				places_arraylist.clear();
-				places_arraylist.addAll(places);
-				Log.i("Upper item Sum", String.valueOf(places.size()));
-				
-				//	Log.i(tag, msg)
-				adapter.notifyDataSetChanged();
-				cost = 0;
-				for (int i = 0; i < places.size(); i++) {
-					
-				
-					if (places.get(i).getMainType().equals("购物")) {
-						// cost += places.get(i).getCost();
-					} else {
-						cost += places.get(i).getCost();
+				if (result.equals("Can not find")) {
+					Toast.makeText(getApplicationContext(), "Can not find",
+							Toast.LENGTH_SHORT).show();
+				} else {
+					Log.i("Upper! jsonString Change! ", result);
+					decodeJson json = new decodeJson(result);
+					JSONArray jsonArray = json.getJsonArray();
+					places.clear();
+					places = json.JsonToPlaceList(jsonArray);
+					// JSONObject jsonObject = new JSONObject(result);
+					places_arraylist.clear();
+					places_arraylist.addAll(places);
+					Log.i("Upper item Sum", String.valueOf(places.size()));
+
+					// Log.i(tag, msg)
+					adapter.notifyDataSetChanged();
+					cost = 0;
+					for (int i = 0; i < places.size(); i++) {
+
+						if (places.get(i).getMainType().equals("购物")) {
+							// cost += places.get(i).getCost();
+						} else {
+							cost += places.get(i).getCost();
+						}
+
 					}
 
+					Log.i("cost", "人均消费 new" + String.valueOf(cost));
+					textView_cost.setText("预计人均消费:" + String.valueOf(cost)
+							+ "元");
 				}
-
-				Log.i("cost", "人均消费 new" + String.valueOf(cost));
-				textView_cost.setText("预计人均消费:" + String.valueOf(cost) + "元");}
 
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
@@ -529,57 +644,58 @@ public class WarpDSLV extends ListActivity {
 			}
 
 		}
-		
-		
+
 	}
-	public class sendArriveTask extends AsyncTask<String, integer, String>
-	{
+
+	public class sendArriveTask extends AsyncTask<String, integer, String> {
 
 		@Override
 		protected String doInBackground(String... params) {
 			// TODO Auto-generated method stub
-			
+
 			return sendArrive(params[0], params[1]);
 		}
+
 		@Override
 		protected void onPostExecute(String result) {
 			if (result.equals("arrive info has been recorded")) {
-				Log.i("SendArrive",result);
-			}
-			else {
+				Log.i("SendArrive", result);
+			} else {
 				Log.e("SendArrive", "Error in Send Arrive");
 			}
 		}
-		
+
 	}
+
 	public class sendDeleteTask extends AsyncTask<String, integer, String> {
 		@Override
 		protected String doInBackground(String... params) {
 			// TODO Auto-generated method stub
-			
+
 			return sendDelete(params[0], params[1]);
 		}
+
 		@Override
 		protected void onPostExecute(String result) {
 			Log.i("result in Send Delete", result);
 			if (result.equals("delete info has been recorded")) {
-				Log.i("SendDelete",result);
-			}
-			else {
+				Log.i("SendDelete", result);
+			} else {
 				Log.e("SendDelete", "Error in Send Delete");
 			}
 		}
-		
+
 	}
+
 	public String requestChangeStringToServer(String type, String pos_x,
-			String pos_y, String time, String shopname) {
+			String pos_y, String time, String shopname, String cost) {
 		DefaultHttpClient httpclient = new DefaultHttpClient();
 		try {
 			HttpHost target = new HttpHost(ipString, 8080, "http");
 			String request = "/?command=change&type=" + type + "&pos_x="
 					+ pos_x + "&pos_y=" + pos_y + "&time=" + time
-					+ "&shopName=" + shopname;
-			Log.i("changeRequest",request);
+					+ "&shopName=" + shopname + "&cost=" + cost;
+			Log.i("changeRequest", request);
 			HttpGet req = new HttpGet(request);
 			Log.i("excute", "executing request to " + target);
 			HttpResponse rsp = httpclient.execute(target, req);
@@ -618,15 +734,16 @@ public class WarpDSLV extends ListActivity {
 		}
 		return null;
 	}
-	public String requestLowerToServer(String type, String pos_x,
-			String pos_y, String cost) {
+
+	public String requestLowerToServer(String type, String pos_x, String pos_y,
+			String cost) {
 		DefaultHttpClient httpclient = new DefaultHttpClient();
 		try {
 			HttpHost target = new HttpHost(ipString, 8080, "http");
 
-			String request = "/?command=lower&type=" + type + "&pos_x="
-					+ pos_x + "&pos_y=" + pos_y + "&cost=" + cost;
-			Log.i("changeRequest",request);
+			String request = "/?command=lower&type=" + type + "&pos_x=" + pos_x
+					+ "&pos_y=" + pos_y + "&cost=" + cost;
+			Log.i("changeRequest", request);
 			HttpGet req = new HttpGet(request);
 			Log.i("excute", "executing request to " + target);
 			HttpResponse rsp = httpclient.execute(target, req);
@@ -664,16 +781,17 @@ public class WarpDSLV extends ListActivity {
 			httpclient.getConnectionManager().shutdown();
 		}
 		return null;
-	} 
-	public String requestUpperToServer(String type, String pos_x,
-			String pos_y, String cost) {
+	}
+
+	public String requestUpperToServer(String type, String pos_x, String pos_y,
+			String cost) {
 		DefaultHttpClient httpclient = new DefaultHttpClient();
 		try {
 			HttpHost target = new HttpHost(ipString, 8080, "http");
 
-			String request = "/?command=upper&type=" + type + "&pos_x="
-					+ pos_x + "&pos_y=" + pos_y + "&cost=" + cost;
-			Log.i("changeRequest",request);
+			String request = "/?command=upper&type=" + type + "&pos_x=" + pos_x
+					+ "&pos_y=" + pos_y + "&cost=" + cost;
+			Log.i("changeRequest", request);
 			HttpGet req = new HttpGet(request);
 			Log.i("excute", "executing request to " + target);
 			HttpResponse rsp = httpclient.execute(target, req);
@@ -711,68 +829,89 @@ public class WarpDSLV extends ListActivity {
 			httpclient.getConnectionManager().shutdown();
 		}
 		return null;
-	} 
-	public String sendArrive(String shopId,String userId)
-	{
-		
+	}
+
+	public String sendArrive(String shopId, String userId) {
+
 		DefaultHttpClient httpclient = new DefaultHttpClient();
-		try
-		{
+		try {
 			HttpHost target = new HttpHost(ipString, 8080, "http");
-			String request = "/?command=arrive&shopId="+shopId+"&userId="+userId;
+			String request = "/?command=arrive&shopId=" + shopId + "&userId="
+					+ userId;
 			HttpGet req = new HttpGet(request);
 			System.out.println("executing request to " + target);
 			HttpResponse rsp = httpclient.execute(target, req);
 			HttpEntity entity = rsp.getEntity();
-			InputStreamReader isr = new InputStreamReader(entity.getContent(), "utf-8");
+			InputStreamReader isr = new InputStreamReader(entity.getContent(),
+					"utf-8");
 			BufferedReader br = new BufferedReader(isr);
 			String line = null;
-			while ((line = br.readLine()) != null)
-			{
+			while ((line = br.readLine()) != null) {
 				return line;
 			}
-		}
-		catch (Exception e)
-		{
+		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
-		}
-		finally
-		{
+		} finally {
 			httpclient.getConnectionManager().shutdown();
 		}
 		return null;
-		
+
 	}
-	public String sendDelete(String shopId,String userId){
-		
+
+	public String sendDelete(String shopId, String userId) {
+
 		Log.i("shopId + userId", shopId + " " + userId);
 		DefaultHttpClient httpclient = new DefaultHttpClient();
-		try
-		{
+		try {
 			HttpHost target = new HttpHost(ipString, 8080, "http");
-			String request = "/?command=delete&shopId="+shopId+"&userId="+userId;
+			String request = "/?command=delete&shopId=" + shopId + "&userId="
+					+ userId;
 			HttpGet req = new HttpGet(request);
 			System.out.println("executing request to " + target);
 			HttpResponse rsp = httpclient.execute(target, req);
 			HttpEntity entity = rsp.getEntity();
-			InputStreamReader isr = new InputStreamReader(entity.getContent(), "utf-8");
+			InputStreamReader isr = new InputStreamReader(entity.getContent(),
+					"utf-8");
 			BufferedReader br = new BufferedReader(isr);
 			String line = null;
-			while ((line = br.readLine()) != null)
-			{
+			while ((line = br.readLine()) != null) {
 				System.out.println(line);
 				return line;
 			}
-		}
-		catch (Exception e)
-		{
+		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
-		}
-		finally
-		{
+		} finally {
 			httpclient.getConnectionManager().shutdown();
+		}
+		return null;
+	}
+
+	public String ChangeDis(double pos_x, double pos_y, double shop_x,
+			double shop_y, int change, int cost, String id, String type) // 改距离，远一点change为1，近为-1
+	{
+		DefaultHttpClient httpclient = new DefaultHttpClient();
+		try {
+			HttpHost target = new HttpHost(ipString, 8080, "http");
+			String request = "/?command=changedis&id=" + id + "&pos_x=" + pos_x
+					+ "&pos_y=" + pos_y + "&shop_x=" + shop_x + "&shop_y="
+					+ shop_y + "&dis=" + change + "&cost=" + cost + "&type="
+					+ type;
+			HttpGet req = new HttpGet(request);
+			System.out.println("executing request to " + target);
+			HttpResponse rsp = httpclient.execute(target, req);
+			HttpEntity entity = rsp.getEntity();
+			InputStreamReader isr = new InputStreamReader(entity.getContent(),
+					"utf-8");
+			BufferedReader br = new BufferedReader(isr);
+			String line = null;
+			while ((line = br.readLine()) != null) {
+				return line;
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
 		}
 		return null;
 	}
