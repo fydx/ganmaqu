@@ -108,7 +108,7 @@ public class MainActivity extends Activity {
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				Intent intent = new Intent();
-				intent.setClass(getApplicationContext(), DislikeActivity.class);
+				intent.setClass(getApplicationContext(),SettingsActivity.class);
 				startActivity(intent);
 			}
 		});

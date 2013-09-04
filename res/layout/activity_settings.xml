@@ -2,13 +2,61 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-   
-    tools:context=".SettingsActivity" 
-    android:background="@drawable/background_dislike">
+    android:background="@drawable/background_dislike"
+    tools:context=".SettingsActivity" >
 
     <TextView
+        android:id="@+id/textView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/hello_world" />
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="10dp"
+        android:text="设置"
+        android:textColor="#A98457"
+        android:textSize="19dp" />
+
+    <Button
+        android:id="@+id/button_account"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_below="@+id/textView1"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/background_settings_item"
+        android:gravity="left|center_vertical"
+        android:paddingLeft="19dp"
+        android:text="账号设置"
+        android:textSize="19dp" />
+
+    <Button
+        android:id="@+id/button_prefer"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_below="@+id/button_account"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/background_settings_item"
+        android:gravity="left|center_vertical"
+        android:paddingLeft="19dp"
+        android:text="偏好设置"
+        android:textSize="19dp" />
+
+    <Button
+        android:id="@+id/button_about"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_below="@+id/button_prefer"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/background_settings_item"
+        android:gravity="left|center_vertical"
+        android:paddingLeft="19dp"
+        android:text="关于"
+        android:textSize="19dp" />
 
 </RelativeLayout>
