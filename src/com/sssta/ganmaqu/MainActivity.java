@@ -19,7 +19,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.sssta.ganmaqu.GifView.GifImageType;
+import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 
 import android.R.integer;
 import android.annotation.TargetApi;
@@ -27,8 +27,6 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.location.Address;
 import android.location.Criteria;
 import android.location.Geocoder;
@@ -39,6 +37,8 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.v4.app.FragmentActivity;
+import android.text.AndroidCharacter;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
@@ -52,7 +52,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class MainActivity extends Activity {
+public class MainActivity extends android.support.v4.app.FragmentActivity {
 	private LocationManager locationManager;
 	private Location location;
 	private String provider;
@@ -69,6 +69,7 @@ public class MainActivity extends Activity {
 	private int count ;
 	private TextView locTextView;
 	private FinalDb db;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -155,6 +156,16 @@ public class MainActivity extends Activity {
 				
 			}
 		});
+		//set sliding menu
+		 SlidingMenu menu = new SlidingMenu(this);
+	      menu.setMode(SlidingMenu.LEFT);
+	      menu.setTouchModeAbove(SlidingMenu.TOUCHMODE_MARGIN);
+	      menu.setShadowWidthRes(R.dimen.shadow_width);
+	      menu.setShadowDrawable(R.drawable.shadow);
+	      menu.setBehindOffsetRes(R.dimen.slidingmenu_offset);
+	      menu.setFadeDegree(0.35f);
+	      menu.attachToActivity(this, SlidingMenu.SLIDING_CONTENT);
+	      menu.setMenu(R.layout.menu);
 		//set Button last
 		Button button_last = (Button)findViewById(R.id.button_last);
 		button_last.setOnClickListener(new OnClickListener() {
