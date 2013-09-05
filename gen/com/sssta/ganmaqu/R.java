@@ -1409,7 +1409,6 @@ containing a value of this type.
     }
     public static final class integer {
         public static final int abs__max_action_buttons=0x7f090000;
-        public static final int num_cols=0x7f090001;
     }
     public static final class layout {
         public static final int abs__action_bar_home=0x7f030000;

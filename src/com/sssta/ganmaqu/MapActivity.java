@@ -181,12 +181,7 @@ public class MapActivity extends Activity {
 		 */
 	}
 
-//	@Override
-//	public boolean onCreateOptionsMenu(Menu menu) {
-//		// Inflate the menu; this adds items to the action bar if it is present.
-//		getMenuInflater().inflate(R.menu.map, menu);
-//		return true;
-//	}
+
 	// 判断是否开启GPS，若未开启，打开GPS设置界面
 		private void openGPS() {
 			if (locationManager

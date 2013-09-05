@@ -499,7 +499,6 @@ int id useLogo 0x7f050009
 int id webPage 0x7f050059
 int id wrap_content 0x7f050005
 int integer abs__max_action_buttons 0x7f090000
-int integer num_cols 0x7f090001
 int layout abs__action_bar_home 0x7f030000
 int layout abs__action_bar_tab 0x7f030001
 int layout abs__action_bar_tab_bar_view 0x7f030002
