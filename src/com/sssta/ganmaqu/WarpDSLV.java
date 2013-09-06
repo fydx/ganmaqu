@@ -25,9 +25,17 @@ import org.json.JSONException;
 import android.R.integer;
 import android.app.Dialog;
 import android.app.ListActivity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.text.AndroidCharacter;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -41,9 +49,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.mobeta.android.dslv.DragSortListView;
 
-public class WarpDSLV extends ListActivity {
+public class WarpDSLV extends  android.support.v4.app.FragmentActivity {
 
 	// private ArrayAdapter<String> adapter;
 	private String ipString;
@@ -60,6 +69,10 @@ public class WarpDSLV extends ListActivity {
 	private TextView textView_cost;
 	private ArrayList<place> places_arraylist;
 	private String type;
+	private SlidingMenu menu;
+	private SharedPreferences userInfo;
+	private String userid;
+	
 
 	private DragSortListView.DropListener onDrop = new DragSortListView.DropListener() {
 		@Override
@@ -84,7 +97,7 @@ public class WarpDSLV extends ListActivity {
 							.getShopName(), String.valueOf(which), String
 							.valueOf(places.get(which).getCost()));
 			new sendDeleteTask().execute(
-					String.valueOf(places.get(which).getId()), "root");
+					String.valueOf(places.get(which).getId()), userid);
 		}
 	};
 
@@ -107,6 +120,21 @@ public class WarpDSLV extends ListActivity {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.warp_main);
+		userInfo = getSharedPreferences("userInfo", 0);
+		userid = userInfo.getString("userid", "root");
+		/**
+		 * set slidingmenu - map
+		 */
+		menu = new SlidingMenu(this);
+	      menu.setMode(SlidingMenu.RIGHT);
+	      menu.setTouchModeAbove(SlidingMenu.TOUCHMODE_MARGIN);
+	      menu.setShadowWidthRes(R.dimen.shadow_width);
+	      menu.setShadowDrawable(R.drawable.shadow);
+	      menu.setBehindOffsetRes(R.dimen.slidingmenu_offset_map);
+	//      menu.setFadeDegree(0.25f);
+	      menu.attachToActivity(this, SlidingMenu.SLIDING_CONTENT);
+	      menu.setMenu(R.layout.fragment_map);
+	      
 		/**
 		 * Set Path Button
 		 */
@@ -135,14 +163,14 @@ public class WarpDSLV extends ListActivity {
 					new distanceTask().execute(
 							String.valueOf(places.get(0).getPos_x()),
 							String.valueOf(places.get(0).getPos_y()), "1",
-							String.valueOf(places.get(0).getCost()), "root",
+							String.valueOf(places.get(0).getCost()), userid,
 							type);
 				} else if (v.getId() == 100 + 2) {
 					System.out.println("近点 Start");
 					new distanceTask().execute(
 							String.valueOf(places.get(0).getPos_x()),
 							String.valueOf(places.get(0).getPos_y()), "-1",
-							String.valueOf(places.get(0).getCost()), "root",
+							String.valueOf(places.get(0).getCost()), userid,
 							type);
 				} else if (v.getId() == 100 + 3) {
 					System.out.println("便宜点 Start");
@@ -174,7 +202,7 @@ public class WarpDSLV extends ListActivity {
 		ipString = getResources().getString(R.string.ip);
 		db = FinalDb.create(this);
 		db_user = FinalDb.create(this);
-		DragSortListView lv = (DragSortListView) getListView();
+		DragSortListView lv = (DragSortListView) findViewById(R.id.dslv_result);
 		type = getIntent().getStringExtra("type");
 		loclat = getIntent().getDoubleExtra("loclat", 34.265733);
 		loclng = getIntent().getDoubleExtra("loclng", 108.953906);
@@ -232,6 +260,7 @@ public class WarpDSLV extends ListActivity {
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				saveToDB(places);
+				finish();
 			}
 		});
 		// button_low.setOnClickListener(new OnClickListener() {
@@ -315,9 +344,9 @@ public class WarpDSLV extends ListActivity {
 		places_arraylist.addAll(places);
 
 		adapter = new placeAdapter(places_arraylist);
-		setListAdapter(adapter);
+		lv.setAdapter(adapter);
 		lv.setDividerHeight(0);
-
+	
 	}
 
 	// 从assets中读取数据
@@ -347,7 +376,7 @@ public class WarpDSLV extends ListActivity {
 			places.get(i).setRouteType(type);
 			db.save(places.get(i));
 			new sendArriveTask().execute(String.valueOf(places.get(i).getId()),
-					"root");
+					userid);
 			Log.i("DBsave", String.valueOf(i));
 		}
 		int num = user.getRoute_num() + 1;
@@ -453,7 +482,7 @@ public class WarpDSLV extends ListActivity {
 		protected String doInBackground(String... params) {
 			// TODO Auto-generated method stub
 			try {
-				return MainActivity.RequestToServer(type, loclng, loclng);
+				return MainActivity.RequestToServer(type, loclng, loclng, userid);
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -915,4 +944,18 @@ public class WarpDSLV extends ListActivity {
 		}
 		return null;
 	}
+			//methods for fragment
+	@Override
+    public void onBackPressed() {  
+        //点击返回键关闭滑动菜单  
+        if (menu.isMenuShowing()) {  
+            menu.showContent();  
+        } else {  
+            super.onBackPressed();  
+        }  
+    }  
+			public List<place> getPlaces()
+			{
+				return places;
+			}
 }

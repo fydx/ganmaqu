@@ -1,37 +1,276 @@
 package com.sssta.ganmaqu;
 
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Looper;
+import android.provider.Settings;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.webkit.WebChromeClient;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
 import android.widget.Button;
-
+import android.widget.Toast;
 
 public class MapFragment extends android.support.v4.app.Fragment {
-	
+	// data for fragment
+	private dataFromJs data;
+	private String jsString;
+	private LocationManager locationManager;
+	private Location location;
+	private String provider;
+	private WebView mapView;
 	@Override
 	public void onAttach(Activity activity) {
-	super.onAttach(activity);
-	//获取到父Activity的引用。
+		super.onAttach(activity);
+		// 获取到父Activity的引用。
 	}
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
-		// return super.onCreateView(inflater, container, savedInstanceState);
-		  View view = inflater.inflate(R.layout.activity_map, container, false);
-		  
-		  return view;
+		View view = inflater.inflate(R.layout.activity_map, container, false);
+		setLocationManager();
+		data= new dataFromJs();
+		mapView = (WebView) view.findViewById(R.id.mapView);
+		final List<place> places = (List<place>) getActivity().getIntent().getSerializableExtra(
+				"places");
+		Log.i("places nums", String.valueOf(places.size()));
+		WebSettings webSettings = mapView.getSettings();
+		// WebView 开启 javascript
+		webSettings.setJavaScriptEnabled(true);
+		webSettings.setJavaScriptCanOpenWindowsAutomatically(true);
+		webSettings.setDefaultTextEncodingName("utf-8");  
+	    mapView.setWebViewClient(new MyWebViewClient());
+	    mapView.setWebChromeClient(new WebChromeClient() {
+	        public void onConsoleMessage(String message, int lineNumber, String sourceID) {
+	            Log.i("MyApplication", message + " -- From line "
+	                                 + lineNumber + " of "
+	                                 + sourceID);
+
+	          }
+	        });
+	   // mapView.addJavascriptInterface(data, "mapView");
+	    mapView.addJavascriptInterface(data, "dataFromJs");
+		mapView.loadUrl("file:///android_asset/test_baidu.html");
+		try {
+			Thread.sleep(300);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		// mapView.loadUrl("file:///android_asset/js.html");
+//		Log.i("route", "javascript:calcRoute2("+String.valueOf(places.get(0).getPos_y())+","+
+//		String.valueOf(places.get(0).getPos_x()+")"));
+		Button jsButton = (Button) view.findViewById(R.id.test_button);
+//		mapView.loadUrl("javascript:calcRoute2("+String.valueOf(places.get(0).getPos_y())+","+
+//				String.valueOf(places.get(0).getPos_x()+")"));
+		
+		//经过测试，这里必须设置timer才能执行，也就是页面文件需要加载完毕后才能使用其他的js方法
+		//时间设定为0.2s即可
+		Timer timer = new Timer(); //设置Timer
+		TimerTask task = new TimerTask() {
+			@Override
+			public void run() {
+				getActivity().getApplicationContext().getMainLooper();
+				Looper.prepare();
+//				
+//				mapView.loadUrl("javascript:calcRoute("+String.valueOf(places.get(0).getPos_y())+","+
+//						String.valueOf(places.get(0).getPos_x()+")"));
+					updateWithNewLocation(location);
+					for (int i = 0; i < places.size(); i++) {
+					String	contentString ;
+					contentString ="<p><b>" + places.get(i).getShopName() + "</b></p>" + "<p>"
+					    + places.get(i).getAddress() + "</p>" + "<p><a href=http://m.dianping.com/shop/" + 
+							String.valueOf(places.get(i).getId()) + ">" + "详细信息>></a>" ;
+//					String loadString = "javascript:addMessage(" +String.valueOf(places.get(i).getPos_y())+","+
+//							String.valueOf(places.get(i).getPos_x()+ "," +  "\"" +  contentString + "\""+")");
+//					String loadString = "javascript:codeAddress(" + "\"" +  places.get(i).getShopName() +"\"" + "," +  "\"" +  contentString + "\"" +  "," +String.valueOf(places.get(i).getPos_x())+","+
+//							String.valueOf(places.get(i).getPos_y())+ ")" ; 
+//					try {
+//						Thread.sleep(1000);
+//					} catch (InterruptedException e) {
+//						// TODO Auto-generated catch block
+//						e.printStackTrace();
+//					}
+					String loadString = "javascript:codeAddress(" + "\"" +  places.get(i).getShopName() +"\"" + "," +  "\"" +  contentString + "\"" +  ")" ; 
+					Log.i("load String", loadString);
+					mapView.loadUrl(loadString);
+					//地图加载完毕后 update location
+//					try {
+//						Thread.sleep(300);
+//					} catch (InterruptedException e) {
+//						// TODO Auto-generated catch block
+//						e.printStackTrace();
+//					}
+					//mapView.loadUrl("javascript:addLocation(34.139,108.84199)");
+					//mapView.loadUrl("javascript:calcRoute()");
+				}
+			}
+		};
+		timer.schedule(task, 1500 * 1);
+		
+		Timer timer_2 = new Timer(); //设置Timer
+		TimerTask task_2 = new TimerTask() {
+			@Override
+			public void run() {
+				if(data.getDataString()!= null)
+				{
+					Log.i("dataFromJs", data.getDataString());
+				}
+				else {
+					Log.i("dataFromJs", "null");
+				}
+		
+			}
+		};
+		timer_2.schedule(task_2, 1000 * 1);
+		
+		//mapView.loadUrl("javascript:getRouteInfo()");
+		jsButton.setText("run");
+		jsButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				
+		      System.exit(0);
+			}
+		});
+//		// return super.onCreateView(inflater, container, savedInstanceState); 
+//	
+
+		return view;
 	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
-		
+
+	}
+
+	// methods for fragment
+	public void setLocationManager() {
+		/**
+		 * 设置LocationManager 设置地理位置服务
+		 */
+		// 获取LocationManager服务
+		locationManager = (LocationManager) getActivity().getSystemService(
+				Context.LOCATION_SERVICE);
+		// 获取Location Provider
+		getProvider();
+		// 如果未设置位置源，打开GPS设置界面
+		openGPS();
+		// 获取位置
+		location = locationManager.getLastKnownLocation(provider);
+		// 显示位置信息到文字标签
+
+		// 注册监听器locationListener，第2、3个参数可以控制接收gps消息的频度以节省电力。第2个参数为毫秒，
+		// 表示调用listener的周期，第3个参数为米,表示位置移动指定距离后就调用listener
+		locationManager.requestLocationUpdates(provider, 2000, 10,
+				locationListener);
+	}
+
+	// 判断是否开启GPS，若未开启，打开GPS设置界面
+	public void openGPS() {
+		if (locationManager
+				.isProviderEnabled(android.location.LocationManager.GPS_PROVIDER)
+				|| locationManager
+						.isProviderEnabled(android.location.LocationManager.NETWORK_PROVIDER)) {
+			Toast.makeText(getActivity().getApplicationContext(), "位置源已设置！",
+					Toast.LENGTH_SHORT).show();
+			return;
+		}
+		Toast.makeText(getActivity().getApplicationContext(), "位置源未设置！",
+				Toast.LENGTH_SHORT).show();
+		// 转至GPS设置界面
+		Intent intent = new Intent(Settings.ACTION_SECURITY_SETTINGS);
+		startActivityForResult(intent, 0);
+	}
+
+	// 获取Location Provider
+	public void getProvider() {
+		// 构建位置查询条件
+		Criteria criteria = new Criteria();
+		// 查询精度：高
+		criteria.setAccuracy(Criteria.ACCURACY_FINE);
+		// 是否查询海拨：否
+		criteria.setAltitudeRequired(false);
+		// 是否查询方位角:否
+		criteria.setBearingRequired(false);
+		// 是否允许付费：是
+		criteria.setCostAllowed(true);
+		// 电量要求：低
+		criteria.setPowerRequirement(Criteria.POWER_LOW);
+		// 返回最合适的符合条件的provider，第2个参数为true说明,如果只有一个provider是有效的,则返回当前provider
+		provider = locationManager.getBestProvider(criteria, true);
+	}
+
+	// Gps消息监听器
+	public final LocationListener locationListener = new LocationListener() {
+		// 位置发生改变后调用
+		public void onLocationChanged(Location location) {
+
+			updateWithNewLocation(location);
+		}
+
+		// provider被用户关闭后调用
+		public void onProviderDisabled(String provider) {
+			updateWithNewLocation(null);
+		}
+
+		// provider被用户开启后调用
+		public void onProviderEnabled(String provider) {
+
+		}
+
+		// provider状态变化时调用
+		public void onStatusChanged(String provider, int status, Bundle extras) {
+
+		}
+
+	};
+
+	// Gps监听器调用，处理位置信息
+	private void updateWithNewLocation(Location location) {
+		String latLongString;
+		double lat = 0;
+		double lng = 0;
+		// TextView myLocationText = (TextView)
+		// findViewById(R.id.text_location);
+		if (location != null) {
+			lat = location.getLatitude();
+			lng = location.getLongitude();
+			latLongString = "纬度:" + lat + "\n经度:" + lng;
+		} else {
+			latLongString = "无法获取地理信息";
+		}
+		Toast.makeText(getActivity().getApplicationContext(),
+				"您当前的位置是: " + "\n" + latLongString + "\n", Toast.LENGTH_LONG)
+				.show();
+		// mapView.loadUrl("javascript:deleteLocation()");
+		// mapView.loadUrl("javascript:addLocation(34.139,108.84199)");f
+		// mapView.loadUrl("javascript:addLocation(" +String.valueOf(lng)+
+		// ","+String.valueOf(lat) +")");
+		Log.i("addLocation", "javascript:setLocation_1(" + String.valueOf(lng)
+				+ "," + String.valueOf(lat) + ")");
+		// mapView.loadUrl("javascript:setLocation_1(" +String.valueOf(lng)+
+		// ","+String.valueOf(lat) +")");
+
+		// myLocationText.setText("您当前的位置是:/n" + latLongString + "/n"
+		// + getAddressbyGeoPoint(location));
 
 	}
 }

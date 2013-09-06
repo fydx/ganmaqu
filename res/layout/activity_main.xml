@@ -188,6 +188,7 @@
         android:layout_alignParentTop="true"
         android:text="   "
         android:background="@drawable/button_settings" 
-        android:layout_margin="5dp"/>
+        android:layout_margin="5dp"
+        android:visibility="gone"/>
 
 </RelativeLayout>

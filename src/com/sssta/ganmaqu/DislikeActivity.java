@@ -16,9 +16,12 @@ import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.sssta.ganmaqu.SettingsFragment.loginTask;
+
 import android.R.string;
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.ClipData.Item;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -38,6 +41,7 @@ import android.widget.TextView;
 
 public class DislikeActivity extends Activity {
 	private  String ipString;
+	private String userid;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -45,6 +49,8 @@ public class DislikeActivity extends Activity {
 		setContentView(R.layout.activity_dislike);
 		ipString = getApplicationContext().getResources()
 				.getString(R.string.ip);
+		SharedPreferences userInfo = getApplicationContext().getSharedPreferences("userInfo", 0);
+		userid = userInfo.getString("userid", "root");
 		myGridView gridView = (myGridView) findViewById(R.id.gridView_dislike);
 		myGridView gridView_type = (myGridView) findViewById(R.id.gridView_dislike_type);
 		final GridAdapter gridAdapter = new GridAdapter(this);
@@ -203,7 +209,8 @@ public class DislikeActivity extends Activity {
 		for (int i = 0; i < list.size(); i++) {
 			jsonObject.put(item + String.valueOf(i), list.get(i));
 		}
-		jsonObject.put("id", "root");
+		jsonObject.put("id", userid);
+		Log.i("userid", userid);
 		return jsonObject.toString();
 	}
 	public String PostDislike(String json)
@@ -211,9 +218,9 @@ public class DislikeActivity extends Activity {
 		try
 		{
 			DefaultHttpClient httpclient = new DefaultHttpClient();
-			HttpPost httpPost = new HttpPost("http://" +ipString +":8080/");
+			HttpPost httpPost = new HttpPost("http://" + ipString+ ":8080/");
 			List<NameValuePair> params = new ArrayList<NameValuePair>();
-			params.add(new BasicNameValuePair("command", "dislike"));
+			params.add(new BasicNameValuePair("command", "setdislike"));
 			params.add(new BasicNameValuePair("item", json));
 			UrlEncodedFormEntity encodedValues = new UrlEncodedFormEntity(params, "UTF-8");
 			httpPost.setEntity(encodedValues);
@@ -243,7 +250,9 @@ public class DislikeActivity extends Activity {
 			// TODO: handle exception
 			e.printStackTrace();
 		}
+	
 		return "EXCEPTION";
 	}
+	
 	
 }

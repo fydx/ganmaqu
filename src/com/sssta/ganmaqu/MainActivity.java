@@ -27,6 +27,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.location.Address;
 import android.location.Criteria;
 import android.location.Geocoder;
@@ -69,6 +70,7 @@ public class MainActivity extends android.support.v4.app.FragmentActivity {
 	private int count ;
 	private TextView locTextView;
 	private FinalDb db;
+	private String userid;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -80,6 +82,8 @@ public class MainActivity extends android.support.v4.app.FragmentActivity {
 		ipString = getApplicationContext().getResources()
 				.getString(R.string.ip);
 		count = 0;
+		SharedPreferences userInfo = getApplicationContext().getSharedPreferences("userInfo", 0);
+		userid = userInfo.getString("userid", "root");
 		// 获取LocationManager服务
 		locationManager = (LocationManager) this
 				.getSystemService(Context.LOCATION_SERVICE);
@@ -145,7 +149,7 @@ public class MainActivity extends android.support.v4.app.FragmentActivity {
 		             }
 		           else {
 		        	    //local_imageview.setColorFilter(Color.parseColor("#c70102"));
-		        	   local_imageview.setAlpha(1f);
+		        	   	local_imageview.setAlpha(1f);
 				}
 		         }
 		     }
@@ -388,7 +392,7 @@ public class MainActivity extends android.support.v4.app.FragmentActivity {
 				pos_y = Double.parseDouble(params[2]);
 			}
 			try {
-				return RequestToServer(params[0], pos_x, pos_y);
+				return RequestToServer(params[0], pos_x, pos_y,userid);
 			} catch (JSONException e) {
 				
 				e.printStackTrace();
@@ -447,12 +451,13 @@ public class MainActivity extends android.support.v4.app.FragmentActivity {
 		@Override
 		protected void onPostExecute(String result)
 		{
-			Log.i("ADDRESS REQUEST", result);
+			
 			if (result==null) {
 				locTextView.setText("暂时无法获取位置");
 			}
 			else {
 				try {
+					Log.i("ADDRESS REQUEST", result);
 					JSONObject jsonObject = new JSONObject(result);
 					JSONObject jsonResult = new JSONObject(jsonObject.getString("result"));
 					//Toast.makeText(getApplicationContext(), jsonResult.getString("formatted_address"), Toast.LENGTH_LONG).show();
@@ -466,7 +471,7 @@ public class MainActivity extends android.support.v4.app.FragmentActivity {
 			
 		}
 	}
-	public static String RequestToServer(String typeString, double pos_x, double pos_y)
+	public static String RequestToServer(String typeString, double pos_x, double pos_y,String userid)
 			throws JSONException {
 		DefaultHttpClient httpclient = new DefaultHttpClient();
 		try {
@@ -476,7 +481,7 @@ public class MainActivity extends android.support.v4.app.FragmentActivity {
 			HttpHost target = new HttpHost(ipString, 8080, "http");
 			// String request="/?type=情侣出行&pos_x=108.947039&pos_y=34.259203";
 			String request = "/?command=full&type=" + typeString + "&pos_x="
-					+ String.valueOf(pos_x) + "&pos_y=" + String.valueOf(pos_y);
+					+ String.valueOf(pos_x) + "&pos_y=" + String.valueOf(pos_y) + "&id=" + userid;
 			Log.i("request string", request);
 			HttpGet req = new HttpGet(request);
 			// System.out.println("executing request to " + target);

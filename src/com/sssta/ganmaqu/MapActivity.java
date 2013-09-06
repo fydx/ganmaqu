@@ -42,7 +42,7 @@ public class MapActivity extends Activity {
 		/**
 		 * 设置LocationManager 设置地理位置服务
 		 */
-		// 获取LocationManager服务
+				// 获取LocationManager服务
 				locationManager = (LocationManager) this
 						.getSystemService(Context.LOCATION_SERVICE);
 				// 获取Location Provider
