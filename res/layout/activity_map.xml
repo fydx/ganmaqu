@@ -28,6 +28,18 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        android:text="test js" />
+        android:text="test js" 
+        android:visibility="gone"/>
+
+    <Button
+        android:id="@+id/button_backtoResult"
+        android:layout_width="40dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:text="返回 ←" 
+        android:background="#c70102"
+        android:visibility="gone"/>
 
 </RelativeLayout>

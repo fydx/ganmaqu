@@ -52,7 +52,7 @@ import android.widget.Toast;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.mobeta.android.dslv.DragSortListView;
 
-public class WarpDSLV extends  android.support.v4.app.FragmentActivity {
+public class WarpDSLV extends android.support.v4.app.FragmentActivity {
 
 	// private ArrayAdapter<String> adapter;
 	private String ipString;
@@ -72,7 +72,6 @@ public class WarpDSLV extends  android.support.v4.app.FragmentActivity {
 	private SlidingMenu menu;
 	private SharedPreferences userInfo;
 	private String userid;
-	
 
 	private DragSortListView.DropListener onDrop = new DragSortListView.DropListener() {
 		@Override
@@ -126,15 +125,16 @@ public class WarpDSLV extends  android.support.v4.app.FragmentActivity {
 		 * set slidingmenu - map
 		 */
 		menu = new SlidingMenu(this);
-	      menu.setMode(SlidingMenu.RIGHT);
-	      menu.setTouchModeAbove(SlidingMenu.TOUCHMODE_MARGIN);
-	      menu.setShadowWidthRes(R.dimen.shadow_width);
-	      menu.setShadowDrawable(R.drawable.shadow);
-	      menu.setBehindOffsetRes(R.dimen.slidingmenu_offset_map);
-	//      menu.setFadeDegree(0.25f);
-	      menu.attachToActivity(this, SlidingMenu.SLIDING_CONTENT);
-	      menu.setMenu(R.layout.fragment_map);
-	      
+		menu.setMode(SlidingMenu.RIGHT);
+		menu.setTouchModeAbove(SlidingMenu.TOUCHMODE_MARGIN);
+		menu.setShadowWidthRes(R.dimen.shadow_width);
+		menu.setShadowDrawable(R.drawable.shadow);
+		menu.setBehindOffsetRes(R.dimen.slidingmenu_offset_map);
+		// menu.setFadeDegree(0.25f);
+		menu.attachToActivity(this, SlidingMenu.SLIDING_CONTENT);
+		menu.setMenu(R.layout.fragment_map);
+		
+
 		/**
 		 * Set Path Button
 		 */
@@ -346,7 +346,7 @@ public class WarpDSLV extends  android.support.v4.app.FragmentActivity {
 		adapter = new placeAdapter(places_arraylist);
 		lv.setAdapter(adapter);
 		lv.setDividerHeight(0);
-	
+
 	}
 
 	// 从assets中读取数据
@@ -482,7 +482,8 @@ public class WarpDSLV extends  android.support.v4.app.FragmentActivity {
 		protected String doInBackground(String... params) {
 			// TODO Auto-generated method stub
 			try {
-				return MainActivity.RequestToServer(type, loclng, loclng, userid);
+				return MainActivity.RequestToServer(type, loclng, loclng,
+						userid);
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -944,18 +945,23 @@ public class WarpDSLV extends  android.support.v4.app.FragmentActivity {
 		}
 		return null;
 	}
-			//methods for fragment
+
+	// methods for fragment
 	@Override
-    public void onBackPressed() {  
-        //点击返回键关闭滑动菜单  
-        if (menu.isMenuShowing()) {  
-            menu.showContent();  
-        } else {  
-            super.onBackPressed();  
-        }  
-    }  
-			public List<place> getPlaces()
-			{
-				return places;
-			}
+	public void onBackPressed() {
+		// 点击返回键关闭滑动菜单
+		if (menu.isMenuShowing()) {
+			menu.showContent();
+		} else {
+			super.onBackPressed();
+		}
+	}
+
+	public List<place> getPlaces() {
+		return places;
+	}
+	public void hideMenu()
+	{
+		menu.showContent();
+	}
 }

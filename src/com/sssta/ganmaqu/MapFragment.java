@@ -22,6 +22,7 @@ import android.view.View.OnClickListener;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
+import android.webkit.WebView.FindListener;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -151,7 +152,15 @@ public class MapFragment extends android.support.v4.app.Fragment {
 		});
 //		// return super.onCreateView(inflater, container, savedInstanceState); 
 //	
-
+		Button button_back = (Button)view.findViewById(R.id.button_backtoResult);
+		button_back.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
 		return view;
 	}
 
