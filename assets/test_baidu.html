@@ -212,7 +212,7 @@ function addMessage(){
 function setLocation_1(pos_x,pos_y)
 {
 	location_1 = new BMap.Point(pos_x,pos_y);
-  console.log("The Location has been set !");
+  console.log("The Location has been set !" + pos_x + "  " + pos_y);
   if (marker_location==null) {
      marker_location = new BMap.Marker(location_1,{icon:myIcon});  // 创建标注
      map.addOverlay(marker_location);  // 将标注添加到地图中  

@@ -34,9 +34,11 @@ public class MapFragment extends android.support.v4.app.Fragment {
 	private Location location;
 	private String provider;
 	private WebView mapView;
+	private Activity activity_1;
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
+		this.activity_1 = activity;
 		// 获取到父Activity的引用。
 	}
 
@@ -176,7 +178,7 @@ public class MapFragment extends android.support.v4.app.Fragment {
 		 * 设置LocationManager 设置地理位置服务
 		 */
 		// 获取LocationManager服务
-		locationManager = (LocationManager) getActivity().getSystemService(
+		locationManager = (LocationManager) activity_1.getSystemService(
 				Context.LOCATION_SERVICE);
 		// 获取Location Provider
 		getProvider();
@@ -266,17 +268,19 @@ public class MapFragment extends android.support.v4.app.Fragment {
 		} else {
 			latLongString = "无法获取地理信息";
 		}
-		Toast.makeText(getActivity().getApplicationContext(),
-				"您当前的位置是: " + "\n" + latLongString + "\n", Toast.LENGTH_LONG)
-				.show();
+		Log.i("LatLongString",latLongString);
+//		Toast.makeText(getActivity().getApplicationContext(),
+//				"您当前的位置是: " + "\n" + latLongString + "\n", Toast.LENGTH_LONG)
+//				.show();
+		
 		// mapView.loadUrl("javascript:deleteLocation()");
 		// mapView.loadUrl("javascript:addLocation(34.139,108.84199)");f
 		// mapView.loadUrl("javascript:addLocation(" +String.valueOf(lng)+
 		// ","+String.valueOf(lat) +")");
 		Log.i("addLocation", "javascript:setLocation_1(" + String.valueOf(lng)
 				+ "," + String.valueOf(lat) + ")");
-		// mapView.loadUrl("javascript:setLocation_1(" +String.valueOf(lng)+
-		// ","+String.valueOf(lat) +")");
+		 mapView.loadUrl("javascript:setLocation_1(" +String.valueOf(lng)+
+		 ","+String.valueOf(lat) +")");
 
 		// myLocationText.setText("您当前的位置是:/n" + latLongString + "/n"
 		// + getAddressbyGeoPoint(location));
