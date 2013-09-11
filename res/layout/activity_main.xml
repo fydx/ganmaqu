@@ -48,7 +48,8 @@
 	android:layout_width="fill_parent" 
 	android:layout_height="wrap_content" 
 	android:layout_centerInParent="true"
-	android:layout_marginBottom="25dp"
+	android:layout_marginBottom="55dp"
+	
 	 android:layout_weight="1.5"/>
         
     </LinearLayout>
@@ -164,7 +165,7 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_below="@+id/text_location"
-        android:layout_marginTop="35dp"
+        android:layout_marginTop="65dp"
         android:text="请选择出行类型"
         android:textSize="20dp"
         android:textColor="#FFC074"

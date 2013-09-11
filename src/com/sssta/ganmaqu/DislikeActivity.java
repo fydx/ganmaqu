@@ -277,16 +277,18 @@ public class DislikeActivity extends Activity {
 		final String item = "item";
 		JSONObject jsonObject = new JSONObject();
 		for (int i = 0; i < list.size(); i++) {
-			jsonObject.put(item + String.valueOf(i), list.get(i));
+			jsonObject.put(item + String.valueOf(i+1), list.get(i));
 		}
 		jsonObject.put("id", userid);
 		Log.i("userid", userid);
+		Log.i("post jsonString", jsonObject.toString());
 		return jsonObject.toString();
 	}
 	public String PostDislike(String json)
 	{
 		try
 		{
+			
 			DefaultHttpClient httpclient = new DefaultHttpClient();
 			HttpPost httpPost = new HttpPost("http://" + ipString+ ":8080/");
 			List<NameValuePair> params = new ArrayList<NameValuePair>();

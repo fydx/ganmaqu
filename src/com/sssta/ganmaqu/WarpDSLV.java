@@ -473,6 +473,20 @@ public class WarpDSLV extends android.support.v4.app.FragmentActivity {
 
 			places_arraylist.addAll(places);
 			adapter.notifyDataSetChanged();
+			cost = 0;
+			for (int i = 0; i < places.size(); i++) {
+
+				if (places.get(i).getMainType().equals("购物")) {
+					// cost += places.get(i).getCost();
+				} else {
+					cost += places.get(i).getCost();
+				}
+
+			}
+
+			Log.i("cost", "人均消费 new" + String.valueOf(cost));
+			textView_cost.setText("预计人均消费:" + String.valueOf(cost)
+					+ "元");
 		}
 	}
 
@@ -516,6 +530,20 @@ public class WarpDSLV extends android.support.v4.app.FragmentActivity {
 
 			places_arraylist.addAll(places);
 			adapter.notifyDataSetChanged();
+			cost = 0;
+			for (int i = 0; i < places.size(); i++) {
+
+				if (places.get(i).getMainType().equals("购物")) {
+					// cost += places.get(i).getCost();
+				} else {
+					cost += places.get(i).getCost();
+				}
+
+			}
+
+			Log.i("cost", "人均消费 new" + String.valueOf(cost));
+			textView_cost.setText("预计人均消费:" + String.valueOf(cost)
+					+ "元");
 		}
 
 	}

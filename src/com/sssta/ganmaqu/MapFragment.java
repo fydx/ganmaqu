@@ -89,8 +89,8 @@ public class MapFragment extends android.support.v4.app.Fragment {
 		TimerTask task = new TimerTask() {
 			@Override
 			public void run() {
-				getActivity().getApplicationContext().getMainLooper();
-				Looper.prepare();
+//				getActivity().getApplicationContext().getMainLooper();
+//				Looper.prepare();
 //				
 //				mapView.loadUrl("javascript:calcRoute("+String.valueOf(places.get(0).getPos_y())+","+
 //						String.valueOf(places.get(0).getPos_x()+")"));

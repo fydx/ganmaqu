@@ -24,7 +24,7 @@
       android:layout_weight="1"
       android:paddingBottom= "16dp"
       android:gravity="center_vertical"
-      android:paddingLeft="43dp"
+      android:paddingLeft="53dp"
       android:text="text_shopName"
       android:textColor="#000000"
       android:textSize="15dp" />
@@ -36,7 +36,7 @@
       android:layout_alignLeft="@+id/text"
       android:layout_alignParentBottom="true"
       android:text="Text_detail" 
-    android:paddingLeft="43dp"
+    android:paddingLeft="53dp"
        android:paddingBottom="10dp"
       android:textColor="#000000"/>
 
