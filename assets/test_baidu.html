@@ -46,7 +46,8 @@ function StringBuilder(){
   //var count  = 0;
   count = 0;
  	map = new BMap.Map("container");          // 创建地图实例
-	var point = new BMap.Point(108.951733,34.269895);  // 创建点坐标
+  var point = new BMap.Point(108.953906,34.265733);  
+	//var point = new BMap.Point(113.3368,23.15255);  // 创建点坐标 广州
 	map.centerAndZoom(point, 15); // 初始化地图，设置中心点坐标和地图级别
  	map.enableScrollWheelZoom();   //启用滚轮放大缩小
   map.addControl(new BMap.NavigationControl());  //添加默认缩放平移控件
@@ -60,8 +61,14 @@ function StringBuilder(){
       icons.push(myIcon);
   };
 
+    setLocation_1(108.953906,34.265733); //默认设置初始位置为钟楼
+   //setLocation_1(113.3368,23.15255); //默认设置初始位置为(华南理工大学)
+   // codeAddress("永旺(东方宝泰店)","<p><b>永旺(东方宝泰店)</b></p><p>天河区林和中路63号东方宝泰购物广场B1-B2铺</p><p><a href=http://m.dianping.com/shop/3132802>详细信息>></a>");
+   // codeAddress("9号码头海鲜火锅酒家","<p><b>9号码头海鲜火锅酒家</b></p><p>天河区粤垦路68号广垦商务大厦3楼</p><p><a href=http://m.dianping.com/shop/7996438>详细信息>></a>");
+   // codeAddress("飞影电影城","<p><b>飞影电影城</b></p><p>天河区东莞庄路38号世纪联华超市2楼</p><p><a href=http://m.dianping.com/shop/5538719>详细信息>></a>");
+   // codeAddress("飞影电影城","<p><b>飞影电影城</b></p><p>天河区东莞庄路38号世纪联华超市2楼</p><p><a href=http://m.dianping.com/shop/5538719>详细信息>></a>");
+   // codeAddress("飞影电影城","<p><b>飞影电影城</b></p><p>天河区东莞庄路38号世纪联华超市2楼</p><p><a href=http://m.dianping.com/shop/5538719>详细信息>></a>");
 
-   setLocation_1(108.953457,34.265808); //默认设置初始位置为钟楼
    //**********TEST AREA*****************
    // codeAddress("豪邦购物广场","<p><b>豪邦购物广场</b></p><p>雁塔区长安中路177号小寨沃尔玛地下</p><p><a href=http://m.dianping.com/shop/2464546>详细信息>></a>");
    // codeAddress("大厨快餐厅","<p><b>大厨快餐厅</b></p><p>雁塔区长安中路2d2号旺角广场3楼</p><p><a href=http://m.dianping.com/shop/8968397>详细信息>></a>");
