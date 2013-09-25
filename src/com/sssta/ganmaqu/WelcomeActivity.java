@@ -22,7 +22,7 @@ public class WelcomeActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		this.requestWindowFeature(Window.FEATURE_NO_TITLE);  //Set NO titlebar
+		this.requestWindowFeature(Window.FEATURE_NO_TITLE);    //Set NO titlebar
 		this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN); //璁剧疆鍏ㄥ睆
 		setContentView(R.layout.activity_welcome);
 		// 判断是否为第一次进入程序
@@ -32,7 +32,7 @@ public class WelcomeActivity extends Activity {
 				e.putInt("COUNT", ++count1);
 				e.commit();
 				// 判断结束
-		final Intent intent2 = new Intent(WelcomeActivity.this, MainActivity.class);
+		final Intent intent2 = new Intent(WelcomeActivity.this, NewMapActivity.class);
 		Timer timer = new Timer(); //设置Timer
 		TimerTask task = new TimerTask() {
 			@Override
