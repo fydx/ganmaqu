@@ -22,6 +22,7 @@ import com.baidu.mapapi.search.MKShareUrlResult;
 import com.baidu.mapapi.search.MKSuggestionResult;
 import com.baidu.mapapi.search.MKTransitRouteResult;
 import com.baidu.mapapi.search.MKWalkingRouteResult;
+import com.baidu.platform.comapi.basestruct.GeoPoint;
 
 public class NewMapActivity extends Activity {
 	// 地图相关
@@ -42,7 +43,13 @@ public class NewMapActivity extends Activity {
 		mMapView = (MapView) findViewById(R.id.bmapsView);
 		mMapView.getController().enableClick(true);
 		mMapView.getController().setZoom(12);
-		
+
+        /**
+         * 设定地图中心点
+         */
+        GeoPoint p = new GeoPoint((int)(34.265733 * 1E6), (int)(116.400191* 1E6));
+        mMapView.getController().setCenter(p);
+        
 		// 初始化搜索模块，注册事件监听
 		mSearch = new MKSearch();
 		mSearch.init(app.mBMapManager, new MKSearchListener() {

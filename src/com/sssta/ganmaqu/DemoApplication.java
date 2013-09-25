@@ -19,6 +19,7 @@ public class DemoApplication extends Application {
 
     //public static final String strKey = "970293a9a6573c4517821ee70a7e30a5";  // for baiduapi 
      public static final String strKey = "397c8e382ee8dcc520182990a807b1b9"; // for XPS 
+     
     /*
     	注意：为了给用户提供更安全的服务，Android SDK自v2.1.3版本开始采用了全新的Key验证体系。
     	因此，当您选择使用v2.1.3及之后版本的SDK时，需要到新的Key申请页面进行全新Key的申请，
