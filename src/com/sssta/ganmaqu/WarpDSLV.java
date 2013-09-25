@@ -218,7 +218,8 @@ public class WarpDSLV extends android.support.v4.app.FragmentActivity {
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				Intent intent = new Intent();
-				intent.setClass(getApplicationContext(), MapActivity.class);
+	//			intent.setClass(getApplicationContext(), MapActivity.class);
+				intent.setClass(getApplicationContext(), NewMapActivity.class); //set new map activity
 				intent.putExtra("places", (Serializable) places);
 				startActivity(intent);
 				overridePendingTransition(android.R.anim.fade_in,
