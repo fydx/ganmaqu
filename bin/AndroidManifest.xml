@@ -87,7 +87,8 @@
         </activity>
         <activity
             android:name="com.sssta.ganmaqu.NewMapActivity"
-            android:label="@string/title_activity_new_map" >
+            android:label="@string/title_activity_new_map"
+          >
         </activity>
     </application>
 
