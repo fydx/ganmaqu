@@ -10,6 +10,7 @@ import android.app.Activity;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -39,10 +40,12 @@ public class NewMapActivity extends Activity {
 	Button mBtnGeoCode = null; // 将地址编码为坐标
 	MKSearch mSearch = null; // 搜索模块，也可去掉地图模块独立使用
 	 ArrayList<MKPoiInfo> mkpoi = null;
+	private List<place> places;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		DemoApplication app = (DemoApplication) this.getApplication();
 		final int markers_id[] = { R.drawable.icon_1, R.drawable.icon_2,R.drawable.icon_3,R.drawable.icon_4,R.drawable.icon_5};
 		//BMapManager 必须在setContentview前面初始化，否则报错
@@ -51,7 +54,7 @@ public class NewMapActivity extends Activity {
 	             app.mBMapManager.init(DemoApplication.strKey,new DemoApplication.MyGeneralListener());
 	         }
 		setContentView(R.layout.activity_new_map);
-		final List<place> places = (List<place>) getIntent().getSerializableExtra(
+		 places = (List<place>) getIntent().getSerializableExtra(
 				"places");
 		Log.i("places nums", String.valueOf(places.size()));
 		
@@ -104,6 +107,7 @@ public class NewMapActivity extends Activity {
 	    protected boolean onTap(int index) {  
 	        //在此处理item点击事件  
 	        System.out.println("item onTap: "+index);  
+	        Toast.makeText(getApplicationContext(), places.get(index).getShopName(), Toast.LENGTH_LONG).show();
 	        return true;  
 	    }  
 	        public boolean onTap(GeoPoint pt, MapView mapView){  
