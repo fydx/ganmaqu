@@ -976,15 +976,15 @@ public class WarpDSLV extends android.support.v4.app.FragmentActivity {
 	}
 
 	// methods for fragment
-	@Override
-	public void onBackPressed() {
-		// 点击返回键关闭滑动菜单
-		if (menu.isMenuShowing()) {
-			menu.showContent();
-		} else {
-			super.onBackPressed();
-		}
-	}
+//	@Override
+//	public void onBackPressed() {
+//		// 点击返回键关闭滑动菜单
+//		if (menu.isMenuShowing()) {
+//			menu.showContent();
+//		} else {
+//			super.onBackPressed();
+//		}
+//	}
 
 	public List<place> getPlaces() {
 		return places;

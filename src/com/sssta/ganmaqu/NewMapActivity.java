@@ -2,6 +2,8 @@ package com.sssta.ganmaqu;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import android.app.Activity;
 import android.graphics.drawable.Drawable;
@@ -24,13 +26,13 @@ import com.baidu.mapapi.search.MKSearch;
 import com.baidu.platform.comapi.basestruct.GeoPoint;
 
 public class NewMapActivity extends Activity {
-	// 地图相关
 	MapView mMapView = null; // 地图View
 	// UI相关
 	Button mBtnReverseGeoCode = null; // 将坐标反编码为地址
 	Button mBtnGeoCode = null; // 将地址编码为坐标
 	MKSearch mSearch = null; // 搜索模块，也可去掉地图模块独立使用
 	 ArrayList<MKPoiInfo> mkpoi = null;
+	 private  OverlayTest itemOverlay = null ;
 	private List<place> places;
 	/**
 	 *  用MapController完成地图控制 
@@ -112,21 +114,27 @@ public class NewMapActivity extends Activity {
      	}
        Log.i("overlay items ", String.valueOf(overlayItems.size()));
      
-//     //创建IteminizedOverlay  
-//       OverlayTest itemOverlay = null ;
-//       itemOverlay = new OverlayTest(markers.get(0), mMapView);  
-       /**
-   	 * 创建自定义overlay
-   	 */
-        mOverlay = new MyOverlay(markers.get(0),mMapView);	
-        
+     //创建IteminizedOverlay  
+      
+       itemOverlay = new OverlayTest(markers.get(0), mMapView);  
+   
        //将IteminizedOverlay添加到MapView中  
-         mOverlay.addItem(overlayItems);
-       clearOverlay(mMapView);
+       itemOverlay.addItem(overlayItems);
        
-       mMapView.getOverlays().add(mOverlay);  
-       
+       //clearOverlay(mMapView);
+       mMapView.getOverlays().clear();
        mMapView.refresh();
+       Timer timer = new Timer();
+       TimerTask timerTask = new TimerTask() {
+		
+		@Override
+		public void run() {
+			// TODO Auto-generated method stub
+			 mMapView.getOverlays().add(itemOverlay);  
+		        mMapView.refresh();
+		}
+	};
+      timer.schedule(timerTask, 100);
         
 		
 		
@@ -178,7 +186,9 @@ public class NewMapActivity extends Activity {
 	     * @param view
 	     */
 	    public void clearOverlay(View view){
+	    	
 	    	mOverlay.removeAll();
+	    	
 	    	if (pop != null){
 	            pop.hidePop();
 	    	}
