@@ -15,8 +15,10 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.baidu.location.LocationClient;
 import com.baidu.mapapi.BMapManager;
 import com.baidu.mapapi.map.ItemizedOverlay;
+import com.baidu.mapapi.map.LocationData;
 import com.baidu.mapapi.map.MapController;
 import com.baidu.mapapi.map.MapView;
 import com.baidu.mapapi.map.OverlayItem;
@@ -90,7 +92,11 @@ public class NewMapActivity extends Activity {
          */
         GeoPoint p = new GeoPoint((int)(34.265733 * 1E6), (int)(108.953906* 1E6));
         mMapController.setCenter(p);
-        
+        /*
+         * 定位相关
+         */
+        LocationClient mLocClient;
+    	LocationData locData = null;
         
         //封装地点坐标到list中
         List<GeoPoint> geoPoints = null;

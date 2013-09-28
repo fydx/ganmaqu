@@ -181,8 +181,8 @@ public class WarpDSLV extends android.support.v4.app.FragmentActivity {
 						}
 					}
 
-					new lowerTask().execute(type, String.valueOf(loclng),
-							String.valueOf(loclat), String.valueOf(tempCost));
+					new lowerTask().execute(type, 	String.valueOf(places.get(0).getPos_x()),
+							String.valueOf(places.get(0).getPos_y()), String.valueOf(tempCost));
 
 				} else if (v.getId() == 100 + 4) {
 					System.out.println("ÉÝ³Þµã Start");
@@ -193,8 +193,8 @@ public class WarpDSLV extends android.support.v4.app.FragmentActivity {
 						}
 					}
 
-					new upperTask().execute(type, String.valueOf(loclng),
-							String.valueOf(loclat), String.valueOf(tempCost));
+					new upperTask().execute(type, String.valueOf(places.get(0).getPos_x()),
+							String.valueOf(places.get(0).getPos_y()),String.valueOf(tempCost));
 				}
 			}
 		};

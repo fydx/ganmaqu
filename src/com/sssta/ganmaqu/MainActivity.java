@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -20,6 +21,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
+import com.sssta.ganmaqu.SettingsFragment.loginTask;
 
 import android.R.integer;
 import android.annotation.TargetApi;
@@ -82,6 +84,7 @@ public class MainActivity extends android.support.v4.app.FragmentActivity {
 		ipString = getApplicationContext().getResources()
 				.getString(R.string.ip);
 		count = 0;
+		new getCircles().execute("西安");
 		SharedPreferences userInfo = getApplicationContext().getSharedPreferences("userInfo", 0);
 		userid = userInfo.getString("userid", "root");
 		// 获取LocationManager服务
@@ -564,4 +567,100 @@ public class MainActivity extends android.support.v4.app.FragmentActivity {
 	return null;
 
 }
+ public class getCircles extends AsyncTask<String, Integer, String>
+ {
+
+	@Override
+	protected String doInBackground(String... params) {
+		// TODO Auto-generated method stub
+		return GetCircleList(params[0]);
+	}
+	@Override
+	protected void onPostExecute(String result)
+	{
+		try {
+			HashMap<Integer, String> hashMapCircle = hashCircle(result);
+			Log.i("circle1", hashMapCircle.get(0));
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	 
+ }
+ public  String GetCircleList(String city)  //获得某个城市的商圈列表，item1,2,3....
+	{
+		DefaultHttpClient httpclient = new DefaultHttpClient();
+		try
+		{
+			HttpHost target = new HttpHost(ipString, 8080, "http");
+			String request = "/?command=getcirclelist&city="+city+"";
+			HttpGet req = new HttpGet(request);
+			System.out.println("executing request to " + target);
+			HttpResponse rsp = httpclient.execute(target, req);
+			HttpEntity entity = rsp.getEntity();
+			InputStreamReader isr = new InputStreamReader(entity.getContent(), "utf-8");
+			BufferedReader br = new BufferedReader(isr);
+			String line = null;
+			while ((line = br.readLine()) != null)
+			{
+				Log.i("return circles line", line);
+				return line;
+			}
+		}
+		catch (Exception e)
+		{
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		return null;
+	}
+    public HashMap<Integer,String> hashCircle(String resultString) throws JSONException
+    
+    {
+    	
+    	HashMap<Integer,String> ansHashMap = new HashMap<Integer, String>();
+    	int i = 1 ;
+    	JSONObject circle = new JSONObject(resultString);
+    //	Log.i("result String", circle.toString());
+    	
+    	
+    	while (circle.has("item" + String.valueOf(i))) {
+    		String temp = circle.getString("item"+ String.valueOf(i));
+    		ansHashMap.put(i-1, temp);
+    		i++;
+		}
+    	//Log.i("hasmap", ansHashMap.toString());
+    	return ansHashMap;
+    }
+    public String testGetShopCircle(double pos_x,double pos_y,String city)   //给坐标，返回最近商圈名称
+	{
+		DefaultHttpClient httpclient = new DefaultHttpClient();
+		try
+		{
+			HttpHost target = new HttpHost(ipString, 8080, "http");
+			String request = "/?command=getshopcircle&city="+city+"&pos_x="+pos_x+"&pos_y="+pos_y;
+//			System.out.println(request);
+			HttpGet req = new HttpGet(request);
+			System.out.println("executing request to " + target);
+			HttpResponse rsp = httpclient.execute(target, req);
+			HttpEntity entity = rsp.getEntity();
+			InputStreamReader isr = new InputStreamReader(entity.getContent(), "utf-8");
+			BufferedReader br = new BufferedReader(isr);
+			String line = null;
+			while ((line = br.readLine()) != null)
+			{
+				return line;
+			}
+		}
+		catch (Exception e)
+		{
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
+    
 }
