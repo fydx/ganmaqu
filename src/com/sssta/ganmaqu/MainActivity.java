@@ -74,7 +74,8 @@ public class MainActivity extends android.support.v4.app.FragmentActivity {
 	private FinalDb db;
 	private String userid;
 	private static String city ; 
-	private String circleString;
+	//private String circleString;
+	private CircleDialog circleDialog;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -85,6 +86,18 @@ public class MainActivity extends android.support.v4.app.FragmentActivity {
 		city= new String("西安");
 		
 		locTextView = (TextView)findViewById(R.id.text_location);
+		locTextView.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				circleDialog = new CircleDialog(MainActivity.this);
+				circleDialog.setCity(city);
+				circleDialog.setTextView(locTextView);
+				circleDialog.show();
+				
+			}
+		});
 		ipString = getApplicationContext().getResources()
 				.getString(R.string.ip);
 		count = 0;
@@ -401,7 +414,7 @@ public class MainActivity extends android.support.v4.app.FragmentActivity {
 				pos_y = Double.parseDouble(params[2]);
 			}
 			try {
-				return RequestToServer(params[0], pos_x, pos_y,userid,circleString);
+				return RequestToServer(params[0], pos_x, pos_y,userid,locTextView.getText().toString());
 			} catch (JSONException e) {
 				
 				e.printStackTrace();
@@ -444,7 +457,7 @@ public class MainActivity extends android.support.v4.app.FragmentActivity {
 			intent.putExtra("loclat", lat);
 			intent.putExtra("loclng", lng);
 			intent.putExtra("type", typeString);
-			intent.putExtra("circle", circleString);
+			intent.putExtra("circle", locTextView.getText().toString());
 			dialog.dismiss();
 			startActivity(intent);
 		}
@@ -647,7 +660,7 @@ public class MainActivity extends android.support.v4.app.FragmentActivity {
 		{
 			HttpHost target = new HttpHost(ipString, 8080, "http");
 			String request = "/?command=getshopcircle&city="+city+"&pos_x="+pos_x+"&pos_y="+pos_y;
-//			System.out.println(request);
+			System.out.println(request);
 			HttpGet req = new HttpGet(request);
 			System.out.println("executing request to " + target);
 			HttpResponse rsp = httpclient.execute(target, req);
@@ -680,7 +693,7 @@ public class MainActivity extends android.support.v4.app.FragmentActivity {
     	@Override
     	protected void onPostExecute(String result)
     	{
-    		circleString = result;
+    		//circleString = result;
     		if (result==null) {
 				locTextView.setText("暂时无法获取位置");
 			}
