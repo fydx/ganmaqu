@@ -73,6 +73,8 @@ public class MainActivity extends android.support.v4.app.FragmentActivity {
 	private TextView locTextView;
 	private FinalDb db;
 	private String userid;
+	private static String city ; 
+	private String circleString;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -80,11 +82,13 @@ public class MainActivity extends android.support.v4.app.FragmentActivity {
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_main);
 		db = FinalDb.create(this);
+		city= new String("西安");
+		
 		locTextView = (TextView)findViewById(R.id.text_location);
 		ipString = getApplicationContext().getResources()
 				.getString(R.string.ip);
 		count = 0;
-		new getCircles().execute("西安");
+		//new getCircles().execute("西安");
 		SharedPreferences userInfo = getApplicationContext().getSharedPreferences("userInfo", 0);
 		userid = userInfo.getString("userid", "root");
 		// 获取LocationManager服务
@@ -351,7 +355,9 @@ public class MainActivity extends android.support.v4.app.FragmentActivity {
 			Log.i("address request start", "execute");
 			// TODO 修改坐标
 			//new AddressRequestTask().execute("34.238225","108.924703"); //Test
-			new AddressRequestTask().execute(String.valueOf(lat),String.valueOf(lng));
+			//new AddressRequestTask().execute(String.valueOf(lat),String.valueOf(lng));
+			Log.i("loaction", String.valueOf(lat) + " " + String.valueOf(lng));
+			new getCurrentCircle().execute(String.valueOf(lng),String.valueOf(lat),"西安");
 			
 		}
 		count++;
@@ -395,7 +401,7 @@ public class MainActivity extends android.support.v4.app.FragmentActivity {
 				pos_y = Double.parseDouble(params[2]);
 			}
 			try {
-				return RequestToServer(params[0], pos_x, pos_y,userid);
+				return RequestToServer(params[0], pos_x, pos_y,userid,circleString);
 			} catch (JSONException e) {
 				
 				e.printStackTrace();
@@ -438,6 +444,7 @@ public class MainActivity extends android.support.v4.app.FragmentActivity {
 			intent.putExtra("loclat", lat);
 			intent.putExtra("loclng", lng);
 			intent.putExtra("type", typeString);
+			intent.putExtra("circle", circleString);
 			dialog.dismiss();
 			startActivity(intent);
 		}
@@ -474,7 +481,7 @@ public class MainActivity extends android.support.v4.app.FragmentActivity {
 			
 		}
 	}
-	public static String RequestToServer(String typeString, double pos_x, double pos_y,String userid)
+	public static  String RequestToServer(String typeString, double pos_x, double pos_y,String userid,String circle)
 			throws JSONException {
 		DefaultHttpClient httpclient = new DefaultHttpClient();
 		try {
@@ -483,8 +490,7 @@ public class MainActivity extends android.support.v4.app.FragmentActivity {
 
 			HttpHost target = new HttpHost(ipString, 8080, "http");
 			// String request="/?type=情侣出行&pos_x=108.947039&pos_y=34.259203";
-			String request = "/?command=full&type=" + typeString + "&pos_x="
-					+ String.valueOf(pos_x) + "&pos_y=" + String.valueOf(pos_y) + "&id=" + userid;
+			String request = "/?command=full&type=" +typeString+ "&city=" + city + "&id=" + userid + "&circleName="+circle;
 			Log.i("request string", request);
 			HttpGet req = new HttpGet(request);
 			// System.out.println("executing request to " + target);
@@ -520,7 +526,7 @@ public class MainActivity extends android.support.v4.app.FragmentActivity {
 		return null;
 
 	}
-	public static String AddressRequset(String pos_x_add,String pos_y_add)
+	public  String AddressRequset(String pos_x_add,String pos_y_add)
 	 {
 	if (pos_x_add==null||pos_y_add==null) {
 		return null;
@@ -634,7 +640,7 @@ public class MainActivity extends android.support.v4.app.FragmentActivity {
     	//Log.i("hasmap", ansHashMap.toString());
     	return ansHashMap;
     }
-    public String testGetShopCircle(double pos_x,double pos_y,String city)   //给坐标，返回最近商圈名称
+    public String GetShopCircle(double pos_x,double pos_y,String city)   //给坐标，返回最近商圈名称
 	{
 		DefaultHttpClient httpclient = new DefaultHttpClient();
 		try
@@ -662,5 +668,25 @@ public class MainActivity extends android.support.v4.app.FragmentActivity {
 		
 		return null;
 	}
-    
+    public class getCurrentCircle extends AsyncTask<String, Integer, String>
+    {
+
+		@Override
+		protected String doInBackground(String... params) {
+			// TODO Auto-generated method stub
+			//Log.i("params, msg)
+			return GetShopCircle(Double.parseDouble(params[0]), Double.parseDouble(params[1]), params[2]);
+		}
+    	@Override
+    	protected void onPostExecute(String result)
+    	{
+    		circleString = result;
+    		if (result==null) {
+				locTextView.setText("暂时无法获取位置");
+			}
+    		else {
+    			locTextView.setText(result);
+			}
+    	}
+    }
 }

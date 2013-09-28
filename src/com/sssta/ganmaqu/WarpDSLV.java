@@ -72,6 +72,7 @@ public class WarpDSLV extends android.support.v4.app.FragmentActivity {
 	private SlidingMenu menu;
 	private SharedPreferences userInfo;
 	private String userid;
+	private String circleString;
 
 	private DragSortListView.DropListener onDrop = new DragSortListView.DropListener() {
 		@Override
@@ -204,6 +205,7 @@ public class WarpDSLV extends android.support.v4.app.FragmentActivity {
 		db_user = FinalDb.create(this);
 		DragSortListView lv = (DragSortListView) findViewById(R.id.dslv_result);
 		type = getIntent().getStringExtra("type");
+		circleString = getIntent().getStringExtra("circle");
 		loclat = getIntent().getDoubleExtra("loclat", 34.265733);
 		loclng = getIntent().getDoubleExtra("loclng", 108.953906);
 		lv.setDropListener(onDrop);
@@ -498,7 +500,7 @@ public class WarpDSLV extends android.support.v4.app.FragmentActivity {
 			// TODO Auto-generated method stub
 			try {
 				return MainActivity.RequestToServer(type, loclng, loclng,
-						userid);
+						userid,circleString);
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -753,7 +755,7 @@ public class WarpDSLV extends android.support.v4.app.FragmentActivity {
 			HttpHost target = new HttpHost(ipString, 8080, "http");
 			String request = "/?command=change&type=" + type + "&pos_x="
 					+ pos_x + "&pos_y=" + pos_y + "&time=" + time
-					+ "&shopName=" + shopname + "&cost=" + cost;
+					+ "&shopName=" + shopname + "&cost=" + cost + "&city=" + "西安" ;
 			Log.i("changeRequest", request);
 			HttpGet req = new HttpGet(request);
 			Log.i("excute", "executing request to " + target);
@@ -976,15 +978,15 @@ public class WarpDSLV extends android.support.v4.app.FragmentActivity {
 	}
 
 	// methods for fragment
-//	@Override
-//	public void onBackPressed() {
-//		// 点击返回键关闭滑动菜单
-//		if (menu.isMenuShowing()) {
-//			menu.showContent();
-//		} else {
-//			super.onBackPressed();
-//		}
-//	}
+	@Override
+	public void onBackPressed() {
+		// 点击返回键关闭滑动菜单
+		if (menu.isMenuShowing()) {
+			menu.showContent();
+		} else {
+			super.onBackPressed();
+		}
+	}
 
 	public List<place> getPlaces() {
 		return places;
