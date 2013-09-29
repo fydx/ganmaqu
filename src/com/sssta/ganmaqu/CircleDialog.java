@@ -12,26 +12,23 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.sssta.ganmaqu.DislikeActivity.GridAdapter;
-
 import android.app.Dialog;
 import android.content.Context;
-
-import android.view.View.OnClickListener;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.GridView;
 import android.widget.TextView;
 
 
 public class CircleDialog extends Dialog {
 	private String ipString;
-	private GridView gridView_circles;
+	private myGridView gridView_circles;
 	private String currentCircle;
 	private GridAdapter gridAdapter;
 	private String city ;
@@ -65,7 +62,7 @@ public class CircleDialog extends Dialog {
     private void setCustomView(){  
         View mView = LayoutInflater.from(getContext()).inflate(R.layout.dialog_main_circles, null);  
       
-        gridView_circles = (GridView)mView.findViewById(R.id.gridView_circles);
+        gridView_circles = (myGridView)mView.findViewById(R.id.gridView_circles);
         gridAdapter = new GridAdapter(this.getContext());
         new getCircles().execute("Î÷°²");
         super.setContentView(mView);  
@@ -169,6 +166,15 @@ public class CircleDialog extends Dialog {
    			HashMap<Integer, String> hashMapCircle = hashCircle(result);
    			Log.i("circle1", hashMapCircle.get(0));
    			gridAdapter.setHashMap(hashMapCircle);
+   			gridView_circles.setOnTouchListener(new OnTouchListener() {
+				
+				@Override
+				public boolean onTouch(View v, MotionEvent event) {
+					// TODO Auto-generated method stub
+					return MotionEvent.ACTION_MOVE == event.getAction() ? true
+                            : false;
+				}
+			});
    			gridView_circles.setAdapter(gridAdapter);
    		} catch (JSONException e) {
    			// TODO Auto-generated catch block
