@@ -5,7 +5,6 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:background="@drawable/background_dislike" >
-
     <com.mobeta.android.dslv.DragSortListView
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:dslv="http://schemas.android.com/apk/res/com.sssta.ganmaqu"
@@ -62,7 +61,10 @@
             android:layout_marginBottom="20dp"
             android:background="@drawable/button_style_save"
             android:text="选好了"
-            android:textColor="#FFFFFF" />
+            android:textColor="#FFFFFF" 
+            />
+
+        
 
     </LinearLayout>
 
@@ -111,5 +113,44 @@
         android:text="人均消费：XX元"
         android:textColor="#FFFFFF"
         android:textSize="13dp" />
+
+    <ImageView
+        android:id="@+id/imageView1"
+        android:layout_width="match_parent"
+        android:layout_height="31dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/result_banner" />
+
+    <Button
+        android:id="@+id/button_change"
+        android:layout_width="30dp"
+        android:layout_height="20dp"
+        android:layout_alignBottom="@+id/imageView1"
+        android:layout_marginBottom="4dp"
+        android:layout_alignRight="@+id/text_type"
+        android:background="@drawable/button_change_new"
+        
+        android:text="  " />
+
+    <Button
+        android:id="@+id/button_save_new"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:text=" " 
+        android:background="@drawable/button_save_new"/>
+
+    <Button
+        android:id="@+id/button_map"
+        android:layout_width="22dp"
+        android:layout_height="22dp"
+        android:layout_alignBaseline="@+id/button_change"
+        android:layout_alignBottom="@+id/button_change"
+        android:layout_marginBottom="15dp"
+        android:layout_alignRight="@+id/dslv_result"
+        android:layout_marginRight="14dp"
+        android:background="@drawable/button_map_new" />
 
 </RelativeLayout>
