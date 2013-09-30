@@ -88,11 +88,7 @@
             android:label="@string/title_activity_web" >
         </activity>
         
-        <service
-            android:name="com.baidu.location.f"
-            android:enabled="true"
-            android:process=":remote" >
-        </service>
+     
         <activity
             android:name="com.sssta.ganmaqu.RouteListActivity"
             android:label="@string/title_activity_route_list" >
@@ -114,6 +110,11 @@
             android:label="@string/title_activity_new_map"
           >
         </activity>
+           <service
+            android:name="com.baidu.location.f"
+            android:enabled="true"
+            android:process=":remote" >
+        </service>
     </application>
 
 </manifest>
