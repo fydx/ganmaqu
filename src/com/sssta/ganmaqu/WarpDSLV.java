@@ -34,6 +34,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -61,7 +62,7 @@ public class WarpDSLV extends FragmentActivity {
 	// private ArrayAdapter<String> adapter;
 	private String ipString;
 	private FinalDb db, db_user;
-	private int cost = 0;
+	private int cost = 0,tempCost = 0;
 	private ArrayAdapter<place> adapter;
 	private String jsonString;
 	private String[] array;
@@ -77,12 +78,13 @@ public class WarpDSLV extends FragmentActivity {
 	private SharedPreferences userInfo;
 	private String userid;
 	private String circleString;
-	private PopupWindow popupWindow;
+	private CustomPopupWindow popupWindow;
 	private ListView lv_group;
 	private View view;
 	private View top_title;
 	private TextView tvtitle;
 	private List<String> groups;
+	private String city =  "西安";
 
 	private DragSortListView.DropListener onDrop = new DragSortListView.DropListener() {
 		@Override
@@ -136,8 +138,9 @@ public class WarpDSLV extends FragmentActivity {
 		ActionBar actionBar = this.getActionBar();
 		actionBar.setDisplayOptions(ActionBar.DISPLAY_HOME_AS_UP,
 				ActionBar.DISPLAY_HOME_AS_UP);
-		actionBar.setBackgroundDrawable(getResources().getDrawable(
-				R.drawable.actionbar_banner));
+//		actionBar.setBackgroundDrawable(getResources().getDrawable(
+//				R.drawable.actionbar_banner));
+		actionBar.setBackgroundDrawable(getResources().getDrawable(R.drawable.actionbar_bg));
 		actionBar.setSplitBackgroundDrawable(getResources().getDrawable(
 				R.drawable.result_banner));
 		actionBar.setDisplayShowHomeEnabled(false);
@@ -590,7 +593,7 @@ public class WarpDSLV extends FragmentActivity {
 
 			rankString = param[5];
 			return requestChangeStringToServer(param[0], param[1], param[2],
-					param[3], param[4], param[6]);
+					param[3], param[4], param[6],param[7]);
 		}
 
 		@Override
@@ -637,7 +640,7 @@ public class WarpDSLV extends FragmentActivity {
 		protected String doInBackground(String... params) {
 			// TODO Auto-generated method stub
 			return requestLowerToServer(params[0], params[1], params[2],
-					params[3]);
+					params[3],params[4]);
 		}
 
 		@Override
@@ -691,7 +694,7 @@ public class WarpDSLV extends FragmentActivity {
 		protected String doInBackground(String... params) {
 			// TODO Auto-generated method stub
 			return requestUpperToServer(params[0], params[1], params[2],
-					params[3]);
+					params[3],params[4]);
 		}
 
 		@Override
@@ -779,14 +782,14 @@ public class WarpDSLV extends FragmentActivity {
 	}
 
 	public String requestChangeStringToServer(String type, String pos_x,
-			String pos_y, String time, String shopname, String cost) {
+			String pos_y, String time, String shopname, String cost,String citysString) {
 		DefaultHttpClient httpclient = new DefaultHttpClient();
 		try {
 			HttpHost target = new HttpHost(ipString, 8080, "http");
 			String request = "/?command=change&type=" + type + "&pos_x="
 					+ pos_x + "&pos_y=" + pos_y + "&time=" + time
 					+ "&shopName=" + shopname + "&cost=" + cost + "&city="
-					+ "西安";
+					+ citysString;
 			Log.i("changeRequest", request);
 			HttpGet req = new HttpGet(request);
 			Log.i("excute", "executing request to " + target);
@@ -828,13 +831,14 @@ public class WarpDSLV extends FragmentActivity {
 	}
 
 	public String requestLowerToServer(String type, String pos_x, String pos_y,
-			String cost) {
+			String cost,String cityString) {
 		DefaultHttpClient httpclient = new DefaultHttpClient();
 		try {
 			HttpHost target = new HttpHost(ipString, 8080, "http");
 
 			String request = "/?command=lower&type=" + type + "&pos_x=" + pos_x
-					+ "&pos_y=" + pos_y + "&cost=" + cost;
+					+ "&pos_y=" + pos_y + "&cost=" + cost + "&city="
+							+ cityString;
 			Log.i("changeRequest", request);
 			HttpGet req = new HttpGet(request);
 			Log.i("excute", "executing request to " + target);
@@ -876,13 +880,14 @@ public class WarpDSLV extends FragmentActivity {
 	}
 
 	public String requestUpperToServer(String type, String pos_x, String pos_y,
-			String cost) {
+			String cost,String cityString) {
 		DefaultHttpClient httpclient = new DefaultHttpClient();
 		try {
 			HttpHost target = new HttpHost(ipString, 8080, "http");
 
 			String request = "/?command=upper&type=" + type + "&pos_x=" + pos_x
-					+ "&pos_y=" + pos_y + "&cost=" + cost;
+					+ "&pos_y=" + pos_y + "&cost=" + cost + "&city="
+							+ cityString;
 			Log.i("changeRequest", request);
 			HttpGet req = new HttpGet(request);
 			Log.i("excute", "executing request to " + target);
@@ -1127,18 +1132,16 @@ public class WarpDSLV extends FragmentActivity {
 			lv_group = (ListView) view.findViewById(R.id.lvGroup);
 			// 加载数据
 			groups = new ArrayList<String>();
-			groups.add("全部");
-			groups.add("我的微博");
-			groups.add("好友");
-			groups.add("亲人");
-			groups.add("同学");
-			groups.add("朋友");
-			groups.add("陌生人");
+			groups.add("更奢侈");
+			groups.add("更便宜");
+			groups.add("随心换");
+			lv_group.setDividerHeight(0);
 
 			GroupAdapter groupAdapter = new GroupAdapter(this, groups);
 			lv_group.setAdapter(groupAdapter);
 			// 创建一个PopuWidow对象
-			popupWindow = new PopupWindow(view, 300, 350);
+			popupWindow = new CustomPopupWindow(view, 300, 200
+					);
 		}
 
 		// 使其聚集
@@ -1154,21 +1157,88 @@ public class WarpDSLV extends FragmentActivity {
 				- popupWindow.getWidth() / 2;
 		Log.i("coder", "xPos:" + xPos);
 
-		popupWindow.showAsDropDown(parent, xPos, 0);
-
+		//popupWindow.showAsDropDown(parent, xPos, 0);
+		popupWindow.showAsDropDown(parent);
 		lv_group.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
 			public void onItemClick(AdapterView<?> adapterView, View view,
 					int position, long id) {
-
-				Toast.makeText(WarpDSLV.this, groups.get(position), 1000)
-						.show();
+				
+				switch (position) {
+				case 0:
+					startExpensive();
+					break;
+				case 1:
+					startCheap();
+					break;
+				case 2:
+					new randomTask().execute();
+					break;
+				default:
+					break;
+				}
+//				Toast.makeText(WarpDSLV.this, groups.get(position), 1000)
+//						.show();
 
 				if (popupWindow != null) {
 					popupWindow.dismiss();
 				}
 			}
 		});
+	}
+	public void startExpensive()
+	{
+		System.out.println("奢侈点 Start");
+		 tempCost = 0;
+		for (int i = 0; i < places.size(); i++) {
+			if (places.get(i).getMainType().equals("美食")) {
+				tempCost += places.get(i).getCost();
+			}
+		}
+
+		new upperTask().execute(type,
+				String.valueOf(places.get(0).getPos_x()),
+				String.valueOf(places.get(0).getPos_y()),
+				String.valueOf(tempCost),city);}
+	public void startCheap()
+	{
+		System.out.println("便宜点 Start");
+		tempCost = 0;
+		for (int i = 0; i < places.size(); i++) {
+			if (places.get(i).getMainType().equals("美食")) {
+				tempCost += places.get(i).getCost();
+			}
+		}
+
+		new lowerTask().execute(type,
+				String.valueOf(places.get(0).getPos_x()),
+				String.valueOf(places.get(0).getPos_y()),
+				String.valueOf(tempCost),city);
+	}
+
+	public class CustomPopupWindow extends PopupWindow {
+	    public CustomPopupWindow(View contentView, int width, int height) {
+	        super(contentView, width, height, false);
+	    }
+	    /**
+	     * 在指定控件上方显示，默认x座标与指定控件的中点x座标相同
+	     * @param anchor
+	     * @param xoff
+	     * @param yoff
+	     */
+	    public void showAsPullUp(View anchor, int xoff, int yoff)
+	    {
+	    	//保存anchor在屏幕中的位置
+	    	int[] location=new int[2];
+	    	//保存anchor上部中点
+	    	int[] anchorCenter=new int[2];
+	    	//读取位置anchor座标
+	    	anchor.getLocationOnScreen(location);
+	    	//计算anchor中点
+	    	anchorCenter[0]=location[0]+anchor.getWidth()/2;
+	    	anchorCenter[1]=location[1];
+	    	super.showAtLocation(anchor, Gravity.TOP|Gravity.LEFT, anchorCenter[0]+xoff, anchorCenter[1]-anchor.getContext().getResources().getDimensionPixelSize(R.dimen.popup_upload_height)+yoff);
+	    }
 	}
 }
