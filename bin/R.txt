@@ -454,6 +454,7 @@ int id button_right 0x7f050040
 int id button_settings 0x7f050050
 int id button_toMap 0x7f05005a
 int id button_yes 0x7f05004b
+int id change 0x7f05008d
 int id checkBox_dislike 0x7f05006a
 int id city 0x7f050061
 int id clickRemove 0x7f050000
@@ -480,6 +481,7 @@ int id list 0x7f050055
 int id listMode 0x7f050007
 int id listView_route 0x7f050058
 int id lvGroup 0x7f05006d
+int id map 0x7f05008f
 int id mapView 0x7f050051
 int id margin 0x7f050017
 int id mins 0x7f050081
@@ -496,6 +498,7 @@ int id pwd_status 0x7f05007b
 int id relativelayout1 0x7f050083
 int id right 0x7f050016
 int id routeList 0x7f05004a
+int id save 0x7f05008e
 int id scrollView1 0x7f050042
 int id section_div 0x7f05007d
 int id select_drag_init_mode 0x7f050089

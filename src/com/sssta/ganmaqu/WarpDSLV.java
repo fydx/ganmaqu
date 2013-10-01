@@ -1030,52 +1030,84 @@ public class WarpDSLV extends FragmentActivity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
-		final MenuItem change = menu.add(0, 1, 0, "Change").setIcon(
-				getResources().getDrawable(R.drawable.button_change_new));
-		change.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+		this.getMenuInflater().inflate(R.menu.result, menu);
+		// final MenuItem change = menu.add(0, 1, 0, "Change").setIcon(
+		// getResources().getDrawable(R.drawable.button_change_new));
+		// change.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+		//
+		// @Override
+		// public boolean onMenuItemClick(MenuItem item) {
+		// // TODO Auto-generated method stub
+		// showWindow(item.getActionView());
+		// return true;
+		// }
+		// });
+		// MenuItem save = menu.add(0, 2, 1, "save").setIcon(
+		// getResources().getDrawable(R.drawable.button_save_new));
+		// save.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+		//
+		// @Override
+		// public boolean onMenuItemClick(MenuItem item) {
+		// // TODO Auto-generated method stub
+		// saveToDB(places);
+		// // finish();
+		// return true;
+		// }
+		// });
+		// MenuItem map = menu.add(0, 3, 2, "Map").setIcon(
+		// getResources().getDrawable(R.drawable.button_change_new));
+		// map.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+		//
+		// @Override
+		// public boolean onMenuItemClick(MenuItem item) {
+		// // TODO Auto-generated method stub
+		// Intent intent = new Intent();
+		// // intent.setClass(getApplicationContext(), MapActivity.class);
+		// intent.setClass(getApplicationContext(), NewMapActivity.class); //
+		// set
+		// // new
+		// // map
+		// // activity
+		// intent.putExtra("places", (Serializable) places);
+		// startActivity(intent);
+		// overridePendingTransition(android.R.anim.fade_in,
+		// android.R.anim.fade_out);
+		// return true;
+		// }
+		// });
+		// change.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+		// save.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+		// map.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+		return super.onCreateOptionsMenu(menu);
+	}
 
-			@Override
-			public boolean onMenuItemClick(MenuItem item) {
-				// TODO Auto-generated method stub
-				showWindow(item.getActionView());
-				return true;
-			}
-		});
-		MenuItem save = menu.add(0, 2, 1, "save").setIcon(
-				getResources().getDrawable(R.drawable.button_save_new));
-		save.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.change:
+			View view  = (findViewById(R.id.change));
+			showWindow(view);
+			break;
+		case R.id.save:
+			saveToDB(places);
+			// // finish();
 
-			@Override
-			public boolean onMenuItemClick(MenuItem item) {
-				// TODO Auto-generated method stub
-				saveToDB(places);
-				// finish();
-				return true;
-			}
-		});
-		MenuItem map = menu.add(0, 3, 2, "Map").setIcon(
-				getResources().getDrawable(R.drawable.button_change_new));
-		map.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+			break;
+		case R.id.map:
+			Intent intent = new Intent();
 
-			@Override
-			public boolean onMenuItemClick(MenuItem item) {
-				// TODO Auto-generated method stub
-				Intent intent = new Intent();
-				// intent.setClass(getApplicationContext(), MapActivity.class);
-				intent.setClass(getApplicationContext(), NewMapActivity.class); // set
-																				// new
-																				// map
-																				// activity
-				intent.putExtra("places", (Serializable) places);
-				startActivity(intent);
-				overridePendingTransition(android.R.anim.fade_in,
-						android.R.anim.fade_out);
-				return true;
-			}
-		});
-		change.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-		save.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-		map.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+			intent.setClass(getApplicationContext(), NewMapActivity.class); // set
+																			// new
+																			// map
+																			// activity
+			intent.putExtra("places", (Serializable) places);
+			startActivity(intent);
+			overridePendingTransition(android.R.anim.fade_in,
+					android.R.anim.fade_out);
+		default:
+			break;
+		}
+
 		return true;
 	}
 
@@ -1084,59 +1116,59 @@ public class WarpDSLV extends FragmentActivity {
 		super.onStart();
 
 	}
-	private void showWindow(View parent) {  
-		  
-        if (popupWindow == null) {  
-            LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);  
-  
-            view = layoutInflater.inflate(R.layout.group_list, null);  
-  
-            lv_group = (ListView) view.findViewById(R.id.lvGroup);  
-            // 加载数据  
-            groups = new ArrayList<String>();  
-            groups.add("全部");  
-            groups.add("我的微博");  
-            groups.add("好友");  
-            groups.add("亲人");  
-            groups.add("同学");  
-            groups.add("朋友");  
-            groups.add("陌生人");  
-  
-            GroupAdapter groupAdapter = new GroupAdapter(this, groups);  
-            lv_group.setAdapter(groupAdapter);  
-            // 创建一个PopuWidow对象  
-            popupWindow = new PopupWindow(view, 300, 350);  
-        }  
-  
-        // 使其聚集  
-        popupWindow.setFocusable(true);  
-        // 设置允许在外点击消失  
-        popupWindow.setOutsideTouchable(true);  
-  
-        // 这个是为了点击“返回Back”也能使其消失，并且并不会影响你的背景  
-        popupWindow.setBackgroundDrawable(new BitmapDrawable());  
-        WindowManager windowManager = (WindowManager) getSystemService(Context.WINDOW_SERVICE);  
-        // 显示的位置为:屏幕的宽度的一半-PopupWindow的高度的一半  
-        int xPos = windowManager.getDefaultDisplay().getWidth() / 2  
-                - popupWindow.getWidth() / 2;  
-        Log.i("coder", "xPos:" + xPos);  
-  
-        popupWindow.showAsDropDown(parent, xPos, 0);  
-  
-        lv_group.setOnItemClickListener(new OnItemClickListener() {  
-  
-            @Override  
-            public void onItemClick(AdapterView<?> adapterView, View view,  
-                    int position, long id) {  
-  
-                Toast.makeText(WarpDSLV.this,  
-                        groups.get(position), 1000)  
-                        .show();  
-  
-                if (popupWindow != null) {  
-                    popupWindow.dismiss();  
-                }  
-            }  
-        });  
-    }  
+
+	private void showWindow(View parent) {
+
+		if (popupWindow == null) {
+			LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+			view = layoutInflater.inflate(R.layout.group_list, null);
+
+			lv_group = (ListView) view.findViewById(R.id.lvGroup);
+			// 加载数据
+			groups = new ArrayList<String>();
+			groups.add("全部");
+			groups.add("我的微博");
+			groups.add("好友");
+			groups.add("亲人");
+			groups.add("同学");
+			groups.add("朋友");
+			groups.add("陌生人");
+
+			GroupAdapter groupAdapter = new GroupAdapter(this, groups);
+			lv_group.setAdapter(groupAdapter);
+			// 创建一个PopuWidow对象
+			popupWindow = new PopupWindow(view, 300, 350);
+		}
+
+		// 使其聚集
+		popupWindow.setFocusable(true);
+		// 设置允许在外点击消失
+		popupWindow.setOutsideTouchable(true);
+
+		// 这个是为了点击“返回Back”也能使其消失，并且并不会影响你的背景
+		popupWindow.setBackgroundDrawable(new BitmapDrawable());
+		WindowManager windowManager = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
+		// 显示的位置为:屏幕的宽度的一半-PopupWindow的高度的一半
+		int xPos = windowManager.getDefaultDisplay().getWidth() / 2
+				- popupWindow.getWidth() / 2;
+		Log.i("coder", "xPos:" + xPos);
+
+		popupWindow.showAsDropDown(parent, xPos, 0);
+
+		lv_group.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> adapterView, View view,
+					int position, long id) {
+
+				Toast.makeText(WarpDSLV.this, groups.get(position), 1000)
+						.show();
+
+				if (popupWindow != null) {
+					popupWindow.dismiss();
+				}
+			}
+		});
+	}
 }

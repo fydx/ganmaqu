@@ -1362,6 +1362,7 @@ containing a value of this type.
         public static final int button_settings=0x7f050050;
         public static final int button_toMap=0x7f05005a;
         public static final int button_yes=0x7f05004b;
+        public static final int change=0x7f05008d;
         public static final int checkBox_dislike=0x7f05006a;
         public static final int city=0x7f050061;
         public static final int clickRemove=0x7f050000;
@@ -1388,6 +1389,7 @@ containing a value of this type.
         public static final int listMode=0x7f050007;
         public static final int listView_route=0x7f050058;
         public static final int lvGroup=0x7f05006d;
+        public static final int map=0x7f05008f;
         public static final int mapView=0x7f050051;
         public static final int margin=0x7f050017;
         public static final int mins=0x7f050081;
@@ -1404,6 +1406,7 @@ containing a value of this type.
         public static final int relativelayout1=0x7f050083;
         public static final int right=0x7f050016;
         public static final int routeList=0x7f05004a;
+        public static final int save=0x7f05008e;
         public static final int scrollView1=0x7f050042;
         public static final int section_div=0x7f05007d;
         public static final int select_drag_init_mode=0x7f050089;
