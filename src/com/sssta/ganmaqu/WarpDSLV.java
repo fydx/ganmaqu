@@ -23,36 +23,40 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import android.R.integer;
-import android.app.Dialog;
-import android.app.ListActivity;
+import android.app.ActionBar;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.location.Criteria;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
+import android.content.res.Resources;
+import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.Settings;
-import android.text.AndroidCharacter;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.mobeta.android.dslv.DragSortListView;
 
-public class WarpDSLV extends android.support.v4.app.FragmentActivity {
+public class WarpDSLV extends FragmentActivity {
 
 	// private ArrayAdapter<String> adapter;
 	private String ipString;
@@ -73,6 +77,12 @@ public class WarpDSLV extends android.support.v4.app.FragmentActivity {
 	private SharedPreferences userInfo;
 	private String userid;
 	private String circleString;
+	private PopupWindow popupWindow;
+	private ListView lv_group;
+	private View view;
+	private View top_title;
+	private TextView tvtitle;
+	private List<String> groups;
 
 	private DragSortListView.DropListener onDrop = new DragSortListView.DropListener() {
 		@Override
@@ -118,10 +128,25 @@ public class WarpDSLV extends android.support.v4.app.FragmentActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		// requestWindowFeature(Window.FEATURE_NO_TITLE);
+		getWindow().requestFeature(Window.FEATURE_ACTION_BAR); // Add this line
 		setContentView(R.layout.warp_main);
 		userInfo = getSharedPreferences("userInfo", 0);
 		userid = userInfo.getString("userid", "root");
+		ActionBar actionBar = this.getActionBar();
+		actionBar.setDisplayOptions(ActionBar.DISPLAY_HOME_AS_UP,
+				ActionBar.DISPLAY_HOME_AS_UP);
+		actionBar.setBackgroundDrawable(getResources().getDrawable(
+				R.drawable.actionbar_banner));
+		actionBar.setSplitBackgroundDrawable(getResources().getDrawable(
+				R.drawable.result_banner));
+		actionBar.setDisplayShowHomeEnabled(false);
+		actionBar.setTitle("下面是我们为您推荐的路线");
+		int titleId = Resources.getSystem().getIdentifier("action_bar_title",
+				"id", "android");
+		TextView title = (TextView) findViewById(titleId);
+		title.setTextColor(Color.parseColor("#a98457"));
+		actionBar.setDisplayHomeAsUpEnabled(true);
 		/**
 		 * set slidingmenu - map
 		 */
@@ -134,18 +159,17 @@ public class WarpDSLV extends android.support.v4.app.FragmentActivity {
 		// menu.setFadeDegree(0.25f);
 		menu.attachToActivity(this, SlidingMenu.SLIDING_CONTENT);
 		menu.setMenu(R.layout.fragment_map);
-		
 
 		/**
 		 * Set Path Button
 		 */
 		// 引用控件
 		composerLayout clayout = new composerLayout(getApplicationContext());
-		clayout = (composerLayout) findViewById(R.id.test);
-		clayout.init(new int[] { R.drawable.random, R.drawable.far,
-				R.drawable.close, R.drawable.cheap, R.drawable.expensive },
-				R.drawable.button_change, R.drawable.composer_icn_plus,
-				composerLayout.LEFTBOTTOM, 180, 300);
+		// clayout = (composerLayout) findViewById(R.id.test);
+		// clayout.init(new int[] { R.drawable.random, R.drawable.far,
+		// R.drawable.close, R.drawable.cheap, R.drawable.expensive },
+		// R.drawable.button_change, R.drawable.composer_icn_plus,
+		// composerLayout.LEFTBOTTOM, 180, 300);
 		// 加個點擊監聽，100+0對應composer_camera，100+1對應composer_music……如此類推你有幾多個按鈕就加幾多個。
 		OnClickListener clickit = new OnClickListener() {
 			@Override
@@ -182,8 +206,10 @@ public class WarpDSLV extends android.support.v4.app.FragmentActivity {
 						}
 					}
 
-					new lowerTask().execute(type, 	String.valueOf(places.get(0).getPos_x()),
-							String.valueOf(places.get(0).getPos_y()), String.valueOf(tempCost));
+					new lowerTask().execute(type,
+							String.valueOf(places.get(0).getPos_x()),
+							String.valueOf(places.get(0).getPos_y()),
+							String.valueOf(tempCost));
 
 				} else if (v.getId() == 100 + 4) {
 					System.out.println("奢侈点 Start");
@@ -194,12 +220,14 @@ public class WarpDSLV extends android.support.v4.app.FragmentActivity {
 						}
 					}
 
-					new upperTask().execute(type, String.valueOf(places.get(0).getPos_x()),
-							String.valueOf(places.get(0).getPos_y()),String.valueOf(tempCost));
+					new upperTask().execute(type,
+							String.valueOf(places.get(0).getPos_x()),
+							String.valueOf(places.get(0).getPos_y()),
+							String.valueOf(tempCost));
 				}
 			}
 		};
-		clayout.setButtonsOnClickListener(clickit);
+		// clayout.setButtonsOnClickListener(clickit);
 		ipString = getResources().getString(R.string.ip);
 		db = FinalDb.create(this);
 		db_user = FinalDb.create(this);
@@ -213,26 +241,30 @@ public class WarpDSLV extends android.support.v4.app.FragmentActivity {
 		TextView textView_type = (TextView) findViewById(R.id.text_type);
 		textView_type.setText(type);
 		// lv.setDragScrollProfile(ssProfile);
-		button_toMap = (Button) findViewById(R.id.button_toMap);
-		button_toMap.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				Intent intent = new Intent();
-	//			intent.setClass(getApplicationContext(), MapActivity.class);
-				intent.setClass(getApplicationContext(), NewMapActivity.class); //set new map activity
-				intent.putExtra("places", (Serializable) places);
-				startActivity(intent);
-				overridePendingTransition(android.R.anim.fade_in,
-						android.R.anim.fade_out);
-
-			}
-		});
+		// button_toMap = (Button) findViewById(R.id.button_toMap);
+		// button_toMap.setOnClickListener(new OnClickListener() {
+		//
+		// @Override
+		// public void onClick(View v) {
+		// // TODO Auto-generated method stub
+		// Intent intent = new Intent();
+		// // intent.setClass(getApplicationContext(), MapActivity.class);
+		// intent.setClass(getApplicationContext(), NewMapActivity.class); //
+		// set
+		// // new
+		// // map
+		// // activity
+		// intent.putExtra("places", (Serializable) places);
+		// startActivity(intent);
+		// overridePendingTransition(android.R.anim.fade_in,
+		// android.R.anim.fade_out);
+		//
+		// }
+		// });
 
 		// button_low = (Button)findViewById(R.id.button_low);
 		// button_up = (Button)findViewById(R.id.button_up);
-		button_saveToDB = (Button) findViewById(R.id.button_savetoDB);
+		// button_saveToDB = (Button) findViewById(R.id.button_savetoDB);
 
 		/**
 		 * read from assets json files
@@ -257,15 +289,15 @@ public class WarpDSLV extends android.support.v4.app.FragmentActivity {
 			places = (List<place>) getIntent().getSerializableExtra("places");
 		}
 
-		button_saveToDB.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				saveToDB(places);
-				finish();
-			}
-		});
+		// button_saveToDB.setOnClickListener(new OnClickListener() {
+		//
+		// @Override
+		// public void onClick(View v) {
+		// // TODO Auto-generated method stub
+		// saveToDB(places);
+		// finish();
+		// }
+		// });
 		// button_low.setOnClickListener(new OnClickListener() {
 		//
 		// @Override
@@ -488,8 +520,7 @@ public class WarpDSLV extends android.support.v4.app.FragmentActivity {
 			}
 
 			Log.i("cost", "人均消费 new" + String.valueOf(cost));
-			textView_cost.setText("预计人均消费:" + String.valueOf(cost)
-					+ "元");
+			textView_cost.setText("预计人均消费:" + String.valueOf(cost) + "元");
 		}
 	}
 
@@ -500,7 +531,7 @@ public class WarpDSLV extends android.support.v4.app.FragmentActivity {
 			// TODO Auto-generated method stub
 			try {
 				return MainActivity.RequestToServer(type, loclng, loclng,
-						userid,circleString);
+						userid, circleString);
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -545,8 +576,7 @@ public class WarpDSLV extends android.support.v4.app.FragmentActivity {
 			}
 
 			Log.i("cost", "人均消费 new" + String.valueOf(cost));
-			textView_cost.setText("预计人均消费:" + String.valueOf(cost)
-					+ "元");
+			textView_cost.setText("预计人均消费:" + String.valueOf(cost) + "元");
 		}
 
 	}
@@ -755,7 +785,8 @@ public class WarpDSLV extends android.support.v4.app.FragmentActivity {
 			HttpHost target = new HttpHost(ipString, 8080, "http");
 			String request = "/?command=change&type=" + type + "&pos_x="
 					+ pos_x + "&pos_y=" + pos_y + "&time=" + time
-					+ "&shopName=" + shopname + "&cost=" + cost + "&city=" + "西安" ;
+					+ "&shopName=" + shopname + "&cost=" + cost + "&city="
+					+ "西安";
 			Log.i("changeRequest", request);
 			HttpGet req = new HttpGet(request);
 			Log.i("excute", "executing request to " + target);
@@ -991,8 +1022,121 @@ public class WarpDSLV extends android.support.v4.app.FragmentActivity {
 	public List<place> getPlaces() {
 		return places;
 	}
-	public void hideMenu()
-	{
+
+	public void hideMenu() {
 		menu.showContent();
 	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		super.onCreateOptionsMenu(menu);
+		final MenuItem change = menu.add(0, 1, 0, "Change").setIcon(
+				getResources().getDrawable(R.drawable.button_change_new));
+		change.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+
+			@Override
+			public boolean onMenuItemClick(MenuItem item) {
+				// TODO Auto-generated method stub
+				showWindow(item.getActionView());
+				return true;
+			}
+		});
+		MenuItem save = menu.add(0, 2, 1, "save").setIcon(
+				getResources().getDrawable(R.drawable.button_save_new));
+		save.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+
+			@Override
+			public boolean onMenuItemClick(MenuItem item) {
+				// TODO Auto-generated method stub
+				saveToDB(places);
+				// finish();
+				return true;
+			}
+		});
+		MenuItem map = menu.add(0, 3, 2, "Map").setIcon(
+				getResources().getDrawable(R.drawable.button_change_new));
+		map.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+
+			@Override
+			public boolean onMenuItemClick(MenuItem item) {
+				// TODO Auto-generated method stub
+				Intent intent = new Intent();
+				// intent.setClass(getApplicationContext(), MapActivity.class);
+				intent.setClass(getApplicationContext(), NewMapActivity.class); // set
+																				// new
+																				// map
+																				// activity
+				intent.putExtra("places", (Serializable) places);
+				startActivity(intent);
+				overridePendingTransition(android.R.anim.fade_in,
+						android.R.anim.fade_out);
+				return true;
+			}
+		});
+		change.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+		save.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+		map.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+		return true;
+	}
+
+	@Override
+	protected void onStart() {
+		super.onStart();
+
+	}
+	private void showWindow(View parent) {  
+		  
+        if (popupWindow == null) {  
+            LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);  
+  
+            view = layoutInflater.inflate(R.layout.group_list, null);  
+  
+            lv_group = (ListView) view.findViewById(R.id.lvGroup);  
+            // 加载数据  
+            groups = new ArrayList<String>();  
+            groups.add("全部");  
+            groups.add("我的微博");  
+            groups.add("好友");  
+            groups.add("亲人");  
+            groups.add("同学");  
+            groups.add("朋友");  
+            groups.add("陌生人");  
+  
+            GroupAdapter groupAdapter = new GroupAdapter(this, groups);  
+            lv_group.setAdapter(groupAdapter);  
+            // 创建一个PopuWidow对象  
+            popupWindow = new PopupWindow(view, 300, 350);  
+        }  
+  
+        // 使其聚集  
+        popupWindow.setFocusable(true);  
+        // 设置允许在外点击消失  
+        popupWindow.setOutsideTouchable(true);  
+  
+        // 这个是为了点击“返回Back”也能使其消失，并且并不会影响你的背景  
+        popupWindow.setBackgroundDrawable(new BitmapDrawable());  
+        WindowManager windowManager = (WindowManager) getSystemService(Context.WINDOW_SERVICE);  
+        // 显示的位置为:屏幕的宽度的一半-PopupWindow的高度的一半  
+        int xPos = windowManager.getDefaultDisplay().getWidth() / 2  
+                - popupWindow.getWidth() / 2;  
+        Log.i("coder", "xPos:" + xPos);  
+  
+        popupWindow.showAsDropDown(parent, xPos, 0);  
+  
+        lv_group.setOnItemClickListener(new OnItemClickListener() {  
+  
+            @Override  
+            public void onItemClick(AdapterView<?> adapterView, View view,  
+                    int position, long id) {  
+  
+                Toast.makeText(WarpDSLV.this,  
+                        groups.get(position), 1000)  
+                        .show();  
+  
+                if (popupWindow != null) {  
+                    popupWindow.dismiss();  
+                }  
+            }  
+        });  
+    }  
 }

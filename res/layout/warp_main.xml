@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/relativelayout1"
     xmlns:app="http://schemas.android.com/apk/res/com.sssta.ganmaqu"
+    android:id="@+id/relativelayout1"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:background="@drawable/background_dislike" >
+    android:background="@drawable/background_result" >
+
     <com.mobeta.android.dslv.DragSortListView
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:dslv="http://schemas.android.com/apk/res/com.sssta.ganmaqu"
@@ -13,12 +14,13 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="0dp"
         android:layout_marginRight="20dp"
-        android:layout_marginTop="70dp"
+        android:layout_marginTop="0dp"
+        android:layout_below="@+id/text_type"
         android:dividerHeight="5dp"
         android:fastScrollEnabled="false"
         android:paddingBottom="0dp"
         android:paddingLeft="10dp"
-        android:paddingTop="29dp"
+        android:paddingTop="10dp"
         app:collapsed_height="2dp"
         app:drag_enabled="true"
         app:drag_handle_id="@id/drag_handle"
@@ -34,18 +36,7 @@
         dslv:track_drag_sort="false"
         dslv:use_default_controller="true" >
     </com.mobeta.android.dslv.DragSortListView>
-    
-    <TextView
-        android:id="@+id/textView1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:paddingLeft="28dp"
-        android:paddingTop="10dp"
-        android:text="我们为您推荐的行程安排:"
-        android:textColor="#A98457" 
-        android:textSize="17dp"/>
+    <!--
     <LinearLayout
         android:id="@+id/linearlayout2"
         android:layout_width="wrap_content"
@@ -53,7 +44,7 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true" >
 
-        <Button
+         <Button
             android:id="@+id/button_savetoDB"
             android:layout_width="120dp"
             android:layout_height="40dp"
@@ -62,23 +53,24 @@
             android:background="@drawable/button_style_save"
             android:text="选好了"
             android:textColor="#FFFFFF" 
+            
             />
 
         
 
     </LinearLayout>
-
-
-
+    -->
+<!--  
     <geniuz.myPathbutton.composerLayout
         android:id="@+id/test"
         android:layout_width="20dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="21dp"
         android:layout_marginLeft="21dp" >
-    </geniuz.myPathbutton.composerLayout>
+    </geniuz.myPathbutton.composerLayout>-->
 
-    <Button
+    <!--
+          <Button
         android:id="@+id/button_toMap"
         android:layout_width="14dp"
         android:layout_height="70dp"
@@ -87,20 +79,20 @@
         android:layout_weight="1"
         android:background="@drawable/button_map"
         android:text="  " />
+    -->
 
     <TextView
         android:id="@+id/text_type"
         android:layout_width="82dp"
         android:layout_height="30dp"
         android:layout_alignParentLeft="true"
-        android:layout_below="@+id/textView1"
+        android:layout_marginTop="10dp"
         android:background="@drawable/marker_small"
-        android:layout_marginTop="32dp"
-        android:paddingLeft="2dp"
         android:gravity="center_vertical|center_horizontal"
+        android:paddingLeft="2dp"
         android:text="type"
-        android:textColor="#FFFFFF" 
-         android:textSize="13dp"/>
+        android:textColor="#FFFFFF"
+        android:textSize="13dp" />
 
     <TextView
         android:id="@+id/cost"
@@ -113,7 +105,7 @@
         android:text="人均消费：XX元"
         android:textColor="#FFFFFF"
         android:textSize="13dp" />
-
+<!-- 
     <ImageView
         android:id="@+id/imageView1"
         android:layout_width="match_parent"
@@ -123,34 +115,29 @@
         android:src="@drawable/result_banner" />
 
     <Button
-        android:id="@+id/button_change"
-        android:layout_width="30dp"
-        android:layout_height="20dp"
-        android:layout_alignBottom="@+id/imageView1"
-        android:layout_marginBottom="4dp"
-        android:layout_alignRight="@+id/text_type"
-        android:background="@drawable/button_change_new"
-        
-        android:text="  " />
-
-    <Button
-        android:id="@+id/button_save_new"
+        android:id="@+id/button_savetoDB"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:text=" " 
-        android:background="@drawable/button_save_new"/>
+        android:background="@drawable/button_save_new"
+        android:text=" " />
 
     <Button
-        android:id="@+id/button_map"
-        android:layout_width="22dp"
-        android:layout_height="22dp"
-        android:layout_alignBaseline="@+id/button_change"
-        android:layout_alignBottom="@+id/button_change"
-        android:layout_marginBottom="15dp"
-        android:layout_alignRight="@+id/dslv_result"
-        android:layout_marginRight="14dp"
-        android:background="@drawable/button_map_new" />
+        android:id="@+id/button_change"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_alignRight="@+id/text_type"
+        android:layout_alignTop="@+id/imageView1"
+        android:background="@drawable/button_change_new"
+        android:text="  " />
+
+    <Button
+        android:id="@+id/button_toMap"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_alignTop="@+id/imageView1"
+        android:layout_marginLeft="16dp"
+        android:background="@drawable/button_map_new" /> -->
 
 </RelativeLayout>
