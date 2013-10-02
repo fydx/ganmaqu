@@ -2,10 +2,10 @@ package com.sssta.ganmaqu;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
@@ -13,12 +13,14 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup.LayoutParams;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.PopupWindow;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,6 +38,7 @@ import com.baidu.mapapi.map.MapView;
 import com.baidu.mapapi.map.MyLocationOverlay;
 import com.baidu.mapapi.map.OverlayItem;
 import com.baidu.mapapi.map.PopupOverlay;
+import com.baidu.mapapi.map.RouteOverlay;
 import com.baidu.mapapi.map.TransitOverlay;
 import com.baidu.mapapi.search.MKAddrInfo;
 import com.baidu.mapapi.search.MKBusLineResult;
@@ -56,13 +59,17 @@ public class NewMapActivity extends Activity {
 	// UI相关
 	Button mBtnReverseGeoCode = null; // 将坐标反编码为地址
 	Button mBtnGeoCode = null; // 将地址编码为坐标
+	private Button preButton, nextButton;
 	MKSearch mSearch = null; // 搜索模块，也可去掉地图模块独立使用
 	ArrayList<MKPoiInfo> mkpoi = null;
 	private OverlayTest itemOverlay = null;
 	private List<place> places;
 	private GeoPoint locGeoPoint;
 	private List<GeoPoint> geoPoints;
-	private int searchType = -1;//记录搜索的类型，区分驾车/步行和公交
+	private PopupWindow mPopupWindow ;
+	private int searchType = -1;// 记录搜索的类型，区分驾车/步行和公交
+	String tmp = null;
+	RouteOverlay routeOverlay = null;
 	// 定位相关
 	LocationClient mLocClient;
 	LocationData locData = null;
@@ -71,13 +78,13 @@ public class NewMapActivity extends Activity {
 	MyLocationOverlay myLocationOverlay = null;
 	// UI相关
 	OnCheckedChangeListener radioButtonListener = null;
-	
+	private int countRoute = 0;
 	boolean isRequest = false;// 是否手动触发请求定位
 	boolean isFirstLoc = true;// 是否首次定位
 	private Button requestLocButton = null;
-	//公交路线相关
-	TransitOverlay transitOverlay = null;//保存公交路线图层数据的变量，供浏览节点时使用
-	
+	// 公交路线相关
+	TransitOverlay transitOverlay = null;// 保存公交路线图层数据的变量，供浏览节点时使用
+
 	/**
 	 * 用MapController完成地图控制
 	 */
@@ -98,7 +105,7 @@ public class NewMapActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		
+
 		DemoApplication app = (DemoApplication) this.getApplication();
 		final int markers_id[] = { R.drawable.icon_1, R.drawable.icon_2,
 				R.drawable.icon_3, R.drawable.icon_4, R.drawable.icon_5 };
@@ -111,13 +118,64 @@ public class NewMapActivity extends Activity {
 		setContentView(R.layout.activity_new_map);
 		places = (List<place>) getIntent().getSerializableExtra("places");
 		Log.i("places nums", String.valueOf(places.size()));
-		requestLocButton = (Button)findViewById(R.id.button_loc);
+		requestLocButton = (Button) findViewById(R.id.button_loc);
 		requestLocButton.setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				requestLocClick();
+			}
+		});
+		preButton = (Button) findViewById(R.id.button_pre);
+		preButton.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				if (countRoute < 0) {
+					Toast.makeText(getApplicationContext(), "这是第一条路线了",
+							Toast.LENGTH_SHORT).show();
+					countRoute = 0;
+					if (routeOverlay != null) {
+						mMapView.getOverlays().remove(routeOverlay);
+						initBusLine();
+					}
+				} else {
+					MKPlanNode start = new MKPlanNode();
+					start.pt = geoPoints.get(countRoute);
+					MKPlanNode end = new MKPlanNode();
+					end.pt = geoPoints.get(countRoute + 1);
+					mSearch.walkingSearch(null, start, null, end);
+					countRoute--;
+				}
+
+			}
+		});
+		nextButton = (Button) findViewById(R.id.button_next);
+		nextButton.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				if (transitOverlay != null) {
+					mMapView.getOverlays().remove(transitOverlay);
+					mMapView.refresh();
+				}
+				if (countRoute < 0) {
+					countRoute = 0;
+				}
+				MKPlanNode start = new MKPlanNode();
+				start.pt = geoPoints.get(countRoute);
+				MKPlanNode end = new MKPlanNode();
+				end.pt = geoPoints.get(countRoute + 1);
+				mSearch.walkingSearch(null, start, null, end);
+				countRoute++;
+				if (countRoute > 3) {
+					countRoute = 3;
+					Toast.makeText(getApplicationContext(), "这是最后一条路线了",
+							Toast.LENGTH_SHORT).show();
+				}
 			}
 		});
 		mkpoi = new ArrayList<MKPoiInfo>();
@@ -138,7 +196,7 @@ public class NewMapActivity extends Activity {
 		/**
 		 * 显示内置缩放控件
 		 */
-		mMapView.setBuiltInZoomControls(true);
+		//mMapView.setBuiltInZoomControls(true);
 
 		/**
 		 * 设定地图中心点 （西安钟楼）
@@ -146,14 +204,12 @@ public class NewMapActivity extends Activity {
 		GeoPoint p = new GeoPoint((int) (34.265733 * 1E6),
 				(int) (108.953906 * 1E6));
 		mMapController.setCenter(p);
-		
+
 		// 定位初始化
 		initLoc();
-		//定位部分结束
-		setLocation(108.953906,34.265733);
+		// 定位部分结束
+		// setLocation(108.953906,34.265733);
 
-		
-		
 		// 封装地点坐标到list中
 		geoPoints = null;
 		geoPoints = new ArrayList<GeoPoint>();
@@ -185,8 +241,8 @@ public class NewMapActivity extends Activity {
 		itemOverlay.addItem(overlayItems);
 
 		// clearOverlay(mMapView);
-	//	mMapView.getOverlays().clear();
-	//	mMapView.refresh();
+		// mMapView.getOverlays().clear();
+		// mMapView.refresh();
 		Timer timer = new Timer();
 		TimerTask timerTask = new TimerTask() {
 
@@ -200,90 +256,100 @@ public class NewMapActivity extends Activity {
 		};
 		timer.schedule(timerTask, 100);
 		// 初始化搜索模块，注册事件监听
-        mSearch = new MKSearch();
-        mSearch.init(app.mBMapManager, new MKSearchListener(){
+		mSearch = new MKSearch();
+		mSearch.init(app.mBMapManager, new MKSearchListener() {
 
 			@Override
 			public void onGetAddrResult(MKAddrInfo arg0, int arg1) {
 				// TODO Auto-generated method stub
-				
+
 			}
 
 			@Override
 			public void onGetBusDetailResult(MKBusLineResult busResult, int code) {
 				// TODO Auto-generated method stub
-				
+
 			}
 
 			@Override
 			public void onGetDrivingRouteResult(MKDrivingRouteResult arg0,
 					int arg1) {
 				// TODO Auto-generated method stub
-				
+
 			}
 
 			@Override
 			public void onGetPoiDetailSearchResult(int arg0, int arg1) {
 				// TODO Auto-generated method stub
-				
+
 			}
 
 			@Override
 			public void onGetPoiResult(MKPoiResult arg0, int arg1, int arg2) {
 				// TODO Auto-generated method stub
-				
+
 			}
 
 			@Override
 			public void onGetShareUrlResult(MKShareUrlResult arg0, int arg1,
 					int arg2) {
 				// TODO Auto-generated method stub
-				
+
 			}
 
 			@Override
 			public void onGetSuggestionResult(MKSuggestionResult arg0, int arg1) {
 				// TODO Auto-generated method stub
-				
+
 			}
+
 			@Override
 			public void onGetTransitRouteResult(MKTransitRouteResult res,
 					int error) {
-				//起点或终点有歧义，需要选择具体的城市列表或地址列表
-				if (error == MKEvent.ERROR_ROUTE_ADDR){
-					//遍历所有地址
-//					ArrayList<MKPoiInfo> stPois = res.getAddrResult().mStartPoiList;
-//					ArrayList<MKPoiInfo> enPois = res.getAddrResult().mEndPoiList;
-//					ArrayList<MKCityListInfo> stCities = res.getAddrResult().mStartCityList;
-//					ArrayList<MKCityListInfo> enCities = res.getAddrResult().mEndCityList;
+				// 起点或终点有歧义，需要选择具体的城市列表或地址列表
+				if (error == MKEvent.ERROR_ROUTE_ADDR) {
+					// 遍历所有地址
+					// ArrayList<MKPoiInfo> stPois =
+					// res.getAddrResult().mStartPoiList;
+					// ArrayList<MKPoiInfo> enPois =
+					// res.getAddrResult().mEndPoiList;
+					// ArrayList<MKCityListInfo> stCities =
+					// res.getAddrResult().mStartCityList;
+					// ArrayList<MKCityListInfo> enCities =
+					// res.getAddrResult().mEndCityList;
 					return;
 				}
 				if (error != 0 || res == null) {
-				//	Toast.makeText(NewMapActivity.this, "抱歉，未找到结果", Toast.LENGTH_SHORT).show();
+					// Toast.makeText(NewMapActivity.this, "抱歉，未找到结果",
+					// Toast.LENGTH_SHORT).show();
 					return;
 				}
-				
+
 				searchType = 1;
-				transitOverlay = new TransitOverlay (NewMapActivity.this, mMapView);
-			    // 此处仅展示一个方案作为示例
-			    transitOverlay.setData(res.getPlan(0));
-			  //清除其他图层
-			   // mMapView.getOverlays().clear();
-			  //添加路线图层
-			    mMapView.getOverlays().add(transitOverlay);
-			  //执行刷新使生效
-			    mMapView.refresh();
-			    // 使用zoomToSpan()绽放地图，使路线能完全显示在地图上
-			    mMapView.getController().zoomToSpan(transitOverlay.getLatSpanE6(), transitOverlay.getLonSpanE6());
-			  //移动地图到起点
-			    mMapView.getController().animateTo(res.getStart().pt);
-			  //重置路线节点索引，节点浏览时使用
-			 //   nodeIndex = 0;
-			    int num_line = res.getPlan(0).getNumLines() - 1;
+				transitOverlay = new TransitOverlay(NewMapActivity.this,
+						mMapView);
+				// 此处仅展示一个方案作为示例
+				transitOverlay.setData(res.getPlan(0));
+				// 清除其他图层
+				// mMapView.getOverlays().clear();
+				// 添加路线图层
+				mMapView.getOverlays().add(transitOverlay);
+				// 执行刷新使生效
+				mMapView.refresh();
+				// 使用zoomToSpan()绽放地图，使路线能完全显示在地图上
+				mMapView.getController().zoomToSpan(
+						transitOverlay.getLatSpanE6(),
+						transitOverlay.getLonSpanE6());
+				// 移动地图到起点
+				mMapView.getController().animateTo(res.getStart().pt);
+				// 重置路线节点索引，节点浏览时使用
+				// nodeIndex = 0;
+				int num_line = res.getPlan(0).getNumLines() - 1;
 				Log.i("fydx",
-						"需要倒" + String.valueOf(res.getPlan(0).getNumLines() - 1)
+						"需要倒"
+								+ String.valueOf(res.getPlan(0).getNumLines() - 1)
 								+ "次车");
-				String tmp = null;
+
 				if (num_line == 0) {
 					tmp = "从 " + res.getPlan(0).getLine(0).getGetOnStop().name
 							+ " " + res.getPlan(0).getLine(0).getTip();
@@ -292,18 +358,68 @@ public class NewMapActivity extends Activity {
 							+ res.getPlan(0).getLine(0).getTip() + "\n再"
 							+ res.getPlan(0).getLine(1).getTip();
 				}
-				Toast.makeText(getApplicationContext(), tmp, Toast.LENGTH_SHORT).show();
+				Toast.makeText(getApplicationContext(), tmp, Toast.LENGTH_SHORT)
+						.show();
+				showRoutePopUp();
 			}
 
 			@Override
-			public void onGetWalkingRouteResult(MKWalkingRouteResult arg0,
-					int arg1) {
+			public void onGetWalkingRouteResult(MKWalkingRouteResult res,
+					int error) {
 				// TODO Auto-generated method stub
-				
+				if (mPopupWindow.isShowing()) {
+					mPopupWindow.dismiss();
+				}
+				if (error == MKEvent.ERROR_ROUTE_ADDR) {
+					// 遍历所有地址
+					// ArrayList<MKPoiInfo> stPois =
+					// res.getAddrResult().mStartPoiList;
+					// ArrayList<MKPoiInfo> enPois =
+					// res.getAddrResult().mEndPoiList;
+					// ArrayList<MKCityListInfo> stCities =
+					// res.getAddrResult().mStartCityList;
+					// ArrayList<MKCityListInfo> enCities =
+					// res.getAddrResult().mEndCityList;
+					return;
+				}
+				if (error != 0 || res == null) {
+					// Toast.makeText(NewMapActivity.this, "抱歉，未找到结果",
+					// Toast.LENGTH_SHORT).show();
+					return;
+				}
+				// if (transitOverlay!= null) {
+				// mMapView.getOverlays().remove(transitOverlay);
+				// mMapView.refresh();
+				// }
+				if (routeOverlay != null) {
+					mMapView.getOverlays().remove(routeOverlay);
+					mMapView.refresh();
+				}
+				searchType = 1;
+				routeOverlay = new RouteOverlay(NewMapActivity.this, mMapView);
+
+				// 此处仅展示一个方案作为示例
+				routeOverlay.setData(res.getPlan(0).getRoute(0));
+				routeOverlay.setEnMarker(getResources().getDrawable(
+						R.drawable.empty));
+				routeOverlay.setStMarker(getResources().getDrawable(
+						R.drawable.empty));
+				// 清除其他图层
+				// mMapView.getOverlays().clear();
+				// 添加路线图层
+				mMapView.getOverlays().add(routeOverlay);
+				// 执行刷新使生效
+				mMapView.refresh();
+				// 使用zoomToSpan()绽放地图，使路线能完全显示在地图上
+				mMapView.getController().zoomToSpan(
+						routeOverlay.getLatSpanE6(),
+						routeOverlay.getLonSpanE6());
+				// 移动地图到起点
+				mMapView.getController().animateTo(res.getStart().pt);
+
 			}
-        
-        });
-		
+
+		});
 
 	}
 
@@ -396,16 +512,15 @@ public class NewMapActivity extends Activity {
 	@Override
 	protected void onDestroy() {
 		mMapView.destroy();
-		//退出时销毁定位
-        if (mLocClient != null)
-            mLocClient.stop();
-       
-	
+		// 退出时销毁定位
+		if (mLocClient != null)
+			mLocClient.stop();
+
 		DemoApplication app = (DemoApplication) this.getApplication();
-		if(app.mBMapManager!=null){
-		app.mBMapManager.destroy();
-		app.mBMapManager=null;
-		 }
+		if (app.mBMapManager != null) {
+			app.mBMapManager.destroy();
+			app.mBMapManager = null;
+		}
 		super.onDestroy();
 	}
 
@@ -444,55 +559,54 @@ public class NewMapActivity extends Activity {
 			// 是手动触发请求或首次定位时，移动到定位点
 			if (isRequest || isFirstLoc) {
 				// 移动地图到定位点
-				locGeoPoint =new GeoPoint(
-						(int) (locData.latitude * 1e6),
+				locGeoPoint = new GeoPoint((int) (locData.latitude * 1e6),
 						(int) (locData.longitude * 1e6));
 				mMapController.animateTo(locGeoPoint);
 				initBusLine();
+
 				isRequest = false;
 			}
 			// 首次定位完成
 			isFirstLoc = false;
-		
+
 		}
 
 		public void onReceivePoi(BDLocation poiLocation) {
-//			if (poiLocation == null){
-//                return ;
-//          }
-//         StringBuffer sb = new StringBuffer(256);
-//          sb.append("Poi time : ");
-//          sb.append(poiLocation.getTime());
-//          sb.append("\nerror code : ");
-//          sb.append(poiLocation.getLocType());
-//          sb.append("\nlatitude : ");
-//          sb.append(poiLocation.getLatitude());
-//          sb.append("\nlontitude : ");
-//          sb.append(poiLocation.getLongitude());
-//          sb.append("\nradius : ");
-//          sb.append(poiLocation.getRadius());
-//          if (poiLocation.getLocType() == BDLocation.TypeNetWorkLocation){
-//              sb.append("\naddr : ");
-//              sb.append(poiLocation.getAddrStr());
-//         } 
-//          if(poiLocation.hasPoi()){
-//               sb.append("\nPoi:");
-//               sb.append(poiLocation.getPoi());
-//         }else{             
-//               sb.append("noPoi information");
-//          }
-//         Log.i("location msg", sb.toString());
-        }
+			// if (poiLocation == null){
+			// return ;
+			// }
+			// StringBuffer sb = new StringBuffer(256);
+			// sb.append("Poi time : ");
+			// sb.append(poiLocation.getTime());
+			// sb.append("\nerror code : ");
+			// sb.append(poiLocation.getLocType());
+			// sb.append("\nlatitude : ");
+			// sb.append(poiLocation.getLatitude());
+			// sb.append("\nlontitude : ");
+			// sb.append(poiLocation.getLongitude());
+			// sb.append("\nradius : ");
+			// sb.append(poiLocation.getRadius());
+			// if (poiLocation.getLocType() == BDLocation.TypeNetWorkLocation){
+			// sb.append("\naddr : ");
+			// sb.append(poiLocation.getAddrStr());
+			// }
+			// if(poiLocation.hasPoi()){
+			// sb.append("\nPoi:");
+			// sb.append(poiLocation.getPoi());
+			// }else{
+			// sb.append("noPoi information");
+			// }
+			// Log.i("location msg", sb.toString());
+		}
 	}
 
-	
-  /**
-   * 定位方法
-   */
+	/**
+	 * 定位方法
+	 */
 	public void initLoc() {
 		// 定位初始化
 		mLocClient = new LocationClient(getApplicationContext());
-		
+
 		locData = new LocationData();
 		mLocClient.registerLocationListener(myListener);
 		LocationClientOption option = new LocationClientOption();
@@ -506,11 +620,12 @@ public class NewMapActivity extends Activity {
 		myLocationOverlay = new MyLocationOverlay(mMapView);
 		// 设置定位数据
 		myLocationOverlay.setData(locData);
-		
-		
+
 		// 添加定位图层
 		mMapView.getOverlays().add(myLocationOverlay);
-		//Toast.makeText(getApplicationContext(), String.valueOf(locData.longitude) +  "  " + String.valueOf(locData.latitude), Toast.LENGTH_SHORT).show();
+		// Toast.makeText(getApplicationContext(),
+		// String.valueOf(locData.longitude) + "  " +
+		// String.valueOf(locData.latitude), Toast.LENGTH_SHORT).show();
 		myLocationOverlay.enableCompass();
 		// 修改定位数据后刷新图层生效
 		mMapView.refresh();
@@ -525,41 +640,63 @@ public class NewMapActivity extends Activity {
 		Toast.makeText(NewMapActivity.this, "正在定位……", Toast.LENGTH_SHORT)
 				.show();
 	}
+
 	/**
 	 * 初始化公交路线
 	 */
-	public void initBusLine()
-	{
+	public void initBusLine() {
 		MKPlanNode start = new MKPlanNode();
 		start.pt = locGeoPoint;
 		MKPlanNode end = new MKPlanNode();
-		Toast.makeText(getApplicationContext(),String.valueOf(locGeoPoint.getLatitudeE6() / 1E6) + " " + String.valueOf(locGeoPoint.getLongitudeE6() / 1E6) , Toast.LENGTH_SHORT).show();
-		end.pt = new GeoPoint(geoPoints.get(0).getLatitudeE6() + (int)(0.0002 * 1E6) , geoPoints.get(0).getLongitudeE6()+ (int)(0.0002 * 1E6) );
+		Toast.makeText(
+				getApplicationContext(),
+				String.valueOf(locGeoPoint.getLatitudeE6() / 1E6) + " "
+						+ String.valueOf(locGeoPoint.getLongitudeE6() / 1E6),
+				Toast.LENGTH_SHORT).show();
+		end.pt = new GeoPoint(geoPoints.get(0).getLatitudeE6()
+				+ (int) (0.0002 * 1E6), geoPoints.get(0).getLongitudeE6()
+				+ (int) (0.0002 * 1E6));
 		mSearch.transitSearch("西安", start, end);
-		
+
 	}
+
 	/**
-	 * set fake  Location
+	 * set fake Location
+	 * 
 	 * @param longitude
 	 * @param latitude
 	 */
 	private void setLocation(double longitude, double latitude) {
-		 String mMockProviderName = "spoof";
-		 //int mPostDelayed = 10000;
-        LocationManager locationManager = (LocationManager) getApplicationContext()
-                .getSystemService(Context.LOCATION_SERVICE);
-        if (locationManager.getProvider(mMockProviderName) == null) {
-            locationManager.addTestProvider(mMockProviderName, false, true,
-                    false, false, false, false, false, 0, 5);
-            locationManager.setTestProviderEnabled(mMockProviderName, true);
-        }
-        Location loc = new Location(mMockProviderName);
-        loc.setTime(System.currentTimeMillis());
-        loc.setLatitude(latitude);
-        loc.setLongitude(longitude);
-        locationManager.setTestProviderLocation(mMockProviderName, loc);
+		String mMockProviderName = "spoof";
+		// int mPostDelayed = 10000;
+		LocationManager locationManager = (LocationManager) getApplicationContext()
+				.getSystemService(Context.LOCATION_SERVICE);
+		if (locationManager.getProvider(mMockProviderName) == null) {
+			locationManager.addTestProvider(mMockProviderName, false, true,
+					false, false, false, false, false, 0, 5);
+			locationManager.setTestProviderEnabled(mMockProviderName, true);
+		}
+		Location loc = new Location(mMockProviderName);
+		loc.setTime(System.currentTimeMillis());
+		loc.setLatitude(latitude);
+		loc.setLongitude(longitude);
+		locationManager.setTestProviderLocation(mMockProviderName, loc);
 
-        Log.i("gps", String.format("once: x=%s y=%s", longitude, latitude));
-    }
-	 
+		Log.i("gps", String.format("once: x=%s y=%s", longitude, latitude));
+	}
+
+	public void showRoutePopUp() {
+		Context mContext = NewMapActivity.this;
+		LayoutInflater mLayoutInflater = (LayoutInflater) mContext
+				.getSystemService(LAYOUT_INFLATER_SERVICE);
+		View route = mLayoutInflater.inflate(R.layout.popup_map, null);
+		TextView textView_route = (TextView) route
+				.findViewById(R.id.textView_route);
+		textView_route.setText(tmp);
+		 mPopupWindow = new PopupWindow(route,
+				LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
+
+		mPopupWindow.showAtLocation(findViewById(R.id.bmapsView), Gravity.TOP
+				| Gravity.CENTER_HORIZONTAL, 0, 40);
+	}
 }
