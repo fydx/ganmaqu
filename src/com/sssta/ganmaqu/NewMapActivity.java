@@ -6,8 +6,10 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import android.R.integer;
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationManager;
@@ -100,6 +102,8 @@ public class NewMapActivity extends Activity {
 	private Button button = null;
 	private MapView.LayoutParams layoutParam = null;
 	private OverlayItem mCurItem = null;
+	private SharedPreferences userInfo ;
+	private int mode ;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -116,6 +120,9 @@ public class NewMapActivity extends Activity {
 					new DemoApplication.MyGeneralListener());
 		}
 		setContentView(R.layout.activity_new_map);
+		//初始化sharedpreference
+		userInfo = getApplicationContext().getSharedPreferences("userInfo", 0);
+		mode = userInfo.getInt("mode", 0);
 		places = (List<place>) getIntent().getSerializableExtra("places");
 		Log.i("places nums", String.valueOf(places.size()));
 		requestLocButton = (Button) findViewById(R.id.button_loc);
@@ -178,6 +185,7 @@ public class NewMapActivity extends Activity {
 				}
 			}
 		});
+		
 		mkpoi = new ArrayList<MKPoiInfo>();
 		// 地图初始化
 		mMapView = (MapView) findViewById(R.id.bmapsView);

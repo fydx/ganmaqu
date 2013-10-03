@@ -107,7 +107,7 @@ public class WarpDSLV extends FragmentActivity {
 					.getPos_x()), String.valueOf(places.get(which).getPos_y()),
 					places.get(which).getTime(), places.get(which)
 							.getShopName(), String.valueOf(which), String
-							.valueOf(places.get(which).getCost()));
+							.valueOf(places.get(which).getCost()),city);
 			new sendDeleteTask().execute(
 					String.valueOf(places.get(which).getId()), userid);
 		}

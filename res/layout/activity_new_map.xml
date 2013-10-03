@@ -12,8 +12,8 @@
 
     <Button
         android:id="@+id/button_loc"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="43dp"
+        android:layout_height="43dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_marginLeft="10dp"
