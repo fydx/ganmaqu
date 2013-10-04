@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <ImageView
+        android:id="@+id/imageView_bg"
+        android:layout_width="match_parent"
+        android:layout_height="225dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:src="@drawable/bg_main" />
+
+    <ImageView
+        android:id="@+id/imageView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/imageView_bg"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="62dp"
+        android:src="@drawable/marker_location" />
+
+    <TextView
+        android:id="@+id/textView_loc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/imageView_bg"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="35dp"
+        android:background="@drawable/marker_text"
+        android:gravity="center"
+        android:text="当前位置"
+        android:textColor="#000000"
+        android:textSize="10dp" />
+
+    <TextView
+        android:id="@+id/textView_circle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/textView_cr"
+        android:layout_marginTop="3dp"
+        android:background="@drawable/bg_text_main"
+        android:gravity="center"
+        android:text="商圈"
+        android:textColor="#c70102"
+        android:textSize="24dp" />
+
+    <TextView
+        android:id="@+id/textView_cr"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:background="@drawable/marker_main_circle"
+        android:gravity="right|bottom"
+        android:padding="4dp"
+        android:text="推荐商圈"
+        android:textColor="#FFFFFF"
+        android:textSize="13dp" />
+
+    <TextView
+        android:id="@+id/textView_ty"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/textView_circle"
+        android:background="@drawable/marker_main_type"
+        android:gravity="right|bottom"
+        android:padding="4dp"
+        android:text="出行类型"
+        android:textColor="#FFFFFF"
+        android:textSize="13dp" />
+
+    <android.widget.Gallery
+        android:id="@+id/Gallery02"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView_ty"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/bg_text_main" />
+
+    <Button
+        android:id="@+id/button_result"
+         android:layout_width="140dp"
+        android:layout_height="40dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/button_style_save"
+        android:text="Let&apos;s Go!"
+        android:textStyle="bold"
+        android:textSize="20dp"
+        android:layout_marginBottom="10dp"
+        android:textColor="#FFFFFF" />
+
+</RelativeLayout>

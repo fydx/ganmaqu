@@ -20,12 +20,10 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
-import com.sssta.ganmaqu.SettingsFragment.loginTask;
-
 import android.R.integer;
 import android.annotation.TargetApi;
-import android.app.Activity;
+import android.app.ActionBar;
+import android.app.ActionBar.LayoutParams;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -40,9 +38,10 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.support.v4.app.FragmentActivity;
-import android.text.AndroidCharacter;
+import android.text.Layout;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -54,6 +53,8 @@ import android.widget.Gallery;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 
 public class MainActivity extends android.support.v4.app.FragmentActivity {
 	private LocationManager locationManager;
@@ -80,11 +81,24 @@ public class MainActivity extends android.support.v4.app.FragmentActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+		getWindow().requestFeature(Window.FEATURE_ACTION_BAR); // Add this line
 		setContentView(R.layout.activity_main);
+		
 		db = FinalDb.create(this);
 		city= new String("西安");
-		
+		View actionbar_title = LayoutInflater.from(this).inflate( 
+                R.layout.actionbar_main, null);
+		ActionBar actionBar = this.getActionBar();
+        TextView title = (TextView) actionbar_title.findViewById(R.id.title);
+        Button button_back = (Button) actionbar_title.findViewById(R.id.button_back); 
+        Button button_right = (Button) actionbar_title.findViewById(R.id.button_right); 
+        actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+       LayoutParams params = new ActionBar.LayoutParams( 
+                ActionBar.LayoutParams.MATCH_PARENT, 
+                ActionBar.LayoutParams.MATCH_PARENT, Gravity.CENTER); 
+        actionBar.setCustomView(actionbar_title, params); 
+        actionBar.setDisplayShowCustomEnabled(true);
+        
 		locTextView = (TextView)findViewById(R.id.text_location);
 		locTextView.setOnClickListener(new OnClickListener() {
 			

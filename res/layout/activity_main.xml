@@ -5,7 +5,7 @@
   
 
     tools:context=".MainActivity"
-    android:background="@drawable/background_main" >
+    android:background="#FFFFFF" >
 
   <!--    <Button
         android:id="@+id/button_yes"
@@ -135,7 +135,7 @@
         android:layout_marginTop="10dp"
         android:text="当前位置" />
 
-    <Button
+     <Button
         android:id="@+id/button_last"
         android:layout_width="130dp"
         android:layout_height="30dp"

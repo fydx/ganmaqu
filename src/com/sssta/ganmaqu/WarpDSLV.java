@@ -1095,7 +1095,12 @@ public class WarpDSLV extends FragmentActivity {
 			break;
 		case R.id.save:
 			saveToDB(places);
-			// // finish();
+			
+			Intent intent3 = new Intent();
+			intent3.setClass(getApplicationContext(), ShareActivity.class);
+			intent3.putExtra("places", (Serializable) places);
+			startActivity(intent3);
+			finish();
 
 			break;
 		case R.id.map:
@@ -1240,6 +1245,7 @@ public class WarpDSLV extends FragmentActivity {
 	    	anchorCenter[1]=location[1];
 	    	super.showAtLocation(anchor, Gravity.TOP|Gravity.LEFT, anchorCenter[0]+xoff, anchorCenter[1]-anchor.getContext().getResources().getDimensionPixelSize(R.dimen.popup_upload_height)+yoff);
 	    }
+	    
 	}
 
 }
