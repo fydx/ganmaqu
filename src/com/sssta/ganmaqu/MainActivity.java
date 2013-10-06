@@ -499,6 +499,7 @@ public class MainActivity extends android.support.v4.app.FragmentActivity {
 					JSONObject jsonResult = new JSONObject(jsonObject.getString("result"));
 					//Toast.makeText(getApplicationContext(), jsonResult.getString("formatted_address"), Toast.LENGTH_LONG).show();
 					locTextView.setText(jsonResult.getString("formatted_address"));
+					
 				} catch (JSONException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

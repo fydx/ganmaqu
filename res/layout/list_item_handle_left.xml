@@ -4,7 +4,7 @@
   android:layout_width="fill_parent"
   android:layout_height="@dimen/item_height"
   android:orientation="horizontal"
-  android:background="@drawable/background_item"
+  android:background="#FFFFFF"
  >
 
   <ImageView
@@ -24,20 +24,30 @@
       android:layout_weight="1"
       android:paddingBottom= "16dp"
       android:gravity="center_vertical"
-      android:paddingLeft="53dp"
+      android:paddingLeft="13dp"
       android:text="text_shopName"
       android:textColor="#000000"
+      android:background="@drawable/bg_result_item"
       android:textSize="15dp" />
 
   <TextView
       android:id="@+id/text_detail"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:layout_alignLeft="@+id/text"
       android:layout_alignParentBottom="true"
-      android:text="Text_detail" 
-    android:paddingLeft="53dp"
-       android:paddingBottom="10dp"
-      android:textColor="#000000"/>
+      android:layout_alignParentRight="true"
+      android:paddingBottom="10dp"
+      android:paddingRight="53dp"
+      android:text="Text_detail"
+      android:textColor="#000000" />
+
+  <ImageView
+      android:id="@+id/imageView1"
+      android:layout_width="15dp"
+      android:layout_height="20dp"
+      android:layout_alignParentRight="true"
+      android:layout_centerVertical="true"
+      android:layout_marginRight="20dp"
+      android:src="@drawable/button_delete" />
 
 </RelativeLayout>

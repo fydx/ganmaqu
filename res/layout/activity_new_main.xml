@@ -4,14 +4,58 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
+    
     <ImageView
         android:id="@+id/imageView_bg"
         android:layout_width="match_parent"
-        android:layout_height="225dp"
+        android:layout_height="238dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:src="@drawable/bg_main" />
+    <RelativeLayout 
+     android:id= "@+id/city"
+     android:layout_width="match_parent"
+     android:layout_height="23dp"
+      android:layout_alignParentTop="true"
+      android:background="#efeff4"
+      
+      >
+    <TextView 
+          android:id= "@+id/wozai"
+     android:layout_width="wrap_content"
+     android:layout_height="match_parent"
+    android:text="当前城市:"
+    android:layout_margin="1dp"
+    android:gravity="center"
+></TextView>
 
+    <TextView
+        android:id="@+id/textView_city"
+        android:layout_width="43dp"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_margin="2dp"
+        android:layout_toRightOf="@+id/wozai"
+        android:text="读取中."
+        android:textSize="11dp"
+        android:gravity="center"
+          android:background="@drawable/button_save"
+          android:textColor="#FFFFFF"/>
+
+    <Button
+        android:id="@+id/button_changecity"
+        android:layout_width="61dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_margin="2dp"
+        android:background="@drawable/button_style_save"
+        android:text="切换城市"
+        android:gravity="center"
+        android:textColor="#FFFFFF"
+         android:textSize="11dp" />
+
+</RelativeLayout>
     <ImageView
         android:id="@+id/imageView1"
         android:layout_width="wrap_content"
@@ -27,7 +71,7 @@
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/imageView_bg"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="35dp"
+        android:layout_marginBottom="45dp"
         android:background="@drawable/marker_text"
         android:gravity="center"
         android:text="当前位置"
@@ -44,9 +88,9 @@
         android:layout_marginTop="3dp"
         android:background="@drawable/bg_text_main"
         android:gravity="center"
-        android:text="商圈"
+        android:text="正在获取推荐商圈..."
         android:textColor="#c70102"
-        android:textSize="24dp" />
+        android:textSize="22dp" />
 
     <TextView
         android:id="@+id/textView_cr"

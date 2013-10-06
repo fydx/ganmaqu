@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 public class GroupAdapter extends BaseAdapter {
@@ -51,19 +52,30 @@ public class GroupAdapter extends BaseAdapter {
             convertView.setTag(holder);  
               
             holder.groupItem=(TextView) convertView.findViewById(R.id.textView_group);  
-              
+             holder.imageView = (ImageView)convertView.findViewById(R.id.imageView_menu);
         }  
         else{  
             holder=(ViewHolder) convertView.getTag();  
         }  
         //holder.groupItem.setTextColor(Color.BLACK);  
         holder.groupItem.setText(list.get(position));  
-          
+        if (position==0) {
+			holder.groupItem.setBackgroundResource(R.drawable.marker_list_top);
+			holder.imageView.setImageResource(R.drawable.icon_small_high);
+		}
+        if (position==1) {
+        	holder.imageView.setImageResource(R.drawable.icon_small_low);
+		}
+        if (position==2) {
+        	holder.groupItem.setBackgroundResource(R.drawable.marker_list_bottom);
+        	holder.imageView.setImageResource(R.drawable.icon_small_random);
+		}
         return convertView;  
     }  
   
     static class ViewHolder {  
         TextView groupItem;  
+        ImageView imageView;
     }  
 
 }

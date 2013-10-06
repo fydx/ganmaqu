@@ -70,11 +70,11 @@ public class WarpDSLV extends FragmentActivity {
 	private ArrayList<String> list_time;
 	private double loclat, loclng;
 	private List<place> places;
-	private Button button_toMap, button_saveToDB, button_up, button_low;
+	
 	private TextView textView_cost;
 	private ArrayList<place> places_arraylist;
 	private String type;
-	private SlidingMenu menu;
+
 	private SharedPreferences userInfo;
 	private String userid;
 	private String circleString;
@@ -142,7 +142,7 @@ public class WarpDSLV extends FragmentActivity {
 //				R.drawable.actionbar_banner));
 		actionBar.setBackgroundDrawable(getResources().getDrawable(R.drawable.actionbar_bg));
 		actionBar.setSplitBackgroundDrawable(getResources().getDrawable(
-				R.drawable.result_banner));
+				R.drawable.actionbar_split_bg));
 		actionBar.setDisplayShowHomeEnabled(false);
 		actionBar.setTitle("下面是我们为您推荐的路线");
 		int titleId = Resources.getSystem().getIdentifier("action_bar_title",
@@ -150,18 +150,7 @@ public class WarpDSLV extends FragmentActivity {
 		TextView title = (TextView) findViewById(titleId);
 		title.setTextColor(Color.parseColor("#a98457"));
 		actionBar.setDisplayHomeAsUpEnabled(true);
-		/**
-		 * set slidingmenu - map
-		 */
-		menu = new SlidingMenu(this);
-		menu.setMode(SlidingMenu.RIGHT);
-		menu.setTouchModeAbove(SlidingMenu.TOUCHMODE_MARGIN);
-		menu.setShadowWidthRes(R.dimen.shadow_width);
-		menu.setShadowDrawable(R.drawable.shadow);
-		menu.setBehindOffsetRes(R.dimen.slidingmenu_offset_map);
-		// menu.setFadeDegree(0.25f);
-		menu.attachToActivity(this, SlidingMenu.SLIDING_CONTENT);
-		menu.setMenu(R.layout.fragment_map);
+		
 
 		/**
 		 * Set Path Button
@@ -357,7 +346,7 @@ public class WarpDSLV extends FragmentActivity {
 		}
 
 		Log.i("cost", "人均消费" + String.valueOf(cost));
-		textView_cost.setText("预计人均消费 :" + String.valueOf(cost) + "元");
+		textView_cost.setText( String.valueOf(cost) );
 
 		lv.setOnItemClickListener(new OnItemClickListener() {
 
@@ -523,7 +512,7 @@ public class WarpDSLV extends FragmentActivity {
 			}
 
 			Log.i("cost", "人均消费 new" + String.valueOf(cost));
-			textView_cost.setText("预计人均消费:" + String.valueOf(cost) + "元");
+			textView_cost.setText(String.valueOf(cost));
 		}
 	}
 
@@ -533,7 +522,7 @@ public class WarpDSLV extends FragmentActivity {
 		protected String doInBackground(String... params) {
 			// TODO Auto-generated method stub
 			try {
-				return MainActivity.RequestToServer(type, loclng, loclng,
+				return RequestToServerAgain(type, loclng, loclng,
 						userid, circleString);
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
@@ -579,7 +568,7 @@ public class WarpDSLV extends FragmentActivity {
 			}
 
 			Log.i("cost", "人均消费 new" + String.valueOf(cost));
-			textView_cost.setText("预计人均消费:" + String.valueOf(cost) + "元");
+			textView_cost.setText(String.valueOf(cost));
 		}
 
 	}
@@ -623,7 +612,7 @@ public class WarpDSLV extends FragmentActivity {
 				}
 
 				Log.i("cost", "人均消费 new" + String.valueOf(cost));
-				textView_cost.setText("预计人均消费:" + String.valueOf(cost) + "元");
+				textView_cost.setText(String.valueOf(cost));
 
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
@@ -676,8 +665,7 @@ public class WarpDSLV extends FragmentActivity {
 					}
 
 					Log.i("cost", "人均消费 new" + String.valueOf(cost));
-					textView_cost.setText("预计人均消费:" + String.valueOf(cost)
-							+ "元");
+					textView_cost.setText( String.valueOf(cost));
 				}
 
 			} catch (JSONException e) {
@@ -728,8 +716,8 @@ public class WarpDSLV extends FragmentActivity {
 					}
 
 					Log.i("cost", "人均消费 new" + String.valueOf(cost));
-					textView_cost.setText("预计人均消费:" + String.valueOf(cost)
-							+ "元");
+					textView_cost.setText( String.valueOf(cost)
+							);
 				}
 
 			} catch (JSONException e) {
@@ -1013,25 +1001,13 @@ public class WarpDSLV extends FragmentActivity {
 		return null;
 	}
 
-	// methods for fragment
-	@Override
-	public void onBackPressed() {
-		// 点击返回键关闭滑动菜单
-		if (menu.isMenuShowing()) {
-			menu.showContent();
-		} else {
-			super.onBackPressed();
-		}
-	}
+	
 
 	public List<place> getPlaces() {
 		return places;
 	}
 
-	public void hideMenu() {
-		menu.showContent();
-	}
-
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
@@ -1245,7 +1221,53 @@ public class WarpDSLV extends FragmentActivity {
 	    	anchorCenter[1]=location[1];
 	    	super.showAtLocation(anchor, Gravity.TOP|Gravity.LEFT, anchorCenter[0]+xoff, anchorCenter[1]-anchor.getContext().getResources().getDimensionPixelSize(R.dimen.popup_upload_height)+yoff);
 	    }
+	   
 	    
 	}
+	 public  String RequestToServerAgain(String typeString, double pos_x, double pos_y,String userid,String circle)
+				throws JSONException {
+			DefaultHttpClient httpclient = new DefaultHttpClient();
+			try {
+				// getApplicationContext().getMainLooper();
+				// Looper.prepare();
+
+				HttpHost target = new HttpHost(ipString, 8080, "http");
+				// String request="/?type=情侣出行&pos_x=108.947039&pos_y=34.259203";
+				String request = "/?command=full&type=" +typeString+ "&city=" + city + "&id=" + userid + "&circleName="+circle;
+				Log.i("request string", request);
+				HttpGet req = new HttpGet(request);
+				// System.out.println("executing request to " + target);
+				HttpResponse rsp = httpclient.execute(target, req);
+				HttpEntity entity = rsp.getEntity();
+				InputStreamReader isr = new InputStreamReader(entity.getContent(),
+						"utf-8");
+				BufferedReader br = new BufferedReader(isr);
+				String line = null;
+				line = br.readLine();
+				if (line != null) {
+
+					System.out.println(line);
+					return line;
+
+				} else {
+					System.out.println("line is null");
+				}
+
+			} catch (ClientProtocolException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} finally {
+				// When HttpClient instance is no longer needed,
+				// shut down the connection manager to ensure
+				// immediate deallocation of all system resources
+				httpclient.getConnectionManager().shutdown();
+			}
+			return null;
+
+		}
 
 }

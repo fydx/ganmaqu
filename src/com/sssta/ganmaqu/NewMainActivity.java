@@ -51,6 +51,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.Gallery;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemSelectedListener;
@@ -74,8 +75,9 @@ public class NewMainActivity extends SlidingFragmentActivity{
 	private Dialog dialog;
 	private Gallery galleryFlow;
 	private GifView gifView;
-	private int count ;
-	private TextView locTextView,circleTextView;
+	private int count ,count_city;
+	private TextView locTextView,circleTextView,cityTextView;
+	private Button changecityButton;
 	private FinalDb db;
 	private String userid;
 	private static String city ; 
@@ -104,11 +106,13 @@ public class NewMainActivity extends SlidingFragmentActivity{
 	     // menu.setMenu(R.layout.menu);
 		db = FinalDb.create(this);
 		city= new String("西安");
+		count_city = 0;
 		View actionbar_title = LayoutInflater.from(this).inflate( 
                 R.layout.actionbar_main, null);
 		ActionBar actionBar = this.getActionBar();
         TextView title = (TextView) actionbar_title.findViewById(R.id.title);
         Button button_back = (Button) actionbar_title.findViewById(R.id.button_back); 
+        
         button_back.setOnClickListener(new OnClickListener() {
 			
 			@Override
@@ -121,6 +125,19 @@ public class NewMainActivity extends SlidingFragmentActivity{
 				else {
 					menu.showMenu();
 				}
+			}
+		});
+        RelativeLayout relativeLayout = (RelativeLayout)findViewById(R.id.city);
+        relativeLayout.getBackground().setAlpha(100);
+        
+        cityTextView = (TextView)findViewById(R.id.textView_city);
+        changecityButton = (Button)findViewById(R.id.button_changecity);
+        changecityButton.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				
 			}
 		});
         Button button_right = (Button) actionbar_title.findViewById(R.id.button_right); 
@@ -152,7 +169,8 @@ public class NewMainActivity extends SlidingFragmentActivity{
         actionBar.setDisplayShowCustomEnabled(true);
         
 		locTextView = (TextView)findViewById(R.id.textView_loc);
-		
+		//locTextView.setBackgroundColor(0xe0FFFFFF);
+		locTextView.getBackground().setAlpha(100);
 		circleTextView = (TextView)findViewById(R.id.textView_circle);
 		circleTextView.setOnClickListener(new OnClickListener() {
 			
@@ -224,7 +242,7 @@ public class NewMainActivity extends SlidingFragmentActivity{
 		              long id) {
 		         // 选中Gallery中某个图像时，放大显示该图像
 		          ImageView imageview = (ImageView)view;
-		          view.setLayoutParams(new Gallery.LayoutParams(570 / 3, 370 / 3));
+		          view.setLayoutParams(new Gallery.LayoutParams(650 / 3, 470 / 3));
 		          for(int i=0; i<parent.getChildCount();i++){
 		             //缩小选中图片旁边的图片
 		             ImageView local_imageview = (ImageView)parent.getChildAt(i);
@@ -544,6 +562,18 @@ public class NewMainActivity extends SlidingFragmentActivity{
 					JSONObject jsonResult = new JSONObject(jsonObject.getString("result"));
 					//Toast.makeText(getApplicationContext(), jsonResult.getString("formatted_address"), Toast.LENGTH_LONG).show();
 					locTextView.setText(jsonResult.getString("formatted_address"));
+					if (count_city==0) {
+						
+						city = null;
+						String addressComponent = jsonResult.getString("addressComponent");
+						JSONObject address =  new JSONObject(addressComponent);
+						city = new String(address.getString("city")).substring(0, 2);
+						Log.i("city", city);
+						cityTextView.setText(city);
+						count++;
+					}
+					
+					
 				} catch (JSONException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

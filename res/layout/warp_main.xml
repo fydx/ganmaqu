@@ -4,7 +4,7 @@
     android:id="@+id/relativelayout1"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:background="@drawable/background_result" >
+    android:background="#FFFFFF" >
 
     <com.mobeta.android.dslv.DragSortListView
         xmlns:android="http://schemas.android.com/apk/res/android"
@@ -13,14 +13,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="0dp"
-        android:layout_marginRight="20dp"
+        android:layout_marginRight="3dp"
         android:layout_marginTop="0dp"
-        android:layout_below="@+id/text_type"
+        android:layout_below="@+id/relativelayout1"
         android:dividerHeight="5dp"
         android:fastScrollEnabled="false"
         android:paddingBottom="0dp"
-        android:paddingLeft="10dp"
-        android:paddingTop="10dp"
+        android:paddingLeft="5dp"
+        android:paddingTop="5dp"
         app:collapsed_height="2dp"
         app:drag_enabled="true"
         app:drag_handle_id="@id/drag_handle"
@@ -80,31 +80,58 @@
         android:background="@drawable/button_map"
         android:text="  " />
     -->
+<RelativeLayout
+     android:id="@+id/relativelayout1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+       android:background="#efeff4"
+        android:layout_centerHorizontal="true" >
 
     <TextView
         android:id="@+id/text_type"
-        android:layout_width="82dp"
-        android:layout_height="30dp"
+        android:layout_width="55dp"
+        android:layout_height="22dp"
         android:layout_alignParentLeft="true"
-        android:layout_marginTop="10dp"
-        android:background="@drawable/marker_small"
+        android:layout_centerVertical="true"
+        android:background="@drawable/button_save"
         android:gravity="center_vertical|center_horizontal"
         android:paddingLeft="2dp"
         android:text="type"
+        android:layout_marginTop="16dp"
+         android:layout_marginBottom="16dp"
+         android:layout_marginLeft="10dp"
         android:textColor="#FFFFFF"
         android:textSize="13dp" />
 
     <TextView
         android:id="@+id/cost"
-        android:layout_width="150dp"
-        android:layout_height="30dp"
-        android:layout_alignParentRight="true"
-        android:layout_alignTop="@+id/text_type"
-        android:background="@drawable/marker_large"
+        android:layout_width="32dp"
+        android:layout_height="22dp"
+        android:layout_toLeftOf="@+id/textView_yuan"
+         android:layout_centerVertical="true"
+        android:layout_toRightOf="@+id/text"
+        android:background="@drawable/button_save"
         android:gravity="center_vertical|center_horizontal"
-        android:text="人均消费：XX元"
+        android:text="XX"
         android:textColor="#FFFFFF"
         android:textSize="13dp" />
+
+    <TextView
+        android:id="@+id/textView_everycost"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_toLeftOf="@+id/cost"
+        android:text="预计人均消费"
+        android:textSize="13dp" />
+<TextView
+    android:id="@+id/textView_yuan"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignParentRight="true"
+    android:layout_centerVertical="true"
+    android:text="元" />
+    </RelativeLayout>
 <!-- 
     <ImageView
         android:id="@+id/imageView1"
@@ -139,5 +166,7 @@
         android:layout_alignTop="@+id/imageView1"
         android:layout_marginLeft="16dp"
         android:background="@drawable/button_map_new" /> -->
+
+
 
 </RelativeLayout>

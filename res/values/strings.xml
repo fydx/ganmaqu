@@ -106,5 +106,6 @@
     <string name="title_activity_settings">设置</string>
     <string name="title_activity_new_map">NewMapActivity</string>
     <string name="title_activity_share">ShareActivity</string>
+    <string name="title_activity_detail">DetailActivity</string>
 
 </resources>
