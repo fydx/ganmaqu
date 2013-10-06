@@ -24,9 +24,11 @@ import android.R.integer;
 import android.R.menu;
 import android.annotation.TargetApi;
 import android.app.ActionBar;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ActionBar.LayoutParams;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Address;
@@ -60,6 +62,7 @@ import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.jeremyfeinstein.slidingmenu.lib.app.SlidingFragmentActivity;
 import com.sssta.ganmaqu.MainActivity.RequestTask;
 import com.sssta.ganmaqu.MainActivity.getCurrentCircle;
+import com.sssta.ganmaqu.SettingsFragment.loginTask;
 
 public class NewMainActivity extends SlidingFragmentActivity{
 	private LocationManager locationManager;
@@ -70,13 +73,15 @@ public class NewMainActivity extends SlidingFragmentActivity{
 	private static String ipString;
 	final String Types[] = new String[] { "亲子出行", "朋友出行", "情侣出行" };
 	private WheelView typeWheel;
-	private double lat;
-	private double lng;
+	private static double lat;
+	private static double lng;
 	private Dialog dialog;
 	private Gallery galleryFlow;
 	private GifView gifView;
 	private int count ,count_city;
-	private TextView locTextView,circleTextView,cityTextView;
+	private TextView locTextView;
+	private static  TextView circleTextView;
+	private static TextView cityTextView;
 	private Button changecityButton;
 	private FinalDb db;
 	private String userid;
@@ -84,6 +89,7 @@ public class NewMainActivity extends SlidingFragmentActivity{
 	//private String circleString;
 	private CircleDialog circleDialog;
 	private  SlidingMenu menu;
+	private SharedPreferences userInfo ;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -92,6 +98,10 @@ public class NewMainActivity extends SlidingFragmentActivity{
 	    setBehindContentView(R.layout.menu);
 	    
 		setContentView(R.layout.activity_new_main);
+		userInfo = getApplicationContext().getSharedPreferences("userInfo", 0);
+		city=userInfo.getString("city", "西安市");
+		count_city=userInfo.getInt("count_city", 0);
+		Log.i("city from sharedperferece", city);
 		setSlidingActionBarEnabled(true);
 		//set sliding menu
 		  menu = getSlidingMenu();
@@ -105,8 +115,8 @@ public class NewMainActivity extends SlidingFragmentActivity{
 	     // menu.attachToActivity(this, SlidingMenu.SLIDING_CONTENT);
 	     // menu.setMenu(R.layout.menu);
 		db = FinalDb.create(this);
-		city= new String("西安");
-		count_city = 0;
+		
+		
 		View actionbar_title = LayoutInflater.from(this).inflate( 
                 R.layout.actionbar_main, null);
 		ActionBar actionBar = this.getActionBar();
@@ -131,12 +141,16 @@ public class NewMainActivity extends SlidingFragmentActivity{
         relativeLayout.getBackground().setAlpha(100);
         
         cityTextView = (TextView)findViewById(R.id.textView_city);
+        cityTextView.setText(city);
         changecityButton = (Button)findViewById(R.id.button_changecity);
         changecityButton.setOnClickListener(new OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
+				ChangeCityDialog changeCityDialog = new  ChangeCityDialog(NewMainActivity.this,String.valueOf(lng),String.valueOf(lat));
+				changeCityDialog.setTextView(cityTextView);
+				changeCityDialog.show();
 				
 			}
 		});
@@ -177,8 +191,8 @@ public class NewMainActivity extends SlidingFragmentActivity{
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				circleDialog = new CircleDialog(NewMainActivity.this);
-				circleDialog.setCity(city);
+				circleDialog = new CircleDialog(NewMainActivity.this,cityTextView.getText().toString());
+			//	circleDialog.setCity(city);
 				circleDialog.setTextView(circleTextView);
 				circleDialog.show();
 				
@@ -188,7 +202,7 @@ public class NewMainActivity extends SlidingFragmentActivity{
 				.getString(R.string.ip);
 		count = 0;
 		//new getCircles().execute("西安");
-		SharedPreferences userInfo = getApplicationContext().getSharedPreferences("userInfo", 0);
+		
 		userid = userInfo.getString("userid", "root");
 		// 获取LocationManager服务
 		locationManager = (LocationManager) this
@@ -353,7 +367,7 @@ public class NewMainActivity extends SlidingFragmentActivity{
 					new RequestTask().execute(
 							Types[galleryFlow.getSelectedItemPosition()],
 							String.valueOf(location.getLongitude()),
-							String.valueOf(location.getLatitude()));
+							String.valueOf(location.getLatitude()),cityTextView.getText().toString());
 				}
 
 			}
@@ -375,13 +389,13 @@ public class NewMainActivity extends SlidingFragmentActivity{
 				.isProviderEnabled(android.location.LocationManager.GPS_PROVIDER)
 				|| locationManager
 						.isProviderEnabled(android.location.LocationManager.NETWORK_PROVIDER)) {
-			Toast.makeText(this, "位置源已设置！", Toast.LENGTH_SHORT).show();
+			Log.i("location service", "位置源已设置！");
+		//	Toast.makeText(this, , Toast.LENGTH_SHORT).show();
 			return;
 		}
-		Toast.makeText(this, "位置源未设置！", Toast.LENGTH_SHORT).show();
-		// 转至GPS设置界面
-		Intent intent = new Intent(Settings.ACTION_SECURITY_SETTINGS);
-		startActivityForResult(intent, 0);
+		Toast.makeText(this, "您未开启定位服务", Toast.LENGTH_SHORT).show();
+		createLogoutDialog();
+	
 	}
 
 	// 获取Location Provider
@@ -447,7 +461,7 @@ public class NewMainActivity extends SlidingFragmentActivity{
 			//new AddressRequestTask().execute("34.238225","108.924703"); //Test
 			new AddressRequestTask().execute(String.valueOf(lat),String.valueOf(lng));
 			Log.i("loaction", String.valueOf(lat) + " " + String.valueOf(lng));
-			new getCurrentCircle().execute(String.valueOf(lng),String.valueOf(lat),"西安");
+			new getCurrentCircle().execute(String.valueOf(lng),String.valueOf(lat),city);
 			
 		}
 		count++;
@@ -491,7 +505,7 @@ public class NewMainActivity extends SlidingFragmentActivity{
 				pos_y = Double.parseDouble(params[2]);
 			}
 			try {
-				return RequestToServer(params[0], pos_x, pos_y,userid,circleTextView.getText().toString());
+				return RequestToServer(params[0], pos_x, pos_y,userid,circleTextView.getText().toString(),params[3]);
 			} catch (JSONException e) {
 				
 				e.printStackTrace();
@@ -534,6 +548,7 @@ public class NewMainActivity extends SlidingFragmentActivity{
 			intent.putExtra("loclat", lat);
 			intent.putExtra("loclng", lng);
 			intent.putExtra("type", typeString);
+		
 			intent.putExtra("circle", circleTextView.getText().toString());
 			dialog.dismiss();
 			startActivity(intent);
@@ -567,10 +582,12 @@ public class NewMainActivity extends SlidingFragmentActivity{
 						city = null;
 						String addressComponent = jsonResult.getString("addressComponent");
 						JSONObject address =  new JSONObject(addressComponent);
-						city = new String(address.getString("city")).substring(0, 2);
+						city = new String(address.getString("city"));
 						Log.i("city", city);
 						cityTextView.setText(city);
-						count++;
+						userInfo.edit().putString("city", city).commit();
+						count_city++;
+						userInfo.edit().putInt("count_city", count_city).commit();
 					}
 					
 					
@@ -583,7 +600,7 @@ public class NewMainActivity extends SlidingFragmentActivity{
 			
 		}
 	}
-	public static  String RequestToServer(String typeString, double pos_x, double pos_y,String userid,String circle)
+	public static  String RequestToServer(String typeString, double pos_x, double pos_y,String userid,String circle,String cityString)
 			throws JSONException {
 		DefaultHttpClient httpclient = new DefaultHttpClient();
 		try {
@@ -592,7 +609,7 @@ public class NewMainActivity extends SlidingFragmentActivity{
 
 			HttpHost target = new HttpHost(ipString, 8080, "http");
 			// String request="/?type=情侣出行&pos_x=108.947039&pos_y=34.259203";
-			String request = "/?command=full&type=" +typeString+ "&city=" + city + "&id=" + userid + "&circleName="+circle;
+			String request = "/?command=full&type=" +typeString+ "&city=" + cityString + "&id=" + userid + "&circleName="+circle;
 			Log.i("request string", request);
 			HttpGet req = new HttpGet(request);
 			// System.out.println("executing request to " + target);
@@ -742,7 +759,7 @@ public class NewMainActivity extends SlidingFragmentActivity{
     	//Log.i("hasmap", ansHashMap.toString());
     	return ansHashMap;
     }
-    public String GetShopCircle(double pos_x,double pos_y,String city)   //给坐标，返回最近商圈名称
+    public static String GetShopCircle(double pos_x,double pos_y,String city)   //给坐标，返回最近商圈名称
 	{
 		DefaultHttpClient httpclient = new DefaultHttpClient();
 		try
@@ -770,7 +787,7 @@ public class NewMainActivity extends SlidingFragmentActivity{
 		
 		return null;
 	}
-    public class getCurrentCircle extends AsyncTask<String, Integer, String>
+    public static class getCurrentCircle extends AsyncTask<String, Integer, String>
     {
 
 		@Override
@@ -790,6 +807,41 @@ public class NewMainActivity extends SlidingFragmentActivity{
     			circleTextView.setText(result);
 			}
     	}
+    	
     }
+    public static void startrequest()
+	{
+		new getCurrentCircle().execute(String.valueOf(lng),String.valueOf(lat),cityTextView.getText().toString());
+		Log.i("start", "start");
+	}
+    public void createLogoutDialog()
+
+	{
+		
+		AlertDialog dlg = new AlertDialog.Builder(NewMainActivity.this)
+				.setTitle("提示")
+				.setMessage("您没有开启定位服务，这会影响干嘛去的使用效果，是否进入设置开启定位服务？")
+				.setPositiveButton("确认", new DialogInterface.OnClickListener() {
+
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						// TODO Auto-generated method stub
+						// 转至GPS设置界面
+						Intent intent = new Intent(Settings.ACTION_SECURITY_SETTINGS);
+						startActivityForResult(intent, 0);
+					}
+
+				})
+				.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						// TODO Auto-generated method stub
+
+					}
+				}).create();
+		dlg.show();
+
+	}
 }
 

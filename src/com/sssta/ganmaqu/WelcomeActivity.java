@@ -33,6 +33,7 @@ public class WelcomeActivity extends Activity {
 				e.commit();
 				// 判断结束
 		final Intent intent2 = new Intent(WelcomeActivity.this, NewMainActivity.class);
+		final Intent intent3 = new Intent(WelcomeActivity.this, GuideActivity.class);
 		Timer timer = new Timer(); //设置Timer
 		TimerTask task = new TimerTask() {
 			@Override
@@ -41,12 +42,23 @@ public class WelcomeActivity extends Activity {
 				finish(); 
 			}
 		};
-		timer.schedule(task, 1000 * 1);
+		Timer timer2 = new Timer(); //设置Timer
+		TimerTask task2 = new TimerTask() {
+			@Override
+			public void run() {
+				startActivity(intent3);
+				finish(); 
+			}
+		};
 		if (count1==1) {
 			Log.i("firstboot", "True");
 			db_user = FinalDb.create(this);
 			User user = new User(1,1);
 			db_user.save(user);
+			timer2.schedule(task2, 1000 * 1);
+		}
+		else {
+			timer.schedule(task, 1000 * 1);
 		}
 		
 		

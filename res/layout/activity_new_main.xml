@@ -4,14 +4,20 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
+   <LinearLayout
+       android:id="@+id/linearlayout1"
+        android:layout_width="fill_parent"
+    android:layout_height="238dp"
     
+     >
     <ImageView
         android:id="@+id/imageView_bg"
         android:layout_width="match_parent"
-        android:layout_height="238dp"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:scaleType="fitXY"
         android:src="@drawable/bg_main" />
+    </LinearLayout> 
     <RelativeLayout 
      android:id= "@+id/city"
      android:layout_width="match_parent"
@@ -31,7 +37,7 @@
 
     <TextView
         android:id="@+id/textView_city"
-        android:layout_width="43dp"
+        android:layout_width="46dp"
         android:layout_height="match_parent"
         android:layout_alignParentTop="true"
         android:layout_margin="2dp"
@@ -60,7 +66,7 @@
         android:id="@+id/imageView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/imageView_bg"
+        android:layout_alignBottom="@+id/linearlayout1"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="62dp"
         android:src="@drawable/marker_location" />
@@ -69,7 +75,7 @@
         android:id="@+id/textView_loc"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/imageView_bg"
+        android:layout_alignBottom="@+id/linearlayout1"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="45dp"
         android:background="@drawable/marker_text"
@@ -88,7 +94,7 @@
         android:layout_marginTop="3dp"
         android:background="@drawable/bg_text_main"
         android:gravity="center"
-        android:text="正在获取推荐商圈..."
+        android:text="正在获取推荐商圈.."
         android:textColor="#c70102"
         android:textSize="22dp" />
 

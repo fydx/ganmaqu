@@ -80,7 +80,7 @@ public class NewMapActivity extends Activity {
 	MyLocationOverlay myLocationOverlay = null;
 	// UI相关
 	OnCheckedChangeListener radioButtonListener = null;
-	private int countRoute = 0;
+	private int countRoute = 0,isFindBus = 0;
 	boolean isRequest = false;// 是否手动触发请求定位
 	boolean isFirstLoc = true;// 是否首次定位
 	private Button requestLocButton = null;
@@ -104,6 +104,7 @@ public class NewMapActivity extends Activity {
 	private OverlayItem mCurItem = null;
 	private SharedPreferences userInfo ;
 	private int mode ;
+	private String city;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -123,6 +124,7 @@ public class NewMapActivity extends Activity {
 		//初始化sharedpreference
 		userInfo = getApplicationContext().getSharedPreferences("userInfo", 0);
 		mode = userInfo.getInt("mode", 0);
+		city = userInfo.getString("city", "西安市");
 		places = (List<place>) getIntent().getSerializableExtra("places");
 		Log.i("places nums", String.valueOf(places.size()));
 		requestLocButton = (Button) findViewById(R.id.button_loc);
@@ -141,7 +143,7 @@ public class NewMapActivity extends Activity {
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				if (countRoute < 0) {
-					Toast.makeText(getApplicationContext(), "这是第一条路线了",
+					Toast.makeText(getApplicationContext(), "这是第一条路线",
 							Toast.LENGTH_SHORT).show();
 					countRoute = 0;
 					if (routeOverlay != null) {
@@ -211,12 +213,14 @@ public class NewMapActivity extends Activity {
 		 */
 		GeoPoint p = new GeoPoint((int) (34.265733 * 1E6),
 				(int) (108.953906 * 1E6));
+//		GeoPoint p = new GeoPoint((int) (36.065159 * 1E6),
+//				(int) (103.833222 * 1E6));
 		mMapController.setCenter(p);
 
 		// 定位初始化
 		initLoc();
 		// 定位部分结束
-		// setLocation(108.953906,34.265733);
+		// setLocation(103.833222,36.065159);
 
 		// 封装地点坐标到list中
 		geoPoints = null;
@@ -366,8 +370,8 @@ public class NewMapActivity extends Activity {
 							+ res.getPlan(0).getLine(0).getTip() + "\n再"
 							+ res.getPlan(0).getLine(1).getTip();
 				}
-				Toast.makeText(getApplicationContext(), tmp, Toast.LENGTH_SHORT)
-						.show();
+//				Toast.makeText(getApplicationContext(), tmp, Toast.LENGTH_SHORT)
+//						.show();
 				showRoutePopUp();
 			}
 
@@ -375,7 +379,7 @@ public class NewMapActivity extends Activity {
 			public void onGetWalkingRouteResult(MKWalkingRouteResult res,
 					int error) {
 				// TODO Auto-generated method stub
-				if (mPopupWindow.isShowing()) {
+				if (mPopupWindow!=null&&mPopupWindow.isShowing()) {
 					mPopupWindow.dismiss();
 				}
 				if (error == MKEvent.ERROR_ROUTE_ADDR) {
@@ -656,15 +660,16 @@ public class NewMapActivity extends Activity {
 		MKPlanNode start = new MKPlanNode();
 		start.pt = locGeoPoint;
 		MKPlanNode end = new MKPlanNode();
-		Toast.makeText(
-				getApplicationContext(),
-				String.valueOf(locGeoPoint.getLatitudeE6() / 1E6) + " "
-						+ String.valueOf(locGeoPoint.getLongitudeE6() / 1E6),
-				Toast.LENGTH_SHORT).show();
+//		Toast.makeText(
+//				getApplicationContext(),
+//				String.valueOf(locGeoPoint.getLatitudeE6() / 1E6) + " "
+//						+ String.valueOf(locGeoPoint.getLongitudeE6() / 1E6),
+//				Toast.LENGTH_SHORT).show();
 		end.pt = new GeoPoint(geoPoints.get(0).getLatitudeE6()
 				+ (int) (0.0002 * 1E6), geoPoints.get(0).getLongitudeE6()
 				+ (int) (0.0002 * 1E6));
-		mSearch.transitSearch("西安", start, end);
+		
+		mSearch.transitSearch(city, start, end);
 
 	}
 

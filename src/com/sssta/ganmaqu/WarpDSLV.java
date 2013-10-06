@@ -84,7 +84,7 @@ public class WarpDSLV extends FragmentActivity {
 	private View top_title;
 	private TextView tvtitle;
 	private List<String> groups;
-	private String city =  "西安";
+	private String city ;
 
 	private DragSortListView.DropListener onDrop = new DragSortListView.DropListener() {
 		@Override
@@ -135,6 +135,7 @@ public class WarpDSLV extends FragmentActivity {
 		setContentView(R.layout.warp_main);
 		userInfo = getSharedPreferences("userInfo", 0);
 		userid = userInfo.getString("userid", "root");
+		city = userInfo.getString("city", "西安市");
 		ActionBar actionBar = this.getActionBar();
 		actionBar.setDisplayOptions(ActionBar.DISPLAY_HOME_AS_UP,
 				ActionBar.DISPLAY_HOME_AS_UP);
@@ -354,10 +355,10 @@ public class WarpDSLV extends FragmentActivity {
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
 				// TODO Auto-generated method stub
-				Toast.makeText(
-						getApplicationContext(),
-						"This is " + String.valueOf(adapter.getItem(arg2))
-								+ " item", Toast.LENGTH_SHORT).show();
+//				Toast.makeText(
+//						getApplicationContext(),
+//						"This is " + String.valueOf(adapter.getItem(arg2))
+//								+ " item", Toast.LENGTH_SHORT).show();
 				Intent intent = new Intent();
 				intent.setClass(getApplicationContext(), WebActivity.class);
 				intent.putExtra("shopId",

@@ -14,6 +14,7 @@ import org.json.JSONObject;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.opengl.Visibility;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -31,13 +32,23 @@ public class CircleDialog extends Dialog {
 	private myGridView gridView_circles;
 	private String currentCircle;
 	private GridAdapter gridAdapter;
-	private String city ;
+	private String city;
 	private TextView textView;
+
 	public CircleDialog(Context context) {
 		super(context,R.style.CustomDialog);
 		ipString = getContext().getResources()
 				.getString(R.string.ip);
 		Log.i("ipString", ipString);
+		setCustomView(); 
+		// TODO Auto-generated constructor stub
+	}
+	public CircleDialog(Context context,String cityString) {
+		super(context,R.style.CustomDialog);
+		ipString = getContext().getResources()
+				.getString(R.string.ip);
+		Log.i("ipString", ipString);
+		this.city = cityString;
 		setCustomView(); 
 		// TODO Auto-generated constructor stub
 	}
@@ -64,7 +75,8 @@ public class CircleDialog extends Dialog {
       
         gridView_circles = (myGridView)mView.findViewById(R.id.gridView_circles);
         gridAdapter = new GridAdapter(this.getContext());
-        new getCircles().execute("Î÷°²");
+        Log.i("city_dialog", city);
+        new getCircles().execute(city);
         super.setContentView(mView);  
         
        
@@ -163,6 +175,8 @@ public class CircleDialog extends Dialog {
    	protected void onPostExecute(String result)
    	{
    		try {
+   			TextView textView_wait = (TextView)findViewById(R.id.textView_wait);
+   			textView_wait.setVisibility(View.GONE);
    			HashMap<Integer, String> hashMapCircle = hashCircle(result);
    			Log.i("circle1", hashMapCircle.get(0));
    			gridAdapter.setHashMap(hashMapCircle);

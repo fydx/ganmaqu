@@ -78,13 +78,13 @@ public class ShareActivity extends Activity  implements  IWeiboHandler.Response{
     public void onResponse(BaseResponse baseResp) {
         switch (baseResp.errCode) {
         case com.sina.weibo.sdk.constant.Constants.ErrorCode.ERR_OK:
-            Toast.makeText(this, "成功！！", Toast.LENGTH_LONG).show();
+          //  Toast.makeText(this, "成功！！", Toast.LENGTH_LONG).show();
             break;
         case com.sina.weibo.sdk.constant.Constants.ErrorCode.ERR_CANCEL:
-            Toast.makeText(this, "用户取消！！", Toast.LENGTH_LONG).show();
+         //   Toast.makeText(this, "用户取消！！", Toast.LENGTH_LONG).show();
             break;
         case com.sina.weibo.sdk.constant.Constants.ErrorCode.ERR_FAIL:
-            Toast.makeText(this, baseResp.errMsg + ":失败！！", Toast.LENGTH_LONG).show();
+         //   Toast.makeText(this, baseResp.errMsg + ":失败！！", Toast.LENGTH_LONG).show();
             break;
         }
     }
@@ -102,14 +102,14 @@ public class ShareActivity extends Activity  implements  IWeiboHandler.Response{
     private void reqMsg() {
         
         if (mWeiboAPI.isWeiboAppSupportAPI()) {
-            Toast.makeText(this, "当前微博版本支持SDK分享", Toast.LENGTH_SHORT).show();
+         //   Toast.makeText(this, "当前微博版本支持SDK分享", Toast.LENGTH_SHORT).show();
             
             int supportApi = mWeiboAPI.getWeiboAppSupportAPI();
             if (supportApi >= 10351) {
                 reqSingleMsg();
             }
         } else {
-            Toast.makeText(this, "当前微博版本不支持SDK分享", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Sorry,一键分享需官方最新版微博支持，请安装微博android客户端", Toast.LENGTH_SHORT).show();
         }
     }
     /**
