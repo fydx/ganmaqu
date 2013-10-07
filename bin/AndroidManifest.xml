@@ -50,7 +50,7 @@
         <activity
             android:name="com.sssta.ganmaqu.WelcomeActivity"
             android:label="@string/app_name"
-             android:screenOrientation="portrait"   >
+            android:screenOrientation="portrait" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -64,7 +64,7 @@
         <activity
             android:name="com.sssta.ganmaqu.NewMainActivity"
             android:label="@string/title_activity_main"
-             android:screenOrientation="portrait"   >
+            android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name="kankan.wheel.demo.CitiesActivity"
@@ -130,6 +130,10 @@
         <activity
             android:name="com.sssta.ganmaqu.GuideActivity"
             android:label="@string/title_activity_detail" >
+        </activity>
+        <activity
+            android:name="com.sssta.ganmaqu.AboutActivity"
+            android:label="@string/title_activity_about" >
         </activity>
     </application>
 

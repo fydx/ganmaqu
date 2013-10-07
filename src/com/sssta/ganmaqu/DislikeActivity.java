@@ -18,6 +18,7 @@ import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -47,8 +48,17 @@ public class DislikeActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+		getWindow().requestFeature(Window.FEATURE_ACTION_BAR); // Add this line
 		setContentView(R.layout.activity_dislike);
+		ActionBar actionBar = this.getActionBar();
+		actionBar.setDisplayOptions(ActionBar.DISPLAY_HOME_AS_UP,
+				ActionBar.DISPLAY_HOME_AS_UP);
+//		actionBar.setBackgroundDrawable(getResources().getDrawable(
+//				R.drawable.actionbar_banner));
+		actionBar.setBackgroundDrawable(getResources().getDrawable(R.drawable.actionbar_bg));
+		actionBar.setDisplayShowHomeEnabled(false);
+		actionBar.setTitle("请选择您不喜欢的类型");
+		actionBar.setDisplayHomeAsUpEnabled(true);
 		ipString = getApplicationContext().getResources()
 				.getString(R.string.ip);
 		SharedPreferences userInfo = getApplicationContext().getSharedPreferences("userInfo", 0);

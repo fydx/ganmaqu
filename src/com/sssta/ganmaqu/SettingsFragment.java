@@ -50,9 +50,35 @@ public class SettingsFragment extends android.support.v4.app.Fragment {
 		Button button_account = (Button) view.findViewById(R.id.button_account);
 		Button button_about = (Button) view.findViewById(R.id.button_about);
 		Button button_prefer = (Button) view.findViewById(R.id.button_prefer);
+		Button button_guide = (Button) view.findViewById(R.id.button_guide);
 		button_prefer.setTextColor(0xff000000);
 		button_account.setTextColor(0xff000000);
 		button_about.setTextColor(0xff000000);
+		button_guide.setTextColor(0xff000000);
+		button_guide.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				Intent intent = new Intent();
+				intent.setClass(getActivity().getApplicationContext(),
+						GuideActivity.class);
+				intent.putExtra("count", 1);
+				startActivity(intent);
+			}
+		});
+		button_about.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				Intent intent = new Intent();
+				intent.setClass(getActivity().getApplicationContext(),
+						AboutActivity.class);
+				
+				startActivity(intent);
+			}
+		});
 		button_prefer.setOnClickListener(new OnClickListener() {
 
 			@Override

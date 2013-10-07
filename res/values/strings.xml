@@ -7,10 +7,6 @@
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_main">MainActivity</string>
     <string name="title_activity_result">ResultActivity</string>
-
-   
-   
-
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
     <string name="select_remove_mode">Remove modes</string>
@@ -33,8 +29,6 @@
         <item>Enable sort</item>
         <item>Enable remove</item>
     </string-array>
-   
-   
 
     <string name="title_activity_map">MapActivity</string>
     <string name="title_activity_web">WebActivity</string>
@@ -45,5 +39,6 @@
     <string name="title_activity_new_map">NewMapActivity</string>
     <string name="title_activity_share">ShareActivity</string>
     <string name="title_activity_detail">DetailActivity</string>
+    <string name="title_activity_about">AboutActivity</string>
 
 </resources>

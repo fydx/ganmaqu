@@ -338,11 +338,16 @@ public class WarpDSLV extends FragmentActivity {
 			list.add(places.get(i).getDetailType() + "  人均"
 					+ String.valueOf(places.get(i).getCost()) + "元");
 			list_time.add(places.get(i).getTime());
-			if (places.get(i).getMainType().equals("购物")) {
-				// cost += places.get(i).getCost();
-			} else {
-				cost += places.get(i).getCost();
-			}
+			
+
+				if (places.get(i).getTime().equals("中午")||places.get(i).getTime().equals("晚餐")) {
+					// cost += places.get(i).getCost();
+					cost += places.get(i).getCost();
+				} else {
+					
+				}
+
+			
 
 		}
 
@@ -445,23 +450,31 @@ public class WarpDSLV extends FragmentActivity {
 			ViewHolder holder = (ViewHolder) v.getTag();
 			// String detail = places.get(position).getAddress();
 			// Log.i("position", String.valueOf(position));
-			holder.detailView.setText(places.get(position).getDetailType()
-					+ "    " + "人均"
-					+ String.valueOf(places.get(position).getCost()) + "元");
+			
 			if (places.get(position).getTime().equals("上午")) {
 				holder.dragImageView.setImageResource(R.drawable.morning);
+				holder.detailView.setText(places.get(position).getDetailType());
 			}
 			if (places.get(position).getTime().equals("中午")) {
 				holder.dragImageView.setImageResource(R.drawable.launch);
+				holder.detailView.setText("人均" + String.valueOf(places.get(position).getCost()) + "元"
+						+ "    "  
+						+  places.get(position).getDetailType());
 			}
 			if (places.get(position).getTime().equals("下午")) {
 				holder.dragImageView.setImageResource(R.drawable.afternoon);
+				holder.detailView.setText(places.get(position).getDetailType());
+				
 			}
 			if (places.get(position).getTime().equals("晚餐")) {
 				holder.dragImageView.setImageResource(R.drawable.dinner);
+				holder.detailView.setText("人均" + String.valueOf(places.get(position).getCost()) + "元"
+						+ "    "  
+						+  places.get(position).getDetailType());
 			}
 			if (places.get(position).getTime().equals("晚上")) {
 				holder.dragImageView.setImageResource(R.drawable.evening);
+				holder.detailView.setText(places.get(position).getDetailType());
 			}
 			return v;
 		}
@@ -504,10 +517,11 @@ public class WarpDSLV extends FragmentActivity {
 			cost = 0;
 			for (int i = 0; i < places.size(); i++) {
 
-				if (places.get(i).getMainType().equals("购物")) {
+				if (places.get(i).getTime().equals("中午")||places.get(i).getTime().equals("晚餐")) {
 					// cost += places.get(i).getCost();
-				} else {
 					cost += places.get(i).getCost();
+				} else {
+					
 				}
 
 			}
@@ -559,11 +573,11 @@ public class WarpDSLV extends FragmentActivity {
 			adapter.notifyDataSetChanged();
 			cost = 0;
 			for (int i = 0; i < places.size(); i++) {
-
-				if (places.get(i).getMainType().equals("购物")) {
+				if (places.get(i).getTime().equals("中午")||places.get(i).getTime().equals("晚餐")) {
 					// cost += places.get(i).getCost();
-				} else {
 					cost += places.get(i).getCost();
+				} else {
+					
 				}
 
 			}
@@ -604,10 +618,11 @@ public class WarpDSLV extends FragmentActivity {
 				cost = 0;
 				for (int i = 0; i < places.size(); i++) {
 
-					if (places.get(i).getMainType().equals("购物")) {
+					if (places.get(i).getTime().equals("中午")||places.get(i).getTime().equals("晚餐")) {
 						// cost += places.get(i).getCost();
-					} else {
 						cost += places.get(i).getCost();
+					} else {
+						
 					}
 
 				}
@@ -657,10 +672,11 @@ public class WarpDSLV extends FragmentActivity {
 					cost = 0;
 					for (int i = 0; i < places.size(); i++) {
 
-						if (places.get(i).getMainType().equals("购物")) {
+						if (places.get(i).getTime().equals("中午")||places.get(i).getTime().equals("晚餐")) {
 							// cost += places.get(i).getCost();
-						} else {
 							cost += places.get(i).getCost();
+						} else {
+							
 						}
 
 					}
@@ -708,10 +724,11 @@ public class WarpDSLV extends FragmentActivity {
 					cost = 0;
 					for (int i = 0; i < places.size(); i++) {
 
-						if (places.get(i).getMainType().equals("购物")) {
+						if (places.get(i).getTime().equals("中午")||places.get(i).getTime().equals("晚餐")) {
 							// cost += places.get(i).getCost();
-						} else {
 							cost += places.get(i).getCost();
+						} else {
+							
 						}
 
 					}

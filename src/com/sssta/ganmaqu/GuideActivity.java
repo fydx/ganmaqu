@@ -25,6 +25,7 @@ public class GuideActivity extends Activity {
 	ViewGroup main, group;
 	TextView textView;
 	TextView[] textViews;
+	int count ;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState)
@@ -33,12 +34,15 @@ public class GuideActivity extends Activity {
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE); // Set NO titlebar
 		this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 				WindowManager.LayoutParams.FLAG_FULLSCREEN); 
+		
 		LayoutInflater inflater = getLayoutInflater();
 		list = new ArrayList<View>();
 		list.add(inflater.inflate(R.layout.item1, null));
 		list.add(inflater.inflate(R.layout.item2, null));
 		list.add(inflater.inflate(R.layout.item3, null));
 		list.add(inflater.inflate(R.layout.item4, null));
+		list.add(inflater.inflate(R.layout.item5, null));
+		list.add(inflater.inflate(R.layout.item6, null));
 //		View view = getLayoutInflater().inflate(R.layout.item4, null);
 //		Button button = (Button) view.findViewById(R.id.button_enter);
 //		button.setOnClickListener(new OnClickListener() {
@@ -58,7 +62,7 @@ public class GuideActivity extends Activity {
 
 		for (int i = 0; i < list.size(); i++) {
 			textView = new TextView(GuideActivity.this);
-			textView.setLayoutParams(new LayoutParams(30, 30));
+			textView.setLayoutParams(new LayoutParams(20, 20));
 			textView.setPadding(0, 0, 2, 0);
 			textViews[i] = textView;
 			if (i == 0) {
@@ -71,7 +75,8 @@ public class GuideActivity extends Activity {
 		}
 
 		setContentView(main);
-
+		count = getIntent().getIntExtra("count", 0);
+		Log.i("count onCreate", String.valueOf(count));
 		viewPager.setAdapter(new MyAdapter());
 		viewPager.setOnPageChangeListener(new MyListener());
 	}
@@ -179,10 +184,19 @@ public class GuideActivity extends Activity {
 	}
 	public void jumptoMain(View v)
 	{
-		Intent intent = new Intent();
-		Log.i("selected", "select");
-		intent.setClass(getApplicationContext(), NewMainActivity.class);
-		startActivity(intent);
-		finish();
+		Log.i("count JumpToMain", String.valueOf(count));
+		if (count == 0) {
+			Intent intent = new Intent();
+			Log.i("selected", "select");
+			intent.setClass(getApplicationContext(), NewMainActivity.class);
+			startActivity(intent);
+			overridePendingTransition(android.R.anim.fade_in,
+					android.R.anim.fade_out);
+			finish();
+		}
+		else {
+			finish();
+		}
+		
 	}
 }
