@@ -1,12 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
+	<classpathentry kind="lib" path="D:/JavaProject/ganmaqu/libs/baidumapapi_v2_1_3.jar"/>
+	<classpathentry kind="lib" path="D:/JavaProject/ganmaqu/libs/locSDK_3.1.jar"/>
+	<classpathentry kind="lib" path="D:/JavaProject/ganmaqu/libs/ShareSDK-Core.jar"/>
+	<classpathentry kind="lib" path="D:/JavaProject/ganmaqu/libs/ShareSDK-Douban.jar"/>
+	<classpathentry kind="lib" path="D:/JavaProject/ganmaqu/libs/ShareSDK-Email.jar"/>
+	<classpathentry kind="lib" path="D:/JavaProject/ganmaqu/libs/ShareSDK-Evernote.jar"/>
+	<classpathentry kind="lib" path="D:/JavaProject/ganmaqu/libs/ShareSDK-GooglePlus.jar"/>
+	<classpathentry kind="lib" path="D:/JavaProject/ganmaqu/libs/ShareSDK-QQ.jar"/>
+	<classpathentry kind="lib" path="D:/JavaProject/ganmaqu/libs/ShareSDK-QZone.jar"/>
+	<classpathentry kind="lib" path="D:/JavaProject/ganmaqu/libs/ShareSDK-Renren.jar"/>
+	<classpathentry kind="lib" path="D:/JavaProject/ganmaqu/libs/ShareSDK-ShortMessage.jar"/>
+	<classpathentry kind="lib" path="D:/JavaProject/ganmaqu/libs/ShareSDK-SinaWeibo.jar"/>
+	<classpathentry kind="lib" path="D:/JavaProject/ganmaqu/libs/ShareSDK-TencentWeibo.jar"/>
+	<classpathentry kind="lib" path="D:/JavaProject/ganmaqu/libs/ShareSDK-Wechat.jar"/>
+	<classpathentry kind="lib" path="D:/JavaProject/ganmaqu/libs/ShareSDK-Wechat-Core.jar"/>
+	<classpathentry kind="lib" path="D:/JavaProject/ganmaqu/libs/ShareSDK-Wechat-Moments.jar"/>
+	<classpathentry kind="lib" path="D:/JavaProject/ganmaqu/libs/ShareSDK-YouDao.jar"/>
+	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="gen"/>
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.DEPENDENCIES"/>
-	<classpathentry kind="lib" path="D:/JavaProject/ganmaqu/libs/baidumapapi_v2_1_3.jar"/>
-	<classpathentry kind="lib" path="D:/JavaProject/ganmaqu/libs/locSDK_3.1.jar"/>
-	<classpathentry kind="lib" path="D:/JavaProject/ganmaqu/libs/weibo_sdk.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

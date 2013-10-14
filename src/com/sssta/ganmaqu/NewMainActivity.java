@@ -7,10 +7,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Timer;
-import java.util.TimerTask;
 
-import kankan.wheel.widget.WheelView;
 import net.tsz.afinal.FinalDb;
 
 import org.apache.http.HttpEntity;
@@ -44,7 +41,6 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.text.format.Time;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -59,6 +55,10 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import cn.sharesdk.framework.Platform;
+import cn.sharesdk.framework.PlatformActionListener;
+import cn.sharesdk.framework.ShareSDK;
+import cn.sharesdk.sina.weibo.SinaWeibo;
 
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.jeremyfeinstein.slidingmenu.lib.app.SlidingFragmentActivity;
@@ -71,7 +71,6 @@ public class NewMainActivity extends SlidingFragmentActivity {
 	private List<place> places;
 	private static String ipString;
 	final String Types[] = new String[] { "亲子出行", "朋友出行", "情侣出行" };
-	private WheelView typeWheel;
 	private static double lat;
 	private static double lng;
 	private Dialog dialog;
@@ -96,7 +95,9 @@ public class NewMainActivity extends SlidingFragmentActivity {
 		super.onCreate(savedInstanceState);
 		getWindow().requestFeature(Window.FEATURE_ACTION_BAR); // Add this line
 		setBehindContentView(R.layout.menu);
-
+		ShareSDK.initSDK(this); 
+		//Platform[] platformList = ShareSDK.getPlatformList(NewMainActivity.this) ;
+		//platformList[0].authorize();
 		setContentView(R.layout.activity_new_main);
 		userInfo = getApplicationContext().getSharedPreferences("userInfo", 0);
 		city = userInfo.getString("city", "西安市");
@@ -104,7 +105,37 @@ public class NewMainActivity extends SlidingFragmentActivity {
 		count_city = userInfo.getInt("count_city", 0);
 		Log.i("city from sharedperferece", city);
 		setSlidingActionBarEnabled(true);
-
+		//set sina authorize()
+	//	final Platform weibo = ShareSDK.getPlatform(NewMainActivity.this, SinaWeibo.NAME);
+		PlatformActionListener paListener =  new PlatformActionListener() {
+			
+			@Override
+			public void onError(Platform arg0, int arg1, Throwable arg2) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void onComplete(Platform arg0, int arg1, HashMap<String, Object> arg2) {
+				// TODO Auto-generated method stub
+			//	String id=weibo.getDb().getUserId(); 
+			//	Log.i("id", id);
+				
+			}
+			
+			@Override
+			public void onCancel(Platform arg0, int arg1) {
+				// TODO Auto-generated method stub
+				
+			}
+		};
+	//	String id=weibo.getDb().getUserId(); 
+	//	Log.i("id2", id);
+	//	weibo.setPlatformActionListener(paListener);
+		//weibo.authorize();
+		//weibo.showUser(id);
+	//	weibo.setPlatformActionListener(paListener); //  设置分享事件回调
+		
 		// set sliding menu
 		menu = getSlidingMenu();
 		menu.setMode(SlidingMenu.LEFT);
@@ -385,6 +416,7 @@ public class NewMainActivity extends SlidingFragmentActivity {
 
 			@Override
 			public void onClick(View v) {
+				
 				if(lat==0.0||lng==0.0)
 				{
 					Toast.makeText(getApplicationContext(), "定位失败，请打开定位服务或稍后再试", Toast.LENGTH_SHORT).show();
@@ -928,4 +960,19 @@ public class NewMainActivity extends SlidingFragmentActivity {
 		}
 		return false;
 	}
+	
+	@Override
+	protected void onPause()
+	{
+		super.onPause();
+		
+	}
+	@Override
+	protected void onDestroy()
+	{
+		super.onDestroy();
+		ShareSDK.stopSDK(this); 
+		
+	}
+	
 }

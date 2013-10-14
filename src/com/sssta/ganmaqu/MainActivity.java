@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
-import kankan.wheel.widget.WheelView;
 import net.tsz.afinal.FinalDb;
 
 import org.apache.http.HttpEntity;
@@ -38,7 +37,6 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.text.Layout;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -64,7 +62,7 @@ public class MainActivity extends android.support.v4.app.FragmentActivity {
 	private List<place> places;
 	private static String ipString;
 	final String Types[] = new String[] { "亲子出行", "朋友出行", "情侣出行" };
-	private WheelView typeWheel;
+	
 	private double lat;
 	private double lng;
 	private Dialog dialog;

@@ -8,6 +8,8 @@
         android:minSdkVersion="14"
         android:targetSdkVersion="17" />
     <!-- 在SDCard中创建与删除文件权限 -->
+    <uses-permission android:name="android.permission.GET_TASKS" />
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
     <!-- 使用网络功能所需权限 -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" >
@@ -40,6 +42,8 @@
     <uses-permission android:name="android.permission.ACCESS_MOCK_LOCATION" >
     </uses-permission>
     <uses-permission android:name="android.permission.ACCESS_GPS" />
+    <uses-permission android:name="android.permission.MANAGE_ACCOUNTS" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
 
     <application
         android:name="com.sssta.ganmaqu.DemoApplication"
@@ -56,6 +60,24 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name="cn.sharesdk.framework.ShareSDKUIShell"
+            android:configChanges="keyboardHidden|orientation"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
+            android:windowSoftInputMode="stateHidden|adjustResize" >
+
+            <!--
+          Adapter继承自 
+          cn.sharesdk.framework. authorize.AuthorizeAdapter， 
+          可以监听到页面的生命周期，也能获取页面的各种UI控件
+          开发者可以通过继承AuthorizeAdapter，重写其方法， 
+          并获取各种UI来自定义这个页面的行为。 
+            -->
+            <meta-data
+                android:name="Adapter"
+                android:value="cn.sharesdk.demo.MyAdapter" />
         </activity>
         <activity
             android:name="com.sssta.ganmaqu.MainActivity"

@@ -206,7 +206,7 @@ public class CircleDialog extends Dialog {
 			HttpHost target = new HttpHost(ipString, 8080, "http");
 			String request = "/?command=getcirclelist&city="+city;
 			HttpGet req = new HttpGet(request);
-			System.out.println("executing request to " + target);
+			System.out.println("circle : executing request to " + target + " " + request);
 			HttpResponse rsp = httpclient.execute(target, req);
 			HttpEntity entity = rsp.getEntity();
 			InputStreamReader isr = new InputStreamReader(entity.getContent(), "utf-8");
