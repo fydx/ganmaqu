@@ -78,11 +78,12 @@ public class SettingsFragment extends android.support.v4.app.Fragment {
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-//				Intent intent = new Intent();
-//				intent.setClass(getActivity().getApplicationContext(),
-//						AboutActivity.class);
-//				
-//				startActivity(intent);
+				Intent intent = new Intent();
+				intent.setClass(getActivity().getApplicationContext(),
+						AboutActivity.class);
+				
+				startActivity(intent);
+			//	shareWeibo();
 				
 			}
 		});
@@ -446,5 +447,15 @@ public class SettingsFragment extends android.support.v4.app.Fragment {
 
 		oks.show(view.getContext());
 	}
+	public void  shareWeibo()
+	{
+		Platform.ShareParams sp = new SinaWeibo.ShareParams();
+		sp.text = "ganmaqu";
+	//	sp.imagePath = “/mnt/sdcard/测试分享的图片.jpg”;
 
+		Platform weibo = ShareSDK.getPlatform(view.getContext(), SinaWeibo.NAME);
+	//	weibo.setPlatformActionListener(paListener); // 设置分享事件回调
+		// 执行图文分享
+		weibo.share(sp);
+	}
 }
