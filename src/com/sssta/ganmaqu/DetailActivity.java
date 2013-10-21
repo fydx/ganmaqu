@@ -72,7 +72,7 @@ public class DetailActivity extends Activity {
 
 		@Override
 		protected void onPostExecute(String result) {
-
+			
 		}
 
 	}

@@ -35,6 +35,7 @@ public class SettingsFragment extends android.support.v4.app.Fragment {
 	private View view;
 	private static String ipString;
 	private SharedPreferences userInfo;
+	private Connect connect;
 
 	@Override
 	public void onAttach(Activity activity) {
@@ -52,7 +53,7 @@ public class SettingsFragment extends android.support.v4.app.Fragment {
 		userInfo = view.getContext().getSharedPreferences("userInfo", 0);
 		ipString = view.getContext().getResources().getString(R.string.ip);
 		final String username_init = userInfo.getString("userid", "NULL");
-
+		connect = new Connect(ipString);
 		Button button_account = (Button) view.findViewById(R.id.button_account);
 		Button button_about = (Button) view.findViewById(R.id.button_about);
 		Button button_prefer = (Button) view.findViewById(R.id.button_prefer);
@@ -62,7 +63,7 @@ public class SettingsFragment extends android.support.v4.app.Fragment {
 		button_about.setTextColor(0xff000000);
 		button_guide.setTextColor(0xff000000);
 		button_guide.setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
@@ -74,17 +75,17 @@ public class SettingsFragment extends android.support.v4.app.Fragment {
 			}
 		});
 		button_about.setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				Intent intent = new Intent();
 				intent.setClass(getActivity().getApplicationContext(),
 						AboutActivity.class);
-				
+
 				startActivity(intent);
-			//	shareWeibo();
-				
+				// shareWeibo();
+
 			}
 		});
 		button_prefer.setOnClickListener(new OnClickListener() {
@@ -292,7 +293,7 @@ public class SettingsFragment extends android.support.v4.app.Fragment {
 		protected String doInBackground(String... params) {
 			// TODO Auto-generated method stub
 			username = params[0];
-			return testLogin(params[0], params[1]);
+			return connect.AuthLogin(params[0], params[1]);
 		}
 
 		@Override
@@ -314,11 +315,12 @@ public class SettingsFragment extends android.support.v4.app.Fragment {
 
 	public class regTask extends AsyncTask<String, Integer, String> {
 		private String username;
+
 		@Override
 		protected String doInBackground(String... params) {
 			// TODO Auto-generated method stub
 			username = params[0];
-			return testRegisterUserDB(params[0], params[1]);
+			return connect.RegUser(params[0], params[1]);
 		}
 
 		@Override
@@ -337,62 +339,12 @@ public class SettingsFragment extends android.support.v4.app.Fragment {
 		}
 	}
 
-	public static String testLogin(String id, String password) {
-		DefaultHttpClient httpclient = new DefaultHttpClient();
-		try {
-			HttpHost target = new HttpHost(ipString, 8080, "http");
-			String request = "/?command=login&id=" + id + "&password="
-					+ password + "";
-			HttpGet req = new HttpGet(request);
-			System.out.println("executing request to " + target);
-			HttpResponse rsp = httpclient.execute(target, req);
-			HttpEntity entity = rsp.getEntity();
-			InputStreamReader isr = new InputStreamReader(entity.getContent(),
-					"utf-8");
-			BufferedReader br = new BufferedReader(isr);
-			String line = null;
-			while ((line = br.readLine()) != null) {
-				return line;
-			}
-		} catch (Exception e) {
-			// TODO: handle exception
-			e.printStackTrace();
-		}
-		return "EXCEPTION IN LOGIN";
-	}
-
-	public static String testRegisterUserDB(String id, String password) // 用户注册
-	{
-		DefaultHttpClient httpclient = new DefaultHttpClient();
-		try {
-			HttpHost target = new HttpHost(ipString, 8080, "http");
-			String request = "/?command=register&id=" + id + "&password="
-					+ password;
-			HttpGet req = new HttpGet(request);
-			System.out.println("executing request to " + target);
-			HttpResponse rsp = httpclient.execute(target, req);
-			HttpEntity entity = rsp.getEntity();
-			InputStreamReader isr = new InputStreamReader(entity.getContent(),
-					"utf-8");
-			BufferedReader br = new BufferedReader(isr);
-			String line = null;
-			while ((line = br.readLine()) != null) {
-				return line;
-			}
-		} catch (Exception e) {
-			// TODO: handle exception
-			e.printStackTrace();
-		} finally {
-			httpclient.getConnectionManager().shutdown();
-		}
-		return "EXCPTION IN REG";
-	}
-	public void  share() {
+	public void share() {
 		OnekeyShare oks = new OnekeyShare();
 
 		// 分享时Notification的图标和文字
-		oks.setNotification(R.drawable.ic_launcher, 
-		view.getContext().getString(R.string.app_name));
+		oks.setNotification(R.drawable.ic_launcher, view.getContext()
+				.getString(R.string.app_name));
 		// address是接收人地址，仅在信息和邮件使用
 		oks.setAddress("12345678901");
 		// title标题，印象笔记、邮箱、信息、微信、人人网和QQ空间使用
@@ -402,14 +354,14 @@ public class SettingsFragment extends android.support.v4.app.Fragment {
 		// text是分享文本，所有平台都需要这个字段
 		oks.setText("ganmaqu");
 		// imagePath是图片的本地路径，Linked-In以外的平台都支持此参数
-		//oks.setImagePath(MainActivity.TEST_IMAGE);
+		// oks.setImagePath(MainActivity.TEST_IMAGE);
 		// imageUrl是图片的网络路径，新浪微博、人人网、QQ空间、
 		// 微信的两个平台、Linked-In支持此字段
-		//oks.setImageUrl("http://sharesdk.cn/ rest.png");
+		// oks.setImageUrl("http://sharesdk.cn/ rest.png");
 		// url仅在微信（包括好友和朋友圈）中使用
 		oks.setUrl("http://sharesdk.cn");
 		// appPath是待分享应用程序的本地路劲，仅在微信中使用
-		//oks.setAppPath(MainActivity.TEST_IMAGE);
+		// oks.setAppPath(MainActivity.TEST_IMAGE);
 		// comment是我对这条分享的评论，仅在人人网和QQ空间使用
 		oks.setComment(view.getContext().getString(R.string.share));
 		// site是分享此内容的网站名称，仅在QQ空间使用
@@ -421,40 +373,42 @@ public class SettingsFragment extends android.support.v4.app.Fragment {
 		// venueDescription是分享社区描述，仅在Foursquare使用
 		oks.setVenueDescription("This is a beautiful place!");
 		// latitude是维度数据，仅在新浪微博、腾讯微博和Foursquare使用
-		//oks.setLatitude(23.122619f);
+		// oks.setLatitude(23.122619f);
 		// longitude是经度数据，仅在新浪微博、腾讯微博和Foursquare使用
-		//oks.setLongitude(113.372338f);
+		// oks.setLongitude(113.372338f);
 		// 是否直接分享（true则直接分享）
 		oks.setSilent(false);
 		// 指定分享平台，和slient一起使用可以直接分享到指定的平台
-		Platform platform = ShareSDK.getPlatform(view.getContext(), SinaWeibo.NAME);
+		Platform platform = ShareSDK.getPlatform(view.getContext(),
+				SinaWeibo.NAME);
 		if (platform != null) {
-		        oks.setPlatform(SinaWeibo.NAME);
+			oks.setPlatform(SinaWeibo.NAME);
 		}
 		// 去除注释可通过OneKeyShareCallback来捕获快捷分享的处理结果
 		// oks.setCallback(new OneKeyShareCallback());
-		//通过OneKeyShareCallback来修改不同平台分享的内容
+		// 通过OneKeyShareCallback来修改不同平台分享的内容
 		oks.setShareContentCustomizeCallback(
-				
+
 		new ShareContentCustomizeCallback() {
-			
+
 			@Override
 			public void onShare(Platform platform, ShareParams paramsToShare) {
 				// TODO Auto-generated method stub
-				
+
 			}
 		});
 
 		oks.show(view.getContext());
 	}
-	public void  shareWeibo()
-	{
+
+	public void shareWeibo() {
 		Platform.ShareParams sp = new SinaWeibo.ShareParams();
 		sp.text = "ganmaqu";
-	//	sp.imagePath = “/mnt/sdcard/测试分享的图片.jpg”;
+		// sp.imagePath = “/mnt/sdcard/测试分享的图片.jpg”;
 
-		Platform weibo = ShareSDK.getPlatform(view.getContext(), SinaWeibo.NAME);
-	//	weibo.setPlatformActionListener(paListener); // 设置分享事件回调
+		Platform weibo = ShareSDK
+				.getPlatform(view.getContext(), SinaWeibo.NAME);
+		// weibo.setPlatformActionListener(paListener); // 设置分享事件回调
 		// 执行图文分享
 		weibo.share(sp);
 	}

@@ -34,7 +34,8 @@ public class CircleDialog extends Dialog {
 	private GridAdapter gridAdapter;
 	private String city;
 	private TextView textView;
-
+	private Connect connect;
+	
 	public CircleDialog(Context context) {
 		super(context,R.style.CustomDialog);
 		ipString = getContext().getResources()
@@ -48,6 +49,7 @@ public class CircleDialog extends Dialog {
 		ipString = getContext().getResources()
 				.getString(R.string.ip);
 		Log.i("ipString", ipString);
+		connect = new Connect(ipString);
 		this.city = cityString;
 		setCustomView(); 
 		// TODO Auto-generated constructor stub
@@ -169,7 +171,7 @@ public class CircleDialog extends Dialog {
    	@Override
    	protected String doInBackground(String... params) {
    		// TODO Auto-generated method stub
-   		return GetCircleList(params[0]);
+   		return connect.GetCircleList(params[0]);
    	}
    	@Override
    	protected void onPostExecute(String result)
@@ -198,33 +200,7 @@ public class CircleDialog extends Dialog {
    	}
    	 
     }
-    public  String GetCircleList(String city)  //获得某个城市的商圈列表，item1,2,3....
-	{
-		DefaultHttpClient httpclient = new DefaultHttpClient();
-		try
-		{
-			HttpHost target = new HttpHost(ipString, 8080, "http");
-			String request = "/?command=getcirclelist&city="+city;
-			HttpGet req = new HttpGet(request);
-			System.out.println("circle : executing request to " + target + " " + request);
-			HttpResponse rsp = httpclient.execute(target, req);
-			HttpEntity entity = rsp.getEntity();
-			InputStreamReader isr = new InputStreamReader(entity.getContent(), "utf-8");
-			BufferedReader br = new BufferedReader(isr);
-			String line = null;
-			while ((line = br.readLine()) != null)
-			{
-				Log.i("return circles line", line);
-				return line;
-			}
-		}
-		catch (Exception e)
-		{
-			// TODO: handle exception
-			e.printStackTrace();
-		}
-		return null;
-	}
+   
     public HashMap<Integer,String> hashCircle(String resultString) throws JSONException
     
     {

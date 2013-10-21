@@ -1,8 +1,5 @@
 package com.sssta.ganmaqu;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
@@ -10,12 +7,6 @@ import java.util.Locale;
 
 import net.tsz.afinal.FinalDb;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpHost;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -58,7 +49,6 @@ import android.widget.Toast;
 import cn.sharesdk.framework.Platform;
 import cn.sharesdk.framework.PlatformActionListener;
 import cn.sharesdk.framework.ShareSDK;
-import cn.sharesdk.sina.weibo.SinaWeibo;
 
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.jeremyfeinstein.slidingmenu.lib.app.SlidingFragmentActivity;
@@ -89,15 +79,20 @@ public class NewMainActivity extends SlidingFragmentActivity {
 	private SlidingMenu menu;
 	private SharedPreferences userInfo;
 	private int count_first;
+	public Connect connect;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		getWindow().requestFeature(Window.FEATURE_ACTION_BAR); // Add this line
 		setBehindContentView(R.layout.menu);
-		ShareSDK.initSDK(this); 
-		//Platform[] platformList = ShareSDK.getPlatformList(NewMainActivity.this) ;
-		//platformList[0].authorize();
+		ShareSDK.initSDK(this);
+		ipString = getApplicationContext().getResources()
+				.getString(R.string.ip);
+		connect = new Connect(ipString);
+		// Platform[] platformList =
+		// ShareSDK.getPlatformList(NewMainActivity.this) ;
+		// platformList[0].authorize();
 		setContentView(R.layout.activity_new_main);
 		userInfo = getApplicationContext().getSharedPreferences("userInfo", 0);
 		city = userInfo.getString("city", "西安市");
@@ -105,37 +100,39 @@ public class NewMainActivity extends SlidingFragmentActivity {
 		count_city = userInfo.getInt("count_city", 0);
 		Log.i("city from sharedperferece", city);
 		setSlidingActionBarEnabled(true);
-		//set sina authorize()
-	//	final Platform weibo = ShareSDK.getPlatform(NewMainActivity.this, SinaWeibo.NAME);
-		PlatformActionListener paListener =  new PlatformActionListener() {
-			
+		// set sina authorize()
+		// final Platform weibo = ShareSDK.getPlatform(NewMainActivity.this,
+		// SinaWeibo.NAME);
+		PlatformActionListener paListener = new PlatformActionListener() {
+
 			@Override
 			public void onError(Platform arg0, int arg1, Throwable arg2) {
 				// TODO Auto-generated method stub
-				
+
 			}
-			
+
 			@Override
-			public void onComplete(Platform arg0, int arg1, HashMap<String, Object> arg2) {
+			public void onComplete(Platform arg0, int arg1,
+					HashMap<String, Object> arg2) {
 				// TODO Auto-generated method stub
-			//	String id=weibo.getDb().getUserId(); 
-			//	Log.i("id", id);
-				
+				// String id=weibo.getDb().getUserId();
+				// Log.i("id", id);
+
 			}
-			
+
 			@Override
 			public void onCancel(Platform arg0, int arg1) {
 				// TODO Auto-generated method stub
-				
+
 			}
 		};
-	//	String id=weibo.getDb().getUserId(); 
-	//	Log.i("id2", id);
-	//	weibo.setPlatformActionListener(paListener);
-		//weibo.authorize();
-		//weibo.showUser(id);
-	//	weibo.setPlatformActionListener(paListener); //  设置分享事件回调
-		
+		// String id=weibo.getDb().getUserId();
+		// Log.i("id2", id);
+		// weibo.setPlatformActionListener(paListener);
+		// weibo.authorize();
+		// weibo.showUser(id);
+		// weibo.setPlatformActionListener(paListener); // 设置分享事件回调
+
 		// set sliding menu
 		menu = getSlidingMenu();
 		menu.setMode(SlidingMenu.LEFT);
@@ -165,14 +162,13 @@ public class NewMainActivity extends SlidingFragmentActivity {
 								}
 							}).show();
 		}
-		if (count_first==0) {
-			
-//					SimpleDialog SimpleDialog = new SimpleDialog(
-//							NewMainActivity.this, R.drawable.mainpageguide);
-//					
-//					SimpleDialog.show();
-				
-			
+		if (count_first == 0) {
+
+			// SimpleDialog SimpleDialog = new SimpleDialog(
+			// NewMainActivity.this, R.drawable.mainpageguide);
+			//
+			// SimpleDialog.show();
+
 		}
 		View actionbar_title = LayoutInflater.from(this).inflate(
 				R.layout.actionbar_main, null);
@@ -209,6 +205,7 @@ public class NewMainActivity extends SlidingFragmentActivity {
 						NewMainActivity.this, String.valueOf(lng), String
 								.valueOf(lat));
 				changeCityDialog.setTextView(cityTextView);
+				changeCityDialog.setCircleTextView(circleTextView);
 				changeCityDialog.show();
 
 			}
@@ -261,8 +258,7 @@ public class NewMainActivity extends SlidingFragmentActivity {
 
 			}
 		});
-		ipString = getApplicationContext().getResources()
-				.getString(R.string.ip);
+
 		count = 0;
 		// new getCircles().execute("西安");
 
@@ -283,22 +279,6 @@ public class NewMainActivity extends SlidingFragmentActivity {
 		locationManager.requestLocationUpdates(provider, 2000, 10,
 				locationListener);
 
-		// gifView = (GifView)findViewById(R.id.gifview);
-		// gifView.setGifImage(R.drawable.locgif);
-		//
-		// gifView.setGifImageType(GifImageType.COVER);
-		// set settings button
-		// Button button_settings = (Button)findViewById(R.id.button_settings);
-		// button_settings.setOnClickListener(new OnClickListener() {
-		//
-		// @Override
-		// public void onClick(View v) {
-		// // TODO Auto-generated method stub
-		// Intent intent = new Intent();
-		// intent.setClass(getApplicationContext(),SettingsActivity.class);
-		// startActivity(intent);
-		// }
-		// });
 		// set gallery
 		Integer[] images = { R.drawable.child, R.drawable.friend,
 				R.drawable.couple };
@@ -345,105 +325,42 @@ public class NewMainActivity extends SlidingFragmentActivity {
 			}
 		});
 
-		// set Button last
-		// Button button_last = (Button)findViewById(R.id.button_last);
-		// button_last.setOnClickListener(new OnClickListener() {
-		//
-		// @Override
-		// public void onClick(View v) {
-		// // TODO Auto-generated method stub
-		//
-		// List<place> placeList = db.findAll(place.class);
-		// if (placeList.isEmpty()) {
-		// Toast.makeText(getApplicationContext(), "啊哦，你还没有保存过路线",
-		// Toast.LENGTH_SHORT).show();
-		// }
-		// else {
-		// int route_id = placeList.get(placeList.size()-1).getRoute_id();
-		// List<place> lastLine = db.findAllByWhere(place.class, "route_id = " +
-		// String.valueOf(route_id));
-		// Intent intent = new Intent();
-		// intent.setClass(getApplicationContext(), WarpDSLV.class);
-		// intent.putExtra("places", (Serializable)lastLine);
-		// intent.putExtra("type", lastLine.get(0).getRouteType());
-		// startActivity(intent);
-		// }
-		//
-		// }
-		// });
-
 		Button button_yes = (Button) findViewById(R.id.button_result);
-		// ImageView routeImageView = (ImageView) findViewById(R.id.routeList);
-		// routeImageView.setOnClickListener(new OnClickListener() {
-		//
-		// @Override
-		// public void onClick(View v) {
-		//
-		// Intent intent2 = new Intent();
-		// intent2.setClass(NewMainActivity.this, RouteListActivity.class);
-		// startActivity(intent2);
-		// }
-		// });
-		// WheelView NumberOfPerson = (WheelView)
-		// findViewById(R.id.NumberOfPerson);
-		// String Numbers[] = new String[] {"1", "2", "3",
-		// "4","5","6","7","8","9","10"};
 
-		// final WheelView numberWheel = (WheelView)
-		// findViewById(R.id.NumberOfPerson);
-		// String countries[] = new String[] { "2", "3", "4", "5", "6", "7", "8"
-		// };
-		// numberWheel.setVisibleItems(5);
-		// numberWheel.setCyclic(false);
-		// numberWheel.setAdapter(new ArrayWheelAdapter<String>(countries));
 		final String cities[][] = new String[][] { Types, Types, Types, Types,
 				Types, Types, Types };
-		// temp cancel wheel
-		// typeWheel = (WheelView) findViewById(R.id.Type);
-		// typeWheel.setAdapter(new ArrayWheelAdapter<String>(Types));
-		// typeWheel.setVisibleItems(5);
-
-		/*
-		 * numberWheel.addChangingListener(new OnWheelChangedListener() {
-		 * 
-		 * @Override public void onChanged(WheelView wheel, int oldValue, int
-		 * newValue) { typeWheel.setAdapter(new
-		 * ArrayWheelAdapter<String>(cities[newValue]));
-		 * typeWheel.setCurrentItem(cities[newValue].length / 2); } });
-		 */
 
 		button_yes.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
-				
-				if(lat==0.0||lng==0.0)
-				{
-					Toast.makeText(getApplicationContext(), "定位失败，请打开定位服务或稍后再试", Toast.LENGTH_SHORT).show();
+
+				if (lat == 0.0 || lng == 0.0) {
+					Toast.makeText(getApplicationContext(),
+							"定位失败，请打开定位服务或稍后再试", Toast.LENGTH_SHORT).show();
+				} else {
+					dialog = new Dialog(NewMainActivity.this,
+							R.style.activity_translucent);
+					dialog.setContentView(R.layout.dialog_connect);
+					dialog.show();
+					// Toast.makeText(getApplicationContext(),
+					// Types[typeWheel.getCurrentItem()], Toast.LENGTH_SHORT)
+					// .show();
+					// Log.i("Current Item", Types[typeWheel.getCurrentItem()]);
+
+					if (location == null) {
+						new RequestTask().execute(Types[galleryFlow
+								.getSelectedItemPosition()]);
+					} else {
+						new RequestTask().execute(
+								Types[galleryFlow.getSelectedItemPosition()],
+								String.valueOf(location.getLongitude()),
+								String.valueOf(location.getLatitude()),
+								cityTextView.getText().toString());
+					}
+
 				}
-				else {
-						dialog = new Dialog(NewMainActivity.this,
-								R.style.activity_translucent);
-						dialog.setContentView(R.layout.dialog_connect);
-						dialog.show();
-						// Toast.makeText(getApplicationContext(),
-						// Types[typeWheel.getCurrentItem()], Toast.LENGTH_SHORT)
-						// .show();
-						// Log.i("Current Item", Types[typeWheel.getCurrentItem()]);
-
-						if (location == null) {
-							new RequestTask().execute(Types[galleryFlow
-									.getSelectedItemPosition()]);
-						} else {
-							new RequestTask().execute(
-									Types[galleryFlow.getSelectedItemPosition()],
-									String.valueOf(location.getLongitude()),
-									String.valueOf(location.getLatitude()),
-									cityTextView.getText().toString());
-						}
-
-					}
-					}
+			}
 		});
 		// numberWheel.setCurrentItem(3);
 	}
@@ -582,9 +499,9 @@ public class NewMainActivity extends SlidingFragmentActivity {
 				pos_y = Double.parseDouble(params[2]);
 			}
 			try {
-				return RequestToServer(params[0], pos_x, pos_y, userid,
+				return connect.GetFullRoute(params[0], pos_x, pos_y, userid,
 						circleTextView.getText().toString(), params[3]);
-				
+
 			} catch (JSONException e) {
 
 				e.printStackTrace();
@@ -640,7 +557,7 @@ public class NewMainActivity extends SlidingFragmentActivity {
 		@Override
 		protected String doInBackground(String... params) {
 			// TODO Auto-generated method stub
-			return AddressRequset(params[0], params[1]);
+			return connect.GetCurrentAddress(params[0], params[1]);
 		}
 
 		@Override
@@ -689,106 +606,12 @@ public class NewMainActivity extends SlidingFragmentActivity {
 		}
 	}
 
-	public static String RequestToServer(String typeString, double pos_x,
-			double pos_y, String userid, String circle, String cityString)
-			throws JSONException {
-		DefaultHttpClient httpclient = new DefaultHttpClient();
-		try {
-			// getApplicationContext().getMainLooper();
-			// Looper.prepare();
-
-			HttpHost target = new HttpHost(ipString, 8080, "http");
-			// String request="/?type=情侣出行&pos_x=108.947039&pos_y=34.259203";
-			String request = "/?command=full&type=" + typeString + "&city="
-					+ cityString + "&id=" + userid + "&circleName=" + circle;
-			Log.i("request string", request);
-			HttpGet req = new HttpGet(request);
-			// System.out.println("executing request to " + target);
-			HttpResponse rsp = httpclient.execute(target, req);
-			HttpEntity entity = rsp.getEntity();
-			InputStreamReader isr = new InputStreamReader(entity.getContent(),
-					"utf-8");
-			BufferedReader br = new BufferedReader(isr);
-			String line = null;
-			line = br.readLine();
-			if (line != null) {
-
-				System.out.println(line);
-				return line;
-
-			} else {
-				System.out.println("line is null");
-			}
-
-		} catch (ClientProtocolException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} finally {
-			// When HttpClient instance is no longer needed,
-			// shut down the connection manager to ensure
-			// immediate deallocation of all system resources
-			httpclient.getConnectionManager().shutdown();
-		}
-		return null;
-
-	}
-
-	public String AddressRequset(String pos_x_add, String pos_y_add) {
-		if (pos_x_add == null || pos_y_add == null) {
-			return null;
-		}
-		DefaultHttpClient httpclient = new DefaultHttpClient();
-		try {
-
-			HttpHost target = new HttpHost("api.map.baidu.com", 80, "http");
-			// String request="/?type=情侣出行&pos_x=108.947039&pos_y=34.259203";
-			String request = "/geocoder?output=json&location=" + pos_x_add
-					+ "," + pos_y_add + "&key=APP_KEY";
-			// Log.i("request string",request);
-			HttpGet req = new HttpGet(request);
-			System.out.println("executing request to " + target);
-			HttpResponse rsp = httpclient.execute(target, req);
-			HttpEntity entity = rsp.getEntity();
-			InputStreamReader isr = new InputStreamReader(entity.getContent(),
-					"utf-8");
-			BufferedReader br = new BufferedReader(isr);
-			String line = null;
-			StringBuilder output = new StringBuilder();
-			// line = br.readLine();
-			while ((line = br.readLine()) != null) {
-				output.append(line);
-
-			}
-			System.out.println(output);
-			return output.toString();
-
-		} catch (ClientProtocolException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} finally {
-			// When HttpClient instance is no longer needed,
-			// shut down the connection manager to ensure
-			// immediate deallocation of all system resources
-			httpclient.getConnectionManager().shutdown();
-		}
-		return null;
-
-	}
-
 	public class getCircles extends AsyncTask<String, Integer, String> {
 
 		@Override
 		protected String doInBackground(String... params) {
 			// TODO Auto-generated method stub
-			return GetCircleList(params[0]);
+			return connect.GetCircleList(params[0]);
 		}
 
 		@Override
@@ -803,31 +626,6 @@ public class NewMainActivity extends SlidingFragmentActivity {
 
 		}
 
-	}
-
-	public String GetCircleList(String city) // 获得某个城市的商圈列表，item1,2,3....
-	{
-		DefaultHttpClient httpclient = new DefaultHttpClient();
-		try {
-			HttpHost target = new HttpHost(ipString, 8080, "http");
-			String request = "/?command=getcirclelist&city=" + city + "";
-			HttpGet req = new HttpGet(request);
-			System.out.println("executing request to " + target);
-			HttpResponse rsp = httpclient.execute(target, req);
-			HttpEntity entity = rsp.getEntity();
-			InputStreamReader isr = new InputStreamReader(entity.getContent(),
-					"utf-8");
-			BufferedReader br = new BufferedReader(isr);
-			String line = null;
-			while ((line = br.readLine()) != null) {
-				Log.i("return circles line", line);
-				return line;
-			}
-		} catch (Exception e) {
-			// TODO: handle exception
-			e.printStackTrace();
-		}
-		return null;
 	}
 
 	public HashMap<Integer, String> hashCircle(String resultString)
@@ -849,41 +647,13 @@ public class NewMainActivity extends SlidingFragmentActivity {
 		return ansHashMap;
 	}
 
-	public static String GetShopCircle(double pos_x, double pos_y, String city) // 给坐标，返回最近商圈名称
-	{
-		DefaultHttpClient httpclient = new DefaultHttpClient();
-		try {
-			HttpHost target = new HttpHost(ipString, 8080, "http");
-			String request = "/?command=getshopcircle&city=" + city + "&pos_x="
-					+ pos_x + "&pos_y=" + pos_y;
-			System.out.println(request);
-			HttpGet req = new HttpGet(request);
-			System.out.println("executing request to " + target);
-			HttpResponse rsp = httpclient.execute(target, req);
-			HttpEntity entity = rsp.getEntity();
-			InputStreamReader isr = new InputStreamReader(entity.getContent(),
-					"utf-8");
-			BufferedReader br = new BufferedReader(isr);
-			String line = null;
-			while ((line = br.readLine()) != null) {
-				return line;
-			}
-		} catch (Exception e) {
-			// TODO: handle exception
-			e.printStackTrace();
-		}
-
-		return null;
-	}
-
-	public static class getCurrentCircle extends
-			AsyncTask<String, Integer, String> {
+	public class getCurrentCircle extends AsyncTask<String, Integer, String> {
 
 		@Override
 		protected String doInBackground(String... params) {
 			// TODO Auto-generated method stub
 			// Log.i("params, msg)
-			return GetShopCircle(Double.parseDouble(params[0]),
+			return connect.GetShopCircle(Double.parseDouble(params[0]),
 					Double.parseDouble(params[1]), params[2]);
 		}
 
@@ -899,7 +669,7 @@ public class NewMainActivity extends SlidingFragmentActivity {
 
 	}
 
-	public static void startrequest() {
+	public void startrequest() {
 		new getCurrentCircle().execute(String.valueOf(lng),
 				String.valueOf(lat), cityTextView.getText().toString());
 		Log.i("start", "start");
@@ -960,19 +730,18 @@ public class NewMainActivity extends SlidingFragmentActivity {
 		}
 		return false;
 	}
-	
+
 	@Override
-	protected void onPause()
-	{
+	protected void onPause() {
 		super.onPause();
-		
+
 	}
+
 	@Override
-	protected void onDestroy()
-	{
+	protected void onDestroy() {
 		super.onDestroy();
-		ShareSDK.stopSDK(this); 
-		
+		ShareSDK.stopSDK(this);
+
 	}
-	
+
 }
