@@ -27,13 +27,14 @@ import android.widget.Button;
 import android.widget.TextView;
 
 
+
 public class CircleDialog extends Dialog {
 	private String ipString;
 	private myGridView gridView_circles;
 	private String currentCircle;
 	private GridAdapter gridAdapter;
 	private String city;
-	private TextView textView;
+	private Button button;
 	private Connect connect;
 	
 	public CircleDialog(Context context) {
@@ -54,8 +55,8 @@ public class CircleDialog extends Dialog {
 		setCustomView(); 
 		// TODO Auto-generated constructor stub
 	}
-	public void setTextView(TextView textView_trans) {
-		this.textView = textView_trans;
+	public void setbutton(Button button_trans) {
+		this.button = button_trans;
 	}
 	
 	public void setCity(String cityString)
@@ -154,7 +155,7 @@ public class CircleDialog extends Dialog {
 				public void onClick(View v) {
 					// TODO Auto-generated method stub
 					currentCircle = circlesInfo.get(position);
-					textView.setText(currentCircle);
+					button.setText(currentCircle);
 					CircleDialog.this.dismiss();
 					
 				}
@@ -177,8 +178,8 @@ public class CircleDialog extends Dialog {
    	protected void onPostExecute(String result)
    	{
    		try {
-   			TextView textView_wait = (TextView)findViewById(R.id.textView_wait);
-   			textView_wait.setVisibility(View.GONE);
+   			TextView button_wait = (TextView)findViewById(R.id.textView_wait);
+   			button_wait.setVisibility(View.GONE);
    			HashMap<Integer, String> hashMapCircle = hashCircle(result);
    			Log.i("circle1", hashMapCircle.get(0));
    			gridAdapter.setHashMap(hashMapCircle);

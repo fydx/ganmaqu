@@ -253,7 +253,7 @@ public class NewMainActivity extends SlidingFragmentActivity {
 				circleDialog = new CircleDialog(NewMainActivity.this,
 						cityTextView.getText().toString());
 				// circleDialog.setCity(city);
-				circleDialog.setTextView(circleTextView);
+				//circleDialog.setTextView(circleTextView);
 				circleDialog.show();
 
 			}

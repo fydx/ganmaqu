@@ -32,7 +32,7 @@ public class WelcomeActivity extends Activity {
 				e.putInt("COUNT", ++count1);
 				e.commit();
 				// 判断结束
-		final Intent intent2 = new Intent(WelcomeActivity.this, NewMainActivity.class);
+		final Intent intent2 = new Intent(WelcomeActivity.this, MainActivity.class);
 		final Intent intent3 = new Intent(WelcomeActivity.this, GuideActivity.class);
 		Timer timer = new Timer(); //设置Timer
 		TimerTask task = new TimerTask() {

@@ -1,30 +1,21 @@
 package com.sssta.ganmaqu;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Timer;
 
 import net.tsz.afinal.FinalDb;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpHost;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.R.integer;
-import android.annotation.TargetApi;
-import android.app.ActionBar;
-import android.app.ActionBar.LayoutParams;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Address;
@@ -33,122 +24,288 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.text.format.Time;
 import android.util.Log;
-import android.view.Gravity;
-import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemSelectedListener;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.AnimationSet;
 import android.widget.Button;
-import android.widget.Gallery;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import cn.sharesdk.framework.Platform;
+import cn.sharesdk.framework.PlatformActionListener;
+import cn.sharesdk.framework.ShareSDK;
 
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
+import com.jeremyfeinstein.slidingmenu.lib.app.SlidingFragmentActivity;
 
-public class MainActivity extends android.support.v4.app.FragmentActivity {
+public class MainActivity extends SlidingFragmentActivity {
 	private LocationManager locationManager;
 	private Location location;
 	private String provider;
-	private Address address;
 	private List<place> places;
 	private static String ipString;
-	final String Types[] = new String[] { "äº²å­å‡ºè¡Œ", "æœ‹å‹å‡ºè¡Œ", "æƒ…ä¾£å‡ºè¡Œ" };
-	
-	private double lat;
-	private double lng;
+	final String Types[] = new String[] { "Ç××Ó³öĞĞ", "ÅóÓÑ³öĞĞ", "ÇéÂÂ³öĞĞ" };
+	private static double lat;
+	private static double lng;
 	private Dialog dialog;
-	private Gallery galleryFlow;
-	private GifView gifView;
-	private int count ;
-	private TextView locTextView;
+	private int count, count_city,count_type;
+	private Button circleButton,button_type,button_yes;
 	private FinalDb db;
 	private String userid;
-	private static String city ; 
-	//private String circleString;
+	private static String city;
 	private CircleDialog circleDialog;
-	
+	private SlidingMenu menu;
+	private SharedPreferences userInfo;
+	private int count_first;
+	public Connect connect;
+
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		getWindow().requestFeature(Window.FEATURE_ACTION_BAR); // Add this line
-		setContentView(R.layout.activity_main);
-		
-		db = FinalDb.create(this);
-		city= new String("è¥¿å®‰");
-		View actionbar_title = LayoutInflater.from(this).inflate( 
-                R.layout.actionbar_main, null);
-		ActionBar actionBar = this.getActionBar();
-        TextView title = (TextView) actionbar_title.findViewById(R.id.title);
-        Button button_back = (Button) actionbar_title.findViewById(R.id.button_back); 
-        Button button_right = (Button) actionbar_title.findViewById(R.id.button_right); 
-        actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-       LayoutParams params = new ActionBar.LayoutParams( 
-                ActionBar.LayoutParams.MATCH_PARENT, 
-                ActionBar.LayoutParams.MATCH_PARENT, Gravity.CENTER); 
-        actionBar.setCustomView(actionbar_title, params); 
-        actionBar.setDisplayShowCustomEnabled(true);
-        
-		locTextView = (TextView)findViewById(R.id.text_location);
-		locTextView.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				circleDialog = new CircleDialog(MainActivity.this);
-				circleDialog.setCity(city);
-				circleDialog.setTextView(locTextView);
-				circleDialog.show();
-				
-			}
-		});
+		this.requestWindowFeature(Window.FEATURE_NO_TITLE); // no title bar
+		setBehindContentView(R.layout.menu);
+		ShareSDK.initSDK(this);
 		ipString = getApplicationContext().getResources()
 				.getString(R.string.ip);
-		count = 0;
-		//new getCircles().execute("è¥¿å®‰");
-		SharedPreferences userInfo = getApplicationContext().getSharedPreferences("userInfo", 0);
-		userid = userInfo.getString("userid", "root");
-		// è·å–LocationManageræœåŠ¡
-		locationManager = (LocationManager) this
-				.getSystemService(Context.LOCATION_SERVICE);
-		// è·å–Location Provider
-		getProvider();
-		// å¦‚æœæœªè®¾ç½®ä½ç½®æºï¼Œæ‰“å¼€GPSè®¾ç½®ç•Œé¢
-		openGPS();
-		// è·å–ä½ç½®
-		location = locationManager.getLastKnownLocation(provider);
-		// æ˜¾ç¤ºä½ç½®ä¿¡æ¯åˆ°æ–‡å­—æ ‡ç­¾
-		updateWithNewLocation(location);
-		// æ³¨å†Œç›‘å¬å™¨locationListenerï¼Œç¬¬2ã€3ä¸ªå‚æ•°å¯ä»¥æ§åˆ¶æ¥æ”¶gpsæ¶ˆæ¯çš„é¢‘åº¦ä»¥èŠ‚çœç”µåŠ›ã€‚ç¬¬2ä¸ªå‚æ•°ä¸ºæ¯«ç§’ï¼Œ
-		// è¡¨ç¤ºè°ƒç”¨listenerçš„å‘¨æœŸï¼Œç¬¬3ä¸ªå‚æ•°ä¸ºç±³,è¡¨ç¤ºä½ç½®ç§»åŠ¨æŒ‡å®šè·ç¦»åå°±è°ƒç”¨listener
-		locationManager.requestLocationUpdates(provider, 2000, 10,
-				locationListener);
-	
+		connect = new Connect(ipString);
+		count_type = 0;
+		// Platform[] platformList =
+		// ShareSDK.getPlatformList(NewMainActivity.this) ;
+		// platformList[0].authorize();
+		setContentView(R.layout.activity_selectedmain);
+		userInfo = getApplicationContext().getSharedPreferences("userInfo", 0);
 		
-//		gifView = (GifView)findViewById(R.id.gifview);		
-//		gifView.setGifImage(R.drawable.locgif);
-//		
-//		gifView.setGifImageType(GifImageType.COVER);
-		//set settings button
-		Button button_settings = (Button)findViewById(R.id.button_settings);
-		button_settings.setOnClickListener(new OnClickListener() {
+		city = userInfo.getString("city", "Î÷°²ÊĞ");
+		count_first = userInfo.getInt("first", 0);
+		count_city = userInfo.getInt("count_city", 0);
+		Log.i("city from sharedperferece", city);
+		setSlidingActionBarEnabled(true);
+		/*
+		 * ÉèÖÃ½¥ÏÔ¶¯»­
+		 */
+		//´´½¨Ò»¸öAnimationSet¶ÔÏó£¬²ÎÊıÎªBooleanĞÍ£¬
+        //true±íÊ¾Ê¹ÓÃAnimationµÄinterpolator£¬falseÔòÊÇÊ¹ÓÃ×Ô¼ºµÄ
+        AnimationSet animationSet = new AnimationSet(true);
+        //´´½¨Ò»¸öAlphaAnimation¶ÔÏó£¬²ÎÊı´ÓÍêÈ«µÄÍ¸Ã÷¶È£¬µ½ÍêÈ«µÄ²»Í¸Ã÷
+        AlphaAnimation alphaAnimation = new AlphaAnimation(0, 1);
+        //ÉèÖÃ¶¯»­Ö´ĞĞµÄÊ±¼ä
+        alphaAnimation.setDuration(3000);
+        //ÉèÖÃ¶¯»­ÑÓ³ÙÖ´ĞĞÊ±¼ä
+        alphaAnimation.setStartOffset(1300);
+        //½«alphaAnimation¶ÔÏóÌí¼Óµ½AnimationSetµ±ÖĞ
+        animationSet.addAnimation(alphaAnimation);
+        /*
+         * ¿Ø¼ş°ó¶¨ 
+         */
+        button_type =  (Button)findViewById(R.id.button_type);
+        ImageView navigation_drawer = (ImageView) findViewById(R.id.navigation_drawer);
+        TextView textView1= (TextView)findViewById(R.id.tuijianshangquan);
+        TextView textView2 = (TextView)findViewById(R.id.chuxingleixing);
+        circleButton = (Button) findViewById(R.id.button_circle);
+        button_type.setAnimation(animationSet);
+        button_yes = (Button) findViewById(R.id.button_go);
+        
+        /*
+         * ÉèÖÃ¶¯»­
+         */
+        navigation_drawer.setAnimation(animationSet);
+        textView1.setAnimation(animationSet);
+        textView2.setAnimation(animationSet);
+        circleButton.setAnimation(animationSet);
+        button_yes.setAnimation(animationSet);
+		// set sina authorize()
+		// final Platform weibo = ShareSDK.getPlatform(NewMainActivity.this,
+		// SinaWeibo.NAME);
+		PlatformActionListener paListener = new PlatformActionListener() {
+
+			@Override
+			public void onError(Platform arg0, int arg1, Throwable arg2) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void onComplete(Platform arg0, int arg1,
+					HashMap<String, Object> arg2) {
+				// TODO Auto-generated method stub
+				// String id=weibo.getDb().getUserId();
+				// Log.i("id", id);
+
+			}
+
+			@Override
+			public void onCancel(Platform arg0, int arg1) {
+				// TODO Auto-generated method stub
+
+			}
+		};
+		// String id=weibo.getDb().getUserId();
+		// Log.i("id2", id);
+		// weibo.setPlatformActionListener(paListener);
+		// weibo.authorize();
+		// weibo.showUser(id);
+		// weibo.setPlatformActionListener(paListener); // ÉèÖÃ·ÖÏíÊÂ¼ş»Øµ÷
+
+		// set sliding menu
+		menu = getSlidingMenu();
+		menu.setMode(SlidingMenu.LEFT);
+
+		menu.setTouchModeAbove(SlidingMenu.TOUCHMODE_MARGIN);
+		menu.setShadowWidthRes(R.dimen.shadow_width);
+		menu.setShadowDrawable(R.drawable.shadow);
+		menu.setBehindOffsetRes(R.dimen.slidingmenu_offset);
+		menu.setFadeDegree(0.35f);
+		// menu.attachToActivity(this, SlidingMenu.SLIDING_CONTENT);
+		// menu.setMenu(R.layout.menu);
+		db = FinalDb.create(this);
+		if (isConnect(this) == false) {
+			new AlertDialog.Builder(this)
+					.setTitle("ÍøÂç´íÎó")
+					.setMessage("ÍøÂçÁ¬½ÓÊ§°Ü£¬ÇëÈ·ÈÏÍøÂçÁ¬½Ó")
+					.setPositiveButton("È·¶¨",
+							new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface arg0,
+										int arg1) {
+									// TODO Auto-generated method stub
+									android.os.Process
+											.killProcess(android.os.Process
+													.myPid());
+									System.exit(0);
+								}
+							}).show();
+		}
+		if (count_first == 0) {
+
+			// SimpleDialog SimpleDialog = new SimpleDialog(
+			// NewMainActivity.this, R.drawable.mainpageguide);
+			//
+			// SimpleDialog.show();
+
+		}
+
+		
+
+		navigation_drawer.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				
+				// µã»÷·µ»Ø¼ü¹Ø±Õ»¬¶¯²Ëµ¥
+				if (menu.isMenuShowing()) {
+					menu.showContent();
+				} else {
+					menu.showMenu();
+				}
+			}
+		});
+		
+		button_type.setOnClickListener(new OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				Intent intent = new Intent();
-				intent.setClass(getApplicationContext(),SettingsActivity.class);
-				startActivity(intent);
+				button_type.setText(Types[count_type%3]);
+				count_type++;
 			}
 		});
+		// RelativeLayout relativeLayout = (RelativeLayout)
+		// findViewById(R.id.city);
+		// relativeLayout.getBackground().setAlpha(100);
+
+		// cityTextView = (TextView) findViewById(R.id.textView_city);
+		// cityTextView.setText(city);
+		// changecityButton = (Button) findViewById(R.id.button_changecity);
+		// changecityButton.setOnClickListener(new OnClickListener() {
+		//
+		// @Override
+		// public void onClick(View v) {
+		// // TODO Auto-generated method stub
+		// ChangeCityDialog changeCityDialog = new ChangeCityDialog(
+		// MainActivity.this, String.valueOf(lng), String
+		// .valueOf(lat));
+		// changeCityDialog.setTextView(cityTextView);
+		// changeCityDialog.setcircleButton(circleButton);
+		// changeCityDialog.show();
+		//
+		// }
+		// });
+		// Button button_right = (Button) actionbar_title
+		// .findViewById(R.id.button_right);
+		// button_right.setOnClickListener(new OnClickListener() {
+		//
+		// @Override
+		// public void onClick(View v) {
+		// // TODO Auto-generated method stub
+		// List<place> placeList = db.findAll(place.class);
+		// if (placeList.isEmpty()) {
+		// Toast.makeText(getApplicationContext(), "°¡Å¶£¬Äã»¹Ã»ÓĞ±£´æ¹ıÂ·Ïß",
+		// Toast.LENGTH_SHORT).show();
+		// } else {
+		// int route_id = placeList.get(placeList.size() - 1)
+		// .getRoute_id();
+		// List<place> lastLine = db.findAllByWhere(place.class,
+		// "route_id = " + String.valueOf(route_id));
+		// Intent intent = new Intent();
+		// intent.setClass(getApplicationContext(), WarpDSLV.class);
+		// intent.putExtra("places", (Serializable) lastLine);
+		// intent.putExtra("type", lastLine.get(0).getRouteType());
+		// startActivity(intent);
+		// }
+		// }
+		// });
+		// actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+		// LayoutParams params = new ActionBar.LayoutParams(
+		// ActionBar.LayoutParams.MATCH_PARENT,
+		// ActionBar.LayoutParams.MATCH_PARENT, Gravity.CENTER);
+		// actionBar.setCustomView(actionbar_title, params);
+		// actionBar.setDisplayShowCustomEnabled(true);
+
+		// locTextView.setBackgroundColor(0xe0FFFFFF);
+
+		
+		circleButton.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				circleDialog = new CircleDialog(MainActivity.this, city);
+				// circleDialog.setCity(city);
+				circleDialog.setbutton(circleButton);
+				circleDialog.show();
+
+			}
+		});
+
+		count = 0;
+		// new getCircles().execute("Î÷°²");
+
+		userid = userInfo.getString("userid", "root");
+		// »ñÈ¡LocationManager·şÎñ
+		locationManager = (LocationManager) this
+				.getSystemService(Context.LOCATION_SERVICE);
+		// »ñÈ¡Location Provider
+		getProvider();
+		// Èç¹ûÎ´ÉèÖÃÎ»ÖÃÔ´£¬´ò¿ªGPSÉèÖÃ½çÃæ
+		openGPS();
+		// »ñÈ¡Î»ÖÃ
+		location = locationManager.getLastKnownLocation(provider);
+		// ÏÔÊ¾Î»ÖÃĞÅÏ¢µ½ÎÄ×Ö±êÇ©
+		updateWithNewLocation(location);
+		// ×¢²á¼àÌıÆ÷locationListener£¬µÚ2¡¢3¸ö²ÎÊı¿ÉÒÔ¿ØÖÆ½ÓÊÕgpsÏûÏ¢µÄÆµ¶ÈÒÔ½ÚÊ¡µçÁ¦¡£µÚ2¸ö²ÎÊıÎªºÁÃë£¬
+		// ±íÊ¾µ÷ÓÃlistenerµÄÖÜÆÚ£¬µÚ3¸ö²ÎÊıÎªÃ×,±íÊ¾Î»ÖÃÒÆ¶¯Ö¸¶¨¾àÀëºó¾Íµ÷ÓÃlistener
+		locationManager.requestLocationUpdates(provider, 2000, 10,
+				locationListener);
+
 		// set gallery
 		Integer[] images = { R.drawable.child, R.drawable.friend,
 				R.drawable.couple };
@@ -156,213 +313,109 @@ public class MainActivity extends android.support.v4.app.FragmentActivity {
 		ImageAdapter adapter = new ImageAdapter(this, images);
 		adapter.createReflectedImages();
 
-		galleryFlow = (Gallery) findViewById(R.id.Gallery01);
-	   
-		galleryFlow.setAdapter(adapter);
-		galleryFlow.setOnItemSelectedListener(new OnItemSelectedListener() {
-
-	
-			@TargetApi(Build.VERSION_CODES.HONEYCOMB)
-			@Override
-			public void onItemSelected(AdapterView<?> parent, View view, int position,
-		              long id) {
-		         // é€‰ä¸­Galleryä¸­æŸä¸ªå›¾åƒæ—¶ï¼Œæ”¾å¤§æ˜¾ç¤ºè¯¥å›¾åƒ
-		          ImageView imageview = (ImageView)view;
-		          view.setLayoutParams(new Gallery.LayoutParams(570 / 3, 370 / 3));
-		          for(int i=0; i<parent.getChildCount();i++){
-		             //ç¼©å°é€‰ä¸­å›¾ç‰‡æ—è¾¹çš„å›¾ç‰‡
-		             ImageView local_imageview = (ImageView)parent.getChildAt(i);
-		           if(local_imageview!=imageview){
-		                 local_imageview.setLayoutParams(new Gallery.LayoutParams(520/4, 318/4));
-		                 local_imageview.setScaleType(ImageView.ScaleType.FIT_CENTER);
-		               //  local_imageview.setColorFilter(Color.parseColor("#000000"));
-		                 local_imageview.setAlpha(0.1f);
-		             
-		             }
-		           else {
-		        	    //local_imageview.setColorFilter(Color.parseColor("#c70102"));
-		        	   	local_imageview.setAlpha(1f);
-				}
-		         }
-		     }
-
-			@Override
-			public void onNothingSelected(AdapterView<?> arg0) {
-				// TODO Auto-generated method stub
-				
-			}
-		});
-		//set sliding menu
-		 SlidingMenu menu = new SlidingMenu(this);
-	      menu.setMode(SlidingMenu.LEFT);
-	      menu.setTouchModeAbove(SlidingMenu.TOUCHMODE_MARGIN);
-	      menu.setShadowWidthRes(R.dimen.shadow_width);
-	      menu.setShadowDrawable(R.drawable.shadow);
-	      menu.setBehindOffsetRes(R.dimen.slidingmenu_offset);
-	      menu.setFadeDegree(0.35f);
-	      menu.attachToActivity(this, SlidingMenu.SLIDING_CONTENT);
-	      menu.setMenu(R.layout.menu);
-		//set Button last
-		Button button_last = (Button)findViewById(R.id.button_last);
-		button_last.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				
-				List<place> placeList = db.findAll(place.class);
-				if (placeList.isEmpty()) {
-					Toast.makeText(getApplicationContext(), "å•Šå“¦ï¼Œä½ è¿˜æ²¡æœ‰ä¿å­˜è¿‡è·¯çº¿", Toast.LENGTH_SHORT).show();
-				}
-				else {
-					int route_id = placeList.get(placeList.size()-1).getRoute_id();
-					List<place> lastLine =  db.findAllByWhere(place.class, "route_id = " + String.valueOf(route_id));
-					Intent intent = new Intent();
-					intent.setClass(getApplicationContext(), WarpDSLV.class);
-					intent.putExtra("places", (Serializable)lastLine);
-					intent.putExtra("type", lastLine.get(0).getRouteType());
-					startActivity(intent);
-				}
-				
-			}
-		});
 		
-		Button button_yes = (Button) findViewById(R.id.button_yes);
-		ImageView routeImageView = (ImageView) findViewById(R.id.routeList);
-		routeImageView.setOnClickListener(new OnClickListener() {
 
-			@Override
-			public void onClick(View v) {
-				
-				Intent intent2 = new Intent();
-				intent2.setClass(MainActivity.this, RouteListActivity.class);
-				startActivity(intent2);
-			}
-		});
-		// WheelView NumberOfPerson = (WheelView)
-		// findViewById(R.id.NumberOfPerson);
-		// String Numbers[] = new String[] {"1", "2", "3",
-		// "4","5","6","7","8","9","10"};
-
-		// final WheelView numberWheel = (WheelView)
-		// findViewById(R.id.NumberOfPerson);
-		// String countries[] = new String[] { "2", "3", "4", "5", "6", "7", "8"
-		// };
-		// numberWheel.setVisibleItems(5);
-		// numberWheel.setCyclic(false);
-		// numberWheel.setAdapter(new ArrayWheelAdapter<String>(countries));
-		final String cities[][] = new String[][] { Types, Types, Types, Types,
-				Types, Types, Types };
-		// temp cancel wheel
-		// typeWheel = (WheelView) findViewById(R.id.Type);
-		// typeWheel.setAdapter(new ArrayWheelAdapter<String>(Types));
-		// typeWheel.setVisibleItems(5);
-
-		/*
-		 * numberWheel.addChangingListener(new OnWheelChangedListener() {
-		 * 
-		 * @Override public void onChanged(WheelView wheel, int oldValue, int
-		 * newValue) { typeWheel.setAdapter(new
-		 * ArrayWheelAdapter<String>(cities[newValue]));
-		 * typeWheel.setCurrentItem(cities[newValue].length / 2); } });
-		 */
-
+		
 		button_yes.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
-				
-				dialog = new Dialog(MainActivity.this,
-						R.style.activity_translucent);
-				dialog.setContentView(R.layout.dialog_connect);
-				dialog.show();
-				// Toast.makeText(getApplicationContext(),
-				// Types[typeWheel.getCurrentItem()], Toast.LENGTH_SHORT)
-				// .show();
-				// Log.i("Current Item", Types[typeWheel.getCurrentItem()]);
 
-				if (location == null) {
-					new RequestTask().execute(Types[galleryFlow
-							.getSelectedItemPosition()]);
+				if (lat == 0.0 || lng == 0.0) {
+					Toast.makeText(getApplicationContext(),
+							"¶¨Î»Ê§°Ü£¬Çë´ò¿ª¶¨Î»·şÎñ»òÉÔºóÔÙÊÔ", Toast.LENGTH_SHORT).show();
 				} else {
-					new RequestTask().execute(
-							Types[galleryFlow.getSelectedItemPosition()],
-							String.valueOf(location.getLongitude()),
-							String.valueOf(location.getLatitude()));
-				}
+					dialog = new Dialog(MainActivity.this,
+							R.style.activity_translucent);
+					dialog.setContentView(R.layout.dialog_connect);
+					dialog.show();
+					// Toast.makeText(getApplicationContext(),
+					// Types[typeWheel.getCurrentItem()], Toast.LENGTH_SHORT)
+					// .show();
+					// Log.i("Current Item", Types[typeWheel.getCurrentItem()]);
 
+					if (location == null) {
+						new RequestTask().execute(button_type.getText().toString());
+					} else {
+						new RequestTask().execute(
+								button_type.getText().toString(),
+								String.valueOf(location.getLongitude()),
+								String.valueOf(location.getLatitude()),
+								userInfo.getString("city", "Î÷°²ÊĞ"));
+					}
+
+				}
 			}
 		});
 		// numberWheel.setCurrentItem(3);
 	}
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
-		return true;
-	}
-	
-	
-	// åˆ¤æ–­æ˜¯å¦å¼€å¯GPSï¼Œè‹¥æœªå¼€å¯ï¼Œæ‰“å¼€GPSè®¾ç½®ç•Œé¢
+	// @Override
+	// public boolean onCreateOptionsMenu(Menu menu) {
+	// // Inflate the menu; this adds items to the action bar if it is present.
+	// getMenuInflater().inflate(R.menu.main, menu);
+	// return true;
+	// }
+
+	// ÅĞ¶ÏÊÇ·ñ¿ªÆôGPS£¬ÈôÎ´¿ªÆô£¬´ò¿ªGPSÉèÖÃ½çÃæ
 	private void openGPS() {
 		if (locationManager
 				.isProviderEnabled(android.location.LocationManager.GPS_PROVIDER)
 				|| locationManager
 						.isProviderEnabled(android.location.LocationManager.NETWORK_PROVIDER)) {
-			Toast.makeText(this, "ä½ç½®æºå·²è®¾ç½®ï¼", Toast.LENGTH_SHORT).show();
+			Log.i("location service", "Î»ÖÃÔ´ÒÑÉèÖÃ£¡");
+			// Toast.makeText(this, , Toast.LENGTH_SHORT).show();
 			return;
 		}
-		Toast.makeText(this, "ä½ç½®æºæœªè®¾ç½®ï¼", Toast.LENGTH_SHORT).show();
-		// è½¬è‡³GPSè®¾ç½®ç•Œé¢
-		Intent intent = new Intent(Settings.ACTION_SECURITY_SETTINGS);
-		startActivityForResult(intent, 0);
+		Toast.makeText(this, "ÄúÎ´¿ªÆô¶¨Î»·şÎñ", Toast.LENGTH_SHORT).show();
+		createLogoutDialog();
+
 	}
 
-	// è·å–Location Provider
+	// »ñÈ¡Location Provider
 	private void getProvider() {
-		// æ„å»ºä½ç½®æŸ¥è¯¢æ¡ä»¶
+		// ¹¹½¨Î»ÖÃ²éÑ¯Ìõ¼ş
 		Criteria criteria = new Criteria();
-		// æŸ¥è¯¢ç²¾åº¦ï¼šé«˜
+		// ²éÑ¯¾«¶È£º¸ß
 		criteria.setAccuracy(Criteria.ACCURACY_FINE);
-		// æ˜¯å¦æŸ¥è¯¢æµ·æ‹¨ï¼šå¦
+		// ÊÇ·ñ²éÑ¯º£²¦£º·ñ
 		criteria.setAltitudeRequired(false);
-		// æ˜¯å¦æŸ¥è¯¢æ–¹ä½è§’:å¦
+		// ÊÇ·ñ²éÑ¯·½Î»½Ç:·ñ
 		criteria.setBearingRequired(false);
-		// æ˜¯å¦å…è®¸ä»˜è´¹ï¼šæ˜¯
+		// ÊÇ·ñÔÊĞí¸¶·Ñ£ºÊÇ
 		criteria.setCostAllowed(true);
-		// ç”µé‡è¦æ±‚ï¼šä½
+		// µçÁ¿ÒªÇó£ºµÍ
 		criteria.setPowerRequirement(Criteria.POWER_LOW);
-		// è¿”å›æœ€åˆé€‚çš„ç¬¦åˆæ¡ä»¶çš„providerï¼Œç¬¬2ä¸ªå‚æ•°ä¸ºtrueè¯´æ˜,å¦‚æœåªæœ‰ä¸€ä¸ªprovideræ˜¯æœ‰æ•ˆçš„,åˆ™è¿”å›å½“å‰provider
+		// ·µ»Ø×îºÏÊÊµÄ·ûºÏÌõ¼şµÄprovider£¬µÚ2¸ö²ÎÊıÎªtrueËµÃ÷,Èç¹ûÖ»ÓĞÒ»¸öproviderÊÇÓĞĞ§µÄ,Ôò·µ»Øµ±Ç°provider
 		provider = locationManager.getBestProvider(criteria, true);
 	}
 
-	// Gpsæ¶ˆæ¯ç›‘å¬å™¨
+	// GpsÏûÏ¢¼àÌıÆ÷
 	private final LocationListener locationListener = new LocationListener() {
-		// ä½ç½®å‘ç”Ÿæ”¹å˜åè°ƒç”¨
+		// Î»ÖÃ·¢Éú¸Ä±äºóµ÷ÓÃ
 		public void onLocationChanged(Location location) {
 
 			updateWithNewLocation(location);
 		}
 
-		// providerè¢«ç”¨æˆ·å…³é—­åè°ƒç”¨
+		// provider±»ÓÃ»§¹Ø±Õºóµ÷ÓÃ
 		public void onProviderDisabled(String provider) {
 			updateWithNewLocation(null);
 		}
 
-		// providerè¢«ç”¨æˆ·å¼€å¯åè°ƒç”¨
+		// provider±»ÓÃ»§¿ªÆôºóµ÷ÓÃ
 		public void onProviderEnabled(String provider) {
 
 		}
 
-		// providerçŠ¶æ€å˜åŒ–æ—¶è°ƒç”¨
+		// provider×´Ì¬±ä»¯Ê±µ÷ÓÃ
 		public void onStatusChanged(String provider, int status, Bundle extras) {
 
 		}
 
 	};
 
-	// Gpsç›‘å¬å™¨è°ƒç”¨ï¼Œå¤„ç†ä½ç½®ä¿¡æ¯
+	// Gps¼àÌıÆ÷µ÷ÓÃ£¬´¦ÀíÎ»ÖÃĞÅÏ¢
 	private void updateWithNewLocation(Location location) {
 		String latLongString;
 		// TextView myLocationText = (TextView)
@@ -370,40 +423,43 @@ public class MainActivity extends android.support.v4.app.FragmentActivity {
 		if (location != null) {
 			lat = location.getLatitude();
 			lng = location.getLongitude();
-			latLongString = "çº¬åº¦:" + lat + "\nç»åº¦:" + lng;
-			
+			latLongString = "Î³¶È:" + lat + "\n¾­¶È:" + lng;
+
 		} else {
-			latLongString = "æ— æ³•è·å–åœ°ç†ä¿¡æ¯";
+			latLongString = "ÎŞ·¨»ñÈ¡µØÀíĞÅÏ¢";
 		}
-		if(count==0)
-		{
+		if (count == 0) {
 			Log.i("address request start", "execute");
-			// TODO ä¿®æ”¹åæ ‡
-			//new AddressRequestTask().execute("34.238225","108.924703"); //Test
-			//new AddressRequestTask().execute(String.valueOf(lat),String.valueOf(lng));
+			// TODO ĞŞ¸Ä×ø±ê
+			// new AddressRequestTask().execute("34.238225","108.924703");
+			// //Test
+
 			Log.i("loaction", String.valueOf(lat) + " " + String.valueOf(lng));
-			new getCurrentCircle().execute(String.valueOf(lng),String.valueOf(lat),"è¥¿å®‰");
-			
+			if (count_first != 0) {
+				new getCurrentCircle().execute(String.valueOf(lng),
+						String.valueOf(lat), userInfo.getString("city", "Î÷°²ÊĞ"));
+			}
+
 		}
 		count++;
-//		Toast.makeText(
-//				getApplicationContext(),
-//				"(main)æ‚¨å½“å‰çš„ä½ç½®æ˜¯: " + "\n" + latLongString + "\n"
-//						+ getAddressbyGeoPoint(location), Toast.LENGTH_LONG)
-//				.show();
-		// myLocationText.setText("æ‚¨å½“å‰çš„ä½ç½®æ˜¯:/n" + latLongString + "/n"
+		// Toast.makeText(
+		// getApplicationContext(),
+		// "(main)Äúµ±Ç°µÄÎ»ÖÃÊÇ: " + "\n" + latLongString + "\n"
+		// + getAddressbyGeoPoint(location), Toast.LENGTH_LONG)
+		// .show();
+		// myLocationText.setText("Äúµ±Ç°µÄÎ»ÖÃÊÇ:/n" + latLongString + "/n"
 		// + getAddressbyGeoPoint(location));
 
 	}
 
-	// è·å–åœ°å€ä¿¡æ¯
+	// »ñÈ¡µØÖ·ĞÅÏ¢
 	private List<Address> getAddressbyGeoPoint(Location location) {
 		List<Address> result = null;
-		// å…ˆå°†Locationè½¬æ¢ä¸ºGeoPoint
+		// ÏÈ½«Location×ª»»ÎªGeoPoint
 		// GeoPoint gp=getGeoByLocation(location);
 		try {
 			if (location != null) {
-				// è·å–Geocoderï¼Œé€šè¿‡Geocoderå°±å¯ä»¥æ‹¿åˆ°åœ°å€ä¿¡æ¯
+				// »ñÈ¡Geocoder£¬Í¨¹ıGeocoder¾Í¿ÉÒÔÄÃµ½µØÖ·ĞÅÏ¢
 				Geocoder gc = new Geocoder(this, Locale.getDefault());
 				result = gc.getFromLocation(location.getLatitude(),
 						location.getLongitude(), 1);
@@ -416,9 +472,10 @@ public class MainActivity extends android.support.v4.app.FragmentActivity {
 
 	public class RequestTask extends AsyncTask<String, integer, String> {
 		private String typeString;
+
 		@Override
 		protected String doInBackground(String... params) {
-			typeString= params[0];
+			typeString = params[0];
 			double pos_x = 108.947039, pos_y = 34.259203;
 
 			if (params.length > 1) {
@@ -426,15 +483,17 @@ public class MainActivity extends android.support.v4.app.FragmentActivity {
 				pos_y = Double.parseDouble(params[2]);
 			}
 			try {
-				return RequestToServer(params[0], pos_x, pos_y,userid,locTextView.getText().toString());
+				return connect.GetFullRoute(params[0], pos_x, pos_y, userid,
+						circleButton.getText().toString(), params[3]);
+
 			} catch (JSONException e) {
-				
+
 				e.printStackTrace();
 			}
 			return null;
 		}
 
-		protected void onProgressUpdate(Integer... progress) {// åœ¨è°ƒç”¨publishProgressä¹‹åè¢«è°ƒç”¨ï¼Œåœ¨uiçº¿ç¨‹æ‰§è¡Œ
+		protected void onProgressUpdate(Integer... progress) {// ÔÚµ÷ÓÃpublishProgressÖ®ºó±»µ÷ÓÃ£¬ÔÚuiÏß³ÌÖ´ĞĞ
 			// mProgressBar.setProgress(progress[0]);
 			Log.i("Progress", String.valueOf(progress[0]));
 		}
@@ -465,254 +524,154 @@ public class MainActivity extends android.support.v4.app.FragmentActivity {
 			intent.setClass(getApplicationContext(), WarpDSLV.class);
 			intent.putExtra("places", (Serializable) places);
 			intent.putExtra("type",
-					Types[galleryFlow.getSelectedItemPosition()]);
+					button_type.getText().toString());
 			intent.putExtra("loclat", lat);
 			intent.putExtra("loclng", lng);
 			intent.putExtra("type", typeString);
-			intent.putExtra("circle", locTextView.getText().toString());
+
+			intent.putExtra("circle", circleButton.getText().toString());
 			dialog.dismiss();
 			startActivity(intent);
 		}
 
 	}
-	public class AddressRequestTask extends AsyncTask<String, integer, String>
-	{
+
+	public class getCircles extends AsyncTask<String, Integer, String> {
 
 		@Override
 		protected String doInBackground(String... params) {
 			// TODO Auto-generated method stub
-			return AddressRequset(params[0], params[1]);
+			return connect.GetCircleList(params[0]);
 		}
+
 		@Override
-		protected void onPostExecute(String result)
-		{
-			
-			if (result==null) {
-				locTextView.setText("æš‚æ—¶æ— æ³•è·å–ä½ç½®");
+		protected void onPostExecute(String result) {
+			try {
+				HashMap<Integer, String> hashMapCircle = hashCircle(result);
+				Log.i("circle1", hashMapCircle.get(0));
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-			else {
-				try {
-					Log.i("ADDRESS REQUEST", result);
-					JSONObject jsonObject = new JSONObject(result);
-					JSONObject jsonResult = new JSONObject(jsonObject.getString("result"));
-					//Toast.makeText(getApplicationContext(), jsonResult.getString("formatted_address"), Toast.LENGTH_LONG).show();
-					locTextView.setText(jsonResult.getString("formatted_address"));
-					
-				} catch (JSONException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+
+		}
+
+	}
+
+	public HashMap<Integer, String> hashCircle(String resultString)
+			throws JSONException
+
+	{
+
+		HashMap<Integer, String> ansHashMap = new HashMap<Integer, String>();
+		int i = 1;
+		JSONObject circle = new JSONObject(resultString);
+		// Log.i("result String", circle.toString());
+
+		while (circle.has("item" + String.valueOf(i))) {
+			String temp = circle.getString("item" + String.valueOf(i));
+			ansHashMap.put(i - 1, temp);
+			i++;
+		}
+		// Log.i("hasmap", ansHashMap.toString());
+		return ansHashMap;
+	}
+
+	public class getCurrentCircle extends AsyncTask<String, Integer, String> {
+
+		@Override
+		protected String doInBackground(String... params) {
+			// TODO Auto-generated method stub
+			// Log.i("params, msg)
+			return connect.GetShopCircle(Double.parseDouble(params[0]),
+					Double.parseDouble(params[1]), params[2]);
+		}
+
+		@Override
+		protected void onPostExecute(String result) {
+			// circleString = result;
+			if (result == null) {
+				circleButton.setText("ÔİÊ±ÎŞ·¨»ñÈ¡Î»ÖÃ");
+			} else {
+				circleButton.setText(result);
+			}
+		}
+
+	}
+
+	public void startrequest() {
+		new getCurrentCircle().execute(String.valueOf(lng),
+				String.valueOf(lat), userInfo.getString("city", "Î÷°²ÊĞ"));
+		Log.i("start", "start");
+	}
+
+	public void createLogoutDialog()
+
+	{
+
+		AlertDialog dlg = new AlertDialog.Builder(MainActivity.this)
+				.setTitle("ÌáÊ¾")
+				.setMessage("ÄúÃ»ÓĞ¿ªÆô¶¨Î»·şÎñ£¬Õâ»áÓ°Ïì¸ÉÂïÈ¥µÄÊ¹ÓÃĞ§¹û£¬ÊÇ·ñ½øÈëÉèÖÃ¿ªÆô¶¨Î»·şÎñ£¿")
+				.setPositiveButton("È·ÈÏ", new DialogInterface.OnClickListener() {
+
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						// TODO Auto-generated method stub
+						// ×ªÖÁGPSÉèÖÃ½çÃæ
+						Intent intent = new Intent(
+								Settings.ACTION_SECURITY_SETTINGS);
+						startActivityForResult(intent, 0);
+					}
+
+				})
+				.setNegativeButton("È¡Ïû", new DialogInterface.OnClickListener() {
+
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						// TODO Auto-generated method stub
+
+					}
+				}).create();
+		dlg.show();
+
+	}
+
+	public static boolean isConnect(Context context) {
+
+		// »ñÈ¡ÊÖ»úËùÓĞÁ¬½Ó¹ÜÀí¶ÔÏó£¨°üÀ¨¶Ôwi-fi,netµÈÁ¬½ÓµÄ¹ÜÀí£©
+		try {
+			ConnectivityManager connectivity = (ConnectivityManager) context
+					.getSystemService(Context.CONNECTIVITY_SERVICE);
+			if (connectivity != null) {
+
+				// »ñÈ¡ÍøÂçÁ¬½Ó¹ÜÀíµÄ¶ÔÏó
+				NetworkInfo info = connectivity.getActiveNetworkInfo();
+
+				if (info != null && info.isConnected()) {
+					// ÅĞ¶Ïµ±Ç°ÍøÂçÊÇ·ñÒÑ¾­Á¬½Ó
+					if (info.getState() == NetworkInfo.State.CONNECTED) {
+						return true;
+					}
 				}
 			}
-			
-			
+		} catch (Exception e) {
+			// TODO: handle exception
+			Log.v("error", e.toString());
 		}
+		return false;
 	}
-	public static  String RequestToServer(String typeString, double pos_x, double pos_y,String userid,String circle)
-			throws JSONException {
-		DefaultHttpClient httpclient = new DefaultHttpClient();
-		try {
-			// getApplicationContext().getMainLooper();
-			// Looper.prepare();
-
-			HttpHost target = new HttpHost(ipString, 8080, "http");
-			// String request="/?type=æƒ…ä¾£å‡ºè¡Œ&pos_x=108.947039&pos_y=34.259203";
-			String request = "/?command=full&type=" +typeString+ "&city=" + city + "&id=" + userid + "&circleName="+circle;
-			Log.i("request string", request);
-			HttpGet req = new HttpGet(request);
-			// System.out.println("executing request to " + target);
-			HttpResponse rsp = httpclient.execute(target, req);
-			HttpEntity entity = rsp.getEntity();
-			InputStreamReader isr = new InputStreamReader(entity.getContent(),
-					"utf-8");
-			BufferedReader br = new BufferedReader(isr);
-			String line = null;
-			line = br.readLine();
-			if (line != null) {
-
-				System.out.println(line);
-				return line;
-
-			} else {
-				System.out.println("line is null");
-			}
-
-		} catch (ClientProtocolException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} finally {
-			// When HttpClient instance is no longer needed,
-			// shut down the connection manager to ensure
-			// immediate deallocation of all system resources
-			httpclient.getConnectionManager().shutdown();
-		}
-		return null;
-
-	}
-	public  String AddressRequset(String pos_x_add,String pos_y_add)
-	 {
-	if (pos_x_add==null||pos_y_add==null) {
-		return null;
-	}
-		DefaultHttpClient httpclient = new DefaultHttpClient();
-	try {
-
-		
-		HttpHost target = new HttpHost("api.map.baidu.com", 80, "http");
-		// String request="/?type=æƒ…ä¾£å‡ºè¡Œ&pos_x=108.947039&pos_y=34.259203";
-		String request = "/geocoder?output=json&location=" + pos_x_add+ "," + pos_y_add +"&key=APP_KEY";
-		//Log.i("request string",request);
-		HttpGet req = new HttpGet(request);
-		System.out.println("executing request to " + target);
-		HttpResponse rsp = httpclient.execute(target, req);
-		HttpEntity entity = rsp.getEntity();
-		InputStreamReader isr = new InputStreamReader(entity.getContent(),
-				"utf-8");
-		BufferedReader br = new BufferedReader(isr);
-		String line = null;
-		StringBuilder output = new StringBuilder();
-		//line = br.readLine();
-		while ((line = br.readLine()) != null)
-		{
-			output.append(line);
-			
-		}
-		System.out.println(output);
-		return output.toString();
-		
-	} catch (ClientProtocolException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-		
-	} catch (IOException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	} finally {
-		// When HttpClient instance is no longer needed,
-		// shut down the connection manager to ensure
-		// immediate deallocation of all system resources
-		httpclient.getConnectionManager().shutdown();
-	}
-	return null;
-
-}
- public class getCircles extends AsyncTask<String, Integer, String>
- {
 
 	@Override
-	protected String doInBackground(String... params) {
-		// TODO Auto-generated method stub
-		return GetCircleList(params[0]);
-	}
-	@Override
-	protected void onPostExecute(String result)
-	{
-		try {
-			HashMap<Integer, String> hashMapCircle = hashCircle(result);
-			Log.i("circle1", hashMapCircle.get(0));
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-	}
-	 
- }
- public  String GetCircleList(String city)  //è·å¾—æŸä¸ªåŸå¸‚çš„å•†åœˆåˆ—è¡¨ï¼Œitem1,2,3....
-	{
-		DefaultHttpClient httpclient = new DefaultHttpClient();
-		try
-		{
-			HttpHost target = new HttpHost(ipString, 8080, "http");
-			String request = "/?command=getcirclelist&city="+city+"";
-			HttpGet req = new HttpGet(request);
-			System.out.println("executing request to " + target);
-			HttpResponse rsp = httpclient.execute(target, req);
-			HttpEntity entity = rsp.getEntity();
-			InputStreamReader isr = new InputStreamReader(entity.getContent(), "utf-8");
-			BufferedReader br = new BufferedReader(isr);
-			String line = null;
-			while ((line = br.readLine()) != null)
-			{
-				Log.i("return circles line", line);
-				return line;
-			}
-		}
-		catch (Exception e)
-		{
-			// TODO: handle exception
-			e.printStackTrace();
-		}
-		return null;
-	}
-    public HashMap<Integer,String> hashCircle(String resultString) throws JSONException
-    
-    {
-    	
-    	HashMap<Integer,String> ansHashMap = new HashMap<Integer, String>();
-    	int i = 1 ;
-    	JSONObject circle = new JSONObject(resultString);
-    //	Log.i("result String", circle.toString());
-    	
-    	
-    	while (circle.has("item" + String.valueOf(i))) {
-    		String temp = circle.getString("item"+ String.valueOf(i));
-    		ansHashMap.put(i-1, temp);
-    		i++;
-		}
-    	//Log.i("hasmap", ansHashMap.toString());
-    	return ansHashMap;
-    }
-    public String GetShopCircle(double pos_x,double pos_y,String city)   //ç»™åæ ‡ï¼Œè¿”å›æœ€è¿‘å•†åœˆåç§°
-	{
-		DefaultHttpClient httpclient = new DefaultHttpClient();
-		try
-		{
-			HttpHost target = new HttpHost(ipString, 8080, "http");
-			String request = "/?command=getshopcircle&city="+city+"&pos_x="+pos_x+"&pos_y="+pos_y;
-			System.out.println(request);
-			HttpGet req = new HttpGet(request);
-			System.out.println("executing request to " + target);
-			HttpResponse rsp = httpclient.execute(target, req);
-			HttpEntity entity = rsp.getEntity();
-			InputStreamReader isr = new InputStreamReader(entity.getContent(), "utf-8");
-			BufferedReader br = new BufferedReader(isr);
-			String line = null;
-			while ((line = br.readLine()) != null)
-			{
-				return line;
-			}
-		}
-		catch (Exception e)
-		{
-			// TODO: handle exception
-			e.printStackTrace();
-		}
-		
-		return null;
-	}
-    public class getCurrentCircle extends AsyncTask<String, Integer, String>
-    {
+	protected void onPause() {
+		super.onPause();
 
-		@Override
-		protected String doInBackground(String... params) {
-			// TODO Auto-generated method stub
-			//Log.i("params, msg)
-			return GetShopCircle(Double.parseDouble(params[0]), Double.parseDouble(params[1]), params[2]);
-		}
-    	@Override
-    	protected void onPostExecute(String result)
-    	{
-    		//circleString = result;
-    		if (result==null) {
-				locTextView.setText("æš‚æ—¶æ— æ³•è·å–ä½ç½®");
-			}
-    		else {
-    			locTextView.setText(result);
-			}
-    	}
-    }
+	}
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		ShareSDK.stopSDK(this);
+
+	}
+
 }
