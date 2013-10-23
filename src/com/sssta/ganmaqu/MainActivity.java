@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Timer;
 
 import net.tsz.afinal.FinalDb;
 
@@ -29,13 +28,15 @@ import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.text.format.Time;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
 import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
+import android.view.animation.AnimationUtils;
+import android.view.animation.TranslateAnimation;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -57,8 +58,8 @@ public class MainActivity extends SlidingFragmentActivity {
 	private static double lat;
 	private static double lng;
 	private Dialog dialog;
-	private int count, count_city,count_type;
-	private Button circleButton,button_type,button_yes;
+	private int count, count_city, count_type;
+	private Button circleButton, button_type, button_yes;
 	private FinalDb db;
 	private String userid;
 	private static String city;
@@ -83,7 +84,7 @@ public class MainActivity extends SlidingFragmentActivity {
 		// platformList[0].authorize();
 		setContentView(R.layout.activity_selectedmain);
 		userInfo = getApplicationContext().getSharedPreferences("userInfo", 0);
-		
+
 		city = userInfo.getString("city", "西安市");
 		count_first = userInfo.getInt("first", 0);
 		count_city = userInfo.getInt("count_city", 0);
@@ -92,36 +93,77 @@ public class MainActivity extends SlidingFragmentActivity {
 		/*
 		 * 设置渐显动画
 		 */
-		//创建一个AnimationSet对象，参数为Boolean型，
-        //true表示使用Animation的interpolator，false则是使用自己的
-        AnimationSet animationSet = new AnimationSet(true);
-        //创建一个AlphaAnimation对象，参数从完全的透明度，到完全的不透明
-        AlphaAnimation alphaAnimation = new AlphaAnimation(0, 1);
-        //设置动画执行的时间
-        alphaAnimation.setDuration(3000);
-        //设置动画延迟执行时间
-        alphaAnimation.setStartOffset(1300);
-        //将alphaAnimation对象添加到AnimationSet当中
-        animationSet.addAnimation(alphaAnimation);
-        /*
-         * 控件绑定 
-         */
-        button_type =  (Button)findViewById(R.id.button_type);
-        ImageView navigation_drawer = (ImageView) findViewById(R.id.navigation_drawer);
-        TextView textView1= (TextView)findViewById(R.id.tuijianshangquan);
-        TextView textView2 = (TextView)findViewById(R.id.chuxingleixing);
-        circleButton = (Button) findViewById(R.id.button_circle);
-        button_type.setAnimation(animationSet);
-        button_yes = (Button) findViewById(R.id.button_go);
-        
-        /*
-         * 设置动画
-         */
-        navigation_drawer.setAnimation(animationSet);
-        textView1.setAnimation(animationSet);
-        textView2.setAnimation(animationSet);
-        circleButton.setAnimation(animationSet);
-        button_yes.setAnimation(animationSet);
+		// 创建一个AnimationSet对象，参数为Boolean型，
+		// true表示使用Animation的interpolator，false则是使用自己的
+		AnimationSet animationSet = new AnimationSet(true);
+		// 创建一个AlphaAnimation对象，参数从完全的透明度，到完全的不透明
+		AlphaAnimation alphaAnimation = new AlphaAnimation(0, 1);
+		// 设置动画执行的时间
+		alphaAnimation.setDuration(3000);
+		// 设置动画延迟执行时间
+		alphaAnimation.setStartOffset(1300);
+		// 将alphaAnimation对象添加到AnimationSet当中
+		animationSet.addAnimation(alphaAnimation);
+		/*
+		 * 设置位移下面云彩的动画
+		 */
+		AnimationSet animationSetTrans = new AnimationSet(false);
+		// 参数2：x轴的开始位置
+		// 参数4：x轴的结束位置
+		// 参数6：y轴的开始位置 
+		// 参数8：y轴的结束位置
+		// 参数1,3,5,7 : fromX/YType
+		TranslateAnimation translateAnimation = new TranslateAnimation(
+				Animation.RELATIVE_TO_SELF, -0.31f, Animation.RELATIVE_TO_SELF,
+				0f, Animation.RELATIVE_TO_SELF, 0f,
+				Animation.RELATIVE_TO_SELF, 0f);
+		translateAnimation.setDuration(38000);
+		translateAnimation.setStartOffset(200);
+		translateAnimation.setInterpolator(AnimationUtils.loadInterpolator(
+				MainActivity.this, android.R.anim.cycle_interpolator));
+		translateAnimation.setRepeatCount(-1);
+		animationSetTrans.addAnimation(translateAnimation);
+		/*
+		 * 设置位移上面云彩的动画
+		 */
+		AnimationSet animationSetTrans_top = new AnimationSet(false);
+		// 参数2：x轴的开始位置
+		// 参数4：x轴的结束位置
+		// 参数6：y轴的开始位置 
+		// 参数8：y轴的结束位置
+		// 参数1,3,5,7 : fromX/YType
+		TranslateAnimation translateAnimation_top = new TranslateAnimation(
+				Animation.RELATIVE_TO_SELF, 0.3f, Animation.RELATIVE_TO_SELF,
+				0.05f, Animation.RELATIVE_TO_SELF, 0f,
+				Animation.RELATIVE_TO_SELF, 0f);
+		translateAnimation_top.setDuration(33000);
+		translateAnimation_top.setStartOffset(150);
+		translateAnimation_top.setInterpolator(AnimationUtils.loadInterpolator(
+				MainActivity.this, android.R.anim.cycle_interpolator));
+		translateAnimation_top.setRepeatCount(-1);
+		animationSetTrans_top.addAnimation(translateAnimation_top);
+		/*
+		 * 控件绑定
+		 */
+		button_type = (Button) findViewById(R.id.button_type);
+		ImageView navigation_drawer = (ImageView) findViewById(R.id.navigation_drawer);
+		TextView textView1 = (TextView) findViewById(R.id.tuijianshangquan);
+		TextView textView2 = (TextView) findViewById(R.id.chuxingleixing);
+		circleButton = (Button) findViewById(R.id.button_circle);
+		button_type.setAnimation(animationSet);
+		button_yes = (Button) findViewById(R.id.button_go);
+		ImageView cloud_top = (ImageView) findViewById(R.id.imageView_cloud_top);
+		ImageView cloud_bottom = (ImageView) findViewById(R.id.imageView_cloud_bottom);
+		/*
+		 * 设置动画
+		 */
+		navigation_drawer.setAnimation(animationSet);
+		textView1.setAnimation(animationSet);
+		textView2.setAnimation(animationSet);
+		circleButton.setAnimation(animationSet);
+		button_yes.setAnimation(animationSet);
+		cloud_top.setAnimation(animationSetTrans_top);
+		cloud_bottom.setAnimation(animationSetTrans);
 		// set sina authorize()
 		// final Platform weibo = ShareSDK.getPlatform(NewMainActivity.this,
 		// SinaWeibo.NAME);
@@ -193,13 +235,11 @@ public class MainActivity extends SlidingFragmentActivity {
 
 		}
 
-		
-
 		navigation_drawer.setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
-				
+
 				// 点击返回键关闭滑动菜单
 				if (menu.isMenuShowing()) {
 					menu.showContent();
@@ -208,13 +248,13 @@ public class MainActivity extends SlidingFragmentActivity {
 				}
 			}
 		});
-		
+
 		button_type.setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				button_type.setText(Types[count_type%3]);
+				button_type.setText(Types[count_type % 3]);
 				count_type++;
 			}
 		});
@@ -272,7 +312,6 @@ public class MainActivity extends SlidingFragmentActivity {
 
 		// locTextView.setBackgroundColor(0xe0FFFFFF);
 
-		
 		circleButton.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -313,9 +352,6 @@ public class MainActivity extends SlidingFragmentActivity {
 		ImageAdapter adapter = new ImageAdapter(this, images);
 		adapter.createReflectedImages();
 
-		
-
-		
 		button_yes.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -335,13 +371,14 @@ public class MainActivity extends SlidingFragmentActivity {
 					// Log.i("Current Item", Types[typeWheel.getCurrentItem()]);
 
 					if (location == null) {
-						new RequestTask().execute(button_type.getText().toString());
+						new RequestTask().execute(button_type.getText()
+								.toString());
 					} else {
-						new RequestTask().execute(
-								button_type.getText().toString(),
-								String.valueOf(location.getLongitude()),
-								String.valueOf(location.getLatitude()),
-								userInfo.getString("city", "西安市"));
+						new RequestTask().execute(button_type.getText()
+								.toString(), String.valueOf(location
+								.getLongitude()), String.valueOf(location
+								.getLatitude()), userInfo.getString("city",
+								"西安市"));
 					}
 
 				}
@@ -523,8 +560,7 @@ public class MainActivity extends SlidingFragmentActivity {
 			Intent intent = new Intent();
 			intent.setClass(getApplicationContext(), WarpDSLV.class);
 			intent.putExtra("places", (Serializable) places);
-			intent.putExtra("type",
-					button_type.getText().toString());
+			intent.putExtra("type", button_type.getText().toString());
 			intent.putExtra("loclat", lat);
 			intent.putExtra("loclng", lng);
 			intent.putExtra("type", typeString);

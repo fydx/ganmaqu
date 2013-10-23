@@ -103,7 +103,7 @@
         <activity
             android:name="com.sssta.ganmaqu.WarpDSLV"
             android:label="@string/title_activity_result"
-            android:uiOptions="splitActionBarWhenNarrow" >
+         >
         </activity>
         <activity
             android:name="com.sssta.ganmaqu.MapActivity"

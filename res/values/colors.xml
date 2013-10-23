@@ -7,4 +7,5 @@
     <color name="grayEnd">#ffffff</color>
     <color name="black">#000000</color>
     <color name="bg_handle_pressed">#a0a0a0</color>
+    <drawable name = "result_actionbar">#272c2e</drawable>
 </resources>

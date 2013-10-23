@@ -121,21 +121,23 @@ public class WarpDSLV extends FragmentActivity {
 		userInfo = getSharedPreferences("userInfo", 0);
 		userid = userInfo.getString("userid", "root");
 		city = userInfo.getString("city", "西安市");
+		/*
+		 * actionbar 设置
+		 */
 		ActionBar actionBar = this.getActionBar();
 		actionBar.setDisplayOptions(ActionBar.DISPLAY_HOME_AS_UP,
 				ActionBar.DISPLAY_HOME_AS_UP);
 		// actionBar.setBackgroundDrawable(getResources().getDrawable(
 		// R.drawable.actionbar_banner));
-		actionBar.setBackgroundDrawable(getResources().getDrawable(
-				R.drawable.actionbar_bg));
-		actionBar.setSplitBackgroundDrawable(getResources().getDrawable(
-				R.drawable.actionbar_split_bg));
+		actionBar.setBackgroundDrawable(getResources().getDrawable(R.drawable.result_actionbar));
+//		actionBar.setSplitBackgroundDrawable(getResources().getDrawable(
+//				R.drawable.actionbar_split_bg));
 		actionBar.setDisplayShowHomeEnabled(false);
-		actionBar.setTitle("下面是我们为您推荐的路线");
+		actionBar.setTitle("推荐路线");
 		int titleId = Resources.getSystem().getIdentifier("action_bar_title",
 				"id", "android");
 		TextView title = (TextView) findViewById(titleId);
-		title.setTextColor(Color.parseColor("#a98457"));
+		title.setTextColor(Color.parseColor("#FFFFFF"));
 		actionBar.setDisplayHomeAsUpEnabled(true);
 
 		ipString = getResources().getString(R.string.ip);
@@ -149,8 +151,8 @@ public class WarpDSLV extends FragmentActivity {
 		loclng = getIntent().getDoubleExtra("loclng", 108.953906);
 		lv.setDropListener(onDrop);
 		lv.setRemoveListener(onRemove);
-		TextView textView_type = (TextView) findViewById(R.id.text_type);
-		textView_type.setText(type);
+//		TextView textView_type = (TextView) findViewById(R.id.text_type);
+//		textView_type.setText(type);
 		// lv.setDragScrollProfile(ssProfile);
 		// button_toMap = (Button) findViewById(R.id.button_toMap);
 		// button_toMap.setOnClickListener(new OnClickListener() {
@@ -331,7 +333,7 @@ public class WarpDSLV extends FragmentActivity {
 	 */
 	private class ViewHolder {
 		public TextView detailView;
-		public ImageView dragImageView;
+		//public ImageView dragImageView;
 	}
 
 	private class placeAdapter extends ArrayAdapter<place> {
@@ -348,9 +350,9 @@ public class WarpDSLV extends FragmentActivity {
 				ViewHolder holder = new ViewHolder();
 
 				TextView tv = (TextView) v.findViewById(R.id.text_detail);
-				ImageView iv = (ImageView) v.findViewById(R.id.drag_handle);
+				//ImageView iv = (ImageView) v.findViewById(R.id.drag_handle);
 				holder.detailView = tv;
-				holder.dragImageView = iv;
+				//holder.dragImageView = iv;
 				v.setTag(holder);
 			}
 
@@ -358,31 +360,31 @@ public class WarpDSLV extends FragmentActivity {
 			// String detail = places.get(position).getAddress();
 			// Log.i("position", String.valueOf(position));
 
-			if (places.get(position).getTime().equals("上午")) {
-				holder.dragImageView.setImageResource(R.drawable.morning);
-				holder.detailView.setText(places.get(position).getDetailType());
-			}
-			if (places.get(position).getTime().equals("中午")) {
-				holder.dragImageView.setImageResource(R.drawable.launch);
-				holder.detailView.setText("人均"
-						+ String.valueOf(places.get(position).getCost()) + "元"
-						+ "    " + places.get(position).getDetailType());
-			}
-			if (places.get(position).getTime().equals("下午")) {
-				holder.dragImageView.setImageResource(R.drawable.afternoon);
-				holder.detailView.setText(places.get(position).getDetailType());
-
-			}
-			if (places.get(position).getTime().equals("晚餐")) {
-				holder.dragImageView.setImageResource(R.drawable.dinner);
-				holder.detailView.setText("人均"
-						+ String.valueOf(places.get(position).getCost()) + "元"
-						+ "    " + places.get(position).getDetailType());
-			}
-			if (places.get(position).getTime().equals("晚上")) {
-				holder.dragImageView.setImageResource(R.drawable.evening);
-				holder.detailView.setText(places.get(position).getDetailType());
-			}
+//			if (places.get(position).getTime().equals("上午")) {
+//				holder.dragImageView.setImageResource(R.drawable.morning);
+//				holder.detailView.setText(places.get(position).getDetailType());
+//			}
+//			if (places.get(position).getTime().equals("中午")) {
+//				holder.dragImageView.setImageResource(R.drawable.launch);
+//				holder.detailView.setText("人均"
+//						+ String.valueOf(places.get(position).getCost()) + "元"
+//						+ "    " + places.get(position).getDetailType());
+//			}
+//			if (places.get(position).getTime().equals("下午")) {
+//				holder.dragImageView.setImageResource(R.drawable.afternoon);
+//				holder.detailView.setText(places.get(position).getDetailType());
+//
+//			}
+//			if (places.get(position).getTime().equals("晚餐")) {
+//				holder.dragImageView.setImageResource(R.drawable.dinner);
+//				holder.detailView.setText("人均"
+//						+ String.valueOf(places.get(position).getCost()) + "元"
+//						+ "    " + places.get(position).getDetailType());
+//			}
+//			if (places.get(position).getTime().equals("晚上")) {
+//				holder.dragImageView.setImageResource(R.drawable.evening);
+//				holder.detailView.setText(places.get(position).getDetailType());
+//			}
 			return v;
 		}
 	}

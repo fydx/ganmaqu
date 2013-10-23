@@ -4,18 +4,18 @@
     android:id="@+id/relativelayout1"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:background="#FFFFFF" >
+    android:background="#eeeeee" >
 
     <com.mobeta.android.dslv.DragSortListView
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:dslv="http://schemas.android.com/apk/res/com.sssta.ganmaqu"
         android:id="@+id/dslv_result"
+        android:layout_below="@+id/textView_everycost"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="0dp"
         android:layout_marginRight="3dp"
         android:layout_marginTop="0dp"
-        android:layout_below="@+id/relativelayout1"
         android:dividerHeight="5dp"
         android:fastScrollEnabled="false"
         android:paddingBottom="0dp"
@@ -80,58 +80,24 @@
         android:background="@drawable/button_map"
         android:text="  " />
     -->
-<RelativeLayout
-     android:id="@+id/relativelayout1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-       android:background="#efeff4"
-        android:layout_centerHorizontal="true" >
-
+    <ImageView
+    android:id="@+id/map_preview"
+    android:layout_width="match_parent"
+    android:layout_height="110dp"
+    android:layout_alignParentLeft="true"
+    android:layout_alignParentTop="true"
+    android:src="@drawable/bg_result_route" />
     <TextView
-        android:id="@+id/text_type"
-        android:layout_width="68dp"
-        android:layout_height="22dp"
-        android:layout_alignParentLeft="true"
-        android:layout_centerVertical="true"
-        android:background="@drawable/button_save"
-        android:gravity="center_vertical|center_horizontal"
-        android:paddingLeft="2dp"
-        android:text="亲子出行"
-        android:layout_marginTop="16dp"
-         android:layout_marginBottom="16dp"
-         android:layout_marginLeft="10dp"
-        android:textColor="#FFFFFF"
-        android:textSize="13dp" />
-
-    <TextView
-        android:id="@+id/cost"
-        android:layout_width="32dp"
-        android:layout_height="22dp"
-        android:layout_toLeftOf="@+id/textView_yuan"
-         android:layout_centerVertical="true"
-        android:layout_toRightOf="@+id/text"
-        android:background="@drawable/button_save"
-        android:gravity="center_vertical|center_horizontal"
-        android:text="XX"
-        android:textColor="#FFFFFF"
-        android:textSize="13dp" />
-
-    <TextView
-        android:id="@+id/textView_everycost"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_toLeftOf="@+id/cost"
-        android:text="预计人均消费"
-        android:textSize="13dp" />
-<TextView
-    android:id="@+id/textView_yuan"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_alignParentRight="true"
-    android:layout_centerVertical="true"
-    android:text="元" />
-    </RelativeLayout>
+            android:id="@+id/textView_everycost"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+           android:layout_below="@+id/map_preview"
+           android:layout_marginTop="5dp"
+           android:layout_marginLeft="8dp"
+            android:text="预计人均消费"
+            android:textSize="13dp"
+             />
 <!-- 
     <ImageView
         android:id="@+id/imageView1"
@@ -167,6 +133,26 @@
         android:layout_marginLeft="16dp"
         android:background="@drawable/button_map_new" /> -->
 
+   
 
+    <TextView
+        android:id="@+id/cost"
+        android:layout_width="32dp"
+        android:layout_height="22dp"
+      android:layout_marginTop="2dp"
+        android:layout_toRightOf="@+id/textView_everycost"
+        android:layout_below="@+id/map_preview"
+        android:text="135"
+        android:gravity="center_vertical|center_horizontal"
+        android:textColor="#12a6eb"
+        android:textSize="17dp" />
+    <TextView
+            android:id="@+id/textView_yuan"
+              android:layout_marginTop="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+        android:layout_below="@+id/map_preview"
+        android:layout_toRightOf="@+id/cost"
+            android:text="元" />
 
 </RelativeLayout>
