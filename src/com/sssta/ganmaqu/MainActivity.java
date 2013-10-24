@@ -114,10 +114,10 @@ public class MainActivity extends SlidingFragmentActivity {
 		// 参数8：y轴的结束位置
 		// 参数1,3,5,7 : fromX/YType
 		TranslateAnimation translateAnimation = new TranslateAnimation(
-				Animation.RELATIVE_TO_SELF, -0.31f, Animation.RELATIVE_TO_SELF,
-				0f, Animation.RELATIVE_TO_SELF, 0f,
+				Animation.RELATIVE_TO_SELF, -0.4f, Animation.RELATIVE_TO_SELF,
+				-0.2f, Animation.RELATIVE_TO_SELF, 0f,
 				Animation.RELATIVE_TO_SELF, 0f);
-		translateAnimation.setDuration(38000);
+		translateAnimation.setDuration(40000);
 		translateAnimation.setStartOffset(200);
 		translateAnimation.setInterpolator(AnimationUtils.loadInterpolator(
 				MainActivity.this, android.R.anim.cycle_interpolator));
@@ -470,7 +470,8 @@ public class MainActivity extends SlidingFragmentActivity {
 			// TODO 修改坐标
 			// new AddressRequestTask().execute("34.238225","108.924703");
 			// //Test
-
+			new getCurrentCircle().execute(String.valueOf(lng),
+					String.valueOf(lat), userInfo.getString("city", "西安市"));
 			Log.i("loaction", String.valueOf(lat) + " " + String.valueOf(lng));
 			if (count_first != 0) {
 				new getCurrentCircle().execute(String.valueOf(lng),
@@ -519,12 +520,13 @@ public class MainActivity extends SlidingFragmentActivity {
 				pos_x = Double.parseDouble(params[1]);
 				pos_y = Double.parseDouble(params[2]);
 			}
+			
 			try {
 				return connect.GetFullRoute(params[0], pos_x, pos_y, userid,
 						circleButton.getText().toString(), params[3]);
 
 			} catch (JSONException e) {
-
+				
 				e.printStackTrace();
 			}
 			return null;

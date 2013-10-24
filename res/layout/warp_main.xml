@@ -10,9 +10,9 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:dslv="http://schemas.android.com/apk/res/com.sssta.ganmaqu"
         android:id="@+id/dslv_result"
-        android:layout_below="@+id/textView_everycost"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/textView_everycost"
         android:layout_marginLeft="0dp"
         android:layout_marginRight="3dp"
         android:layout_marginTop="0dp"
@@ -60,14 +60,16 @@
 
     </LinearLayout>
     -->
-<!--  
+    <!--
     <geniuz.myPathbutton.composerLayout
         android:id="@+id/test"
         android:layout_width="20dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="21dp"
         android:layout_marginLeft="21dp" >
-    </geniuz.myPathbutton.composerLayout>-->
+    </geniuz.myPathbutton.composerLayout>
+    -->
+
 
     <!--
           <Button
@@ -80,25 +82,27 @@
         android:background="@drawable/button_map"
         android:text="  " />
     -->
+
     <ImageView
-    android:id="@+id/map_preview"
-    android:layout_width="match_parent"
-    android:layout_height="110dp"
-    android:layout_alignParentLeft="true"
-    android:layout_alignParentTop="true"
-    android:src="@drawable/bg_result_route" />
+        android:id="@+id/map_preview"
+        android:layout_width="match_parent"
+        android:layout_height="110dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:scaleType="fitXY"
+        android:src="@drawable/bg_result_route" />
+
     <TextView
-            android:id="@+id/textView_everycost"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-           android:layout_below="@+id/map_preview"
-           android:layout_marginTop="5dp"
-           android:layout_marginLeft="8dp"
-            android:text="预计人均消费"
-            android:textSize="13dp"
-             />
-<!-- 
+        android:id="@+id/textView_everycost"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/map_preview"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="5dp"
+        android:text="预计人均消费"
+        android:textSize="13dp" />
+    <!--
     <ImageView
         android:id="@+id/imageView1"
         android:layout_width="match_parent"
@@ -131,28 +135,39 @@
         android:layout_height="25dp"
         android:layout_alignTop="@+id/imageView1"
         android:layout_marginLeft="16dp"
-        android:background="@drawable/button_map_new" /> -->
-
-   
+        android:background="@drawable/button_map_new" />
+    -->
 
     <TextView
         android:id="@+id/cost"
         android:layout_width="32dp"
         android:layout_height="22dp"
-      android:layout_marginTop="2dp"
-        android:layout_toRightOf="@+id/textView_everycost"
         android:layout_below="@+id/map_preview"
-        android:text="135"
+        android:layout_marginTop="2dp"
+        android:layout_toRightOf="@+id/textView_everycost"
         android:gravity="center_vertical|center_horizontal"
+        android:text="135"
         android:textColor="#12a6eb"
         android:textSize="17dp" />
+
     <TextView
-            android:id="@+id/textView_yuan"
-              android:layout_marginTop="5dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+        android:id="@+id/textView_yuan"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/map_preview"
+        android:layout_marginTop="5dp"
         android:layout_toRightOf="@+id/cost"
-            android:text="元" />
+        android:text="元" />
+
+    <Button
+        android:id="@+id/button_refresh"
+        android:layout_width="18dp"
+        android:layout_height="18dp"
+        android:layout_alignBottom="@+id/cost"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="3dp"
+        android:layout_marginRight="5dp"
+        android:background="@drawable/button_refresh"
+        android:text="" />
 
 </RelativeLayout>

@@ -2,6 +2,7 @@ package com.sssta.ganmaqu;
 
 import java.io.InputStream;
 import java.io.Serializable;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,9 +32,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
+import android.view.animation.AnimationUtils;
+import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.PopupWindow;
@@ -59,7 +65,7 @@ public class WarpDSLV extends FragmentActivity {
 	private TextView textView_cost;
 	private ArrayList<place> places_arraylist;
 	private String type;
-
+	private List<String> distances;
 	private SharedPreferences userInfo;
 	private String userid;
 	private String circleString;
@@ -70,7 +76,7 @@ public class WarpDSLV extends FragmentActivity {
 	private TextView tvtitle;
 	private List<String> groups;
 	private String city;
-
+	
 	private DragSortListView.DropListener onDrop = new DragSortListView.DropListener() {
 		@Override
 		public void drop(int from, int to) {
@@ -129,9 +135,10 @@ public class WarpDSLV extends FragmentActivity {
 				ActionBar.DISPLAY_HOME_AS_UP);
 		// actionBar.setBackgroundDrawable(getResources().getDrawable(
 		// R.drawable.actionbar_banner));
-		actionBar.setBackgroundDrawable(getResources().getDrawable(R.drawable.result_actionbar));
-//		actionBar.setSplitBackgroundDrawable(getResources().getDrawable(
-//				R.drawable.actionbar_split_bg));
+		actionBar.setBackgroundDrawable(getResources().getDrawable(
+				R.drawable.result_actionbar));
+		// actionBar.setSplitBackgroundDrawable(getResources().getDrawable(
+		// R.drawable.actionbar_split_bg));
 		actionBar.setDisplayShowHomeEnabled(false);
 		actionBar.setTitle("推荐路线");
 		int titleId = Resources.getSystem().getIdentifier("action_bar_title",
@@ -139,7 +146,27 @@ public class WarpDSLV extends FragmentActivity {
 		TextView title = (TextView) findViewById(titleId);
 		title.setTextColor(Color.parseColor("#FFFFFF"));
 		actionBar.setDisplayHomeAsUpEnabled(true);
-
+		/*
+		 * 设置位移动画
+		 */
+		AnimationSet animationSetTrans = new AnimationSet(false);
+		// 参数2：x轴的开始位置
+		// 参数4：x轴的结束位置
+		// 参数6：y轴的开始位置
+		// 参数8：y轴的结束位置
+		// 参数1,3,5,7 : fromX/YType
+		TranslateAnimation translateAnimation = new TranslateAnimation(
+				Animation.RELATIVE_TO_SELF, -0.1f, Animation.RELATIVE_TO_SELF,
+				0.1f, Animation.RELATIVE_TO_SELF, 0f,
+				Animation.RELATIVE_TO_SELF, 0f);
+		translateAnimation.setDuration(40000);
+		translateAnimation.setStartOffset(200);
+		translateAnimation.setInterpolator(AnimationUtils.loadInterpolator(
+				WarpDSLV.this, android.R.anim.cycle_interpolator));
+		translateAnimation.setRepeatCount(-1);
+		animationSetTrans.addAnimation(translateAnimation);
+		// ImageView mapImageView = (ImageView)findViewById(R.id.map_preview);
+		// mapImageView.setAnimation(animationSetTrans);
 		ipString = getResources().getString(R.string.ip);
 		connect = new Connect(ipString);
 		db = FinalDb.create(this);
@@ -151,8 +178,8 @@ public class WarpDSLV extends FragmentActivity {
 		loclng = getIntent().getDoubleExtra("loclng", 108.953906);
 		lv.setDropListener(onDrop);
 		lv.setRemoveListener(onRemove);
-//		TextView textView_type = (TextView) findViewById(R.id.text_type);
-//		textView_type.setText(type);
+		// TextView textView_type = (TextView) findViewById(R.id.text_type);
+		// textView_type.setText(type);
 		// lv.setDragScrollProfile(ssProfile);
 		// button_toMap = (Button) findViewById(R.id.button_toMap);
 		// button_toMap.setOnClickListener(new OnClickListener() {
@@ -193,6 +220,7 @@ public class WarpDSLV extends FragmentActivity {
 		} else {
 			places = (List<place>) getIntent().getSerializableExtra("places");
 		}
+		distances= calcDistances(places);
 		// button_saveToDB.setOnClickListener(new OnClickListener() {
 		//
 		// @Override
@@ -246,8 +274,7 @@ public class WarpDSLV extends FragmentActivity {
 		list_time = new ArrayList<String>();
 		for (int i = 0; i < places.size(); i++) {
 
-			list.add(places.get(i).getDetailType() + "  人均"
-					+ String.valueOf(places.get(i).getCost()) + "元");
+			list.add(places.get(i).getDetailType());
 			list_time.add(places.get(i).getTime());
 
 			if (places.get(i).getTime().equals("中午")
@@ -333,7 +360,10 @@ public class WarpDSLV extends FragmentActivity {
 	 */
 	private class ViewHolder {
 		public TextView detailView;
-		//public ImageView dragImageView;
+		public TextView addressTextView;
+		public TextView costTextView;
+		public ImageView dragImageView;
+		public Button distanceButton;
 	}
 
 	private class placeAdapter extends ArrayAdapter<place> {
@@ -350,41 +380,51 @@ public class WarpDSLV extends FragmentActivity {
 				ViewHolder holder = new ViewHolder();
 
 				TextView tv = (TextView) v.findViewById(R.id.text_detail);
-				//ImageView iv = (ImageView) v.findViewById(R.id.drag_handle);
+				TextView address = (TextView) v
+						.findViewById(R.id.textView_address);
+				TextView cost = (TextView) v.findViewById(R.id.textView_cost);
+				ImageView iv = (ImageView) v.findViewById(R.id.imageView_rank);
+				Button bt = (Button)v.findViewById(R.id.drag_handle);
 				holder.detailView = tv;
-				//holder.dragImageView = iv;
+				holder.addressTextView = address;
+				holder.costTextView = cost;
+				holder.dragImageView = iv;
+				holder.distanceButton=bt;
+				// holder.dragImageView = iv;
 				v.setTag(holder);
 			}
 
 			ViewHolder holder = (ViewHolder) v.getTag();
+			holder.detailView.setText(places.get(position).getDetailType());
+			holder.addressTextView.setText(places.get(position).getAddress());
+			holder.costTextView.setText(String.valueOf(places.get(position)
+					.getCost()));
+			holder.distanceButton.setText(distances.get(position));
+
 			// String detail = places.get(position).getAddress();
 			// Log.i("position", String.valueOf(position));
 
-//			if (places.get(position).getTime().equals("上午")) {
-//				holder.dragImageView.setImageResource(R.drawable.morning);
-//				holder.detailView.setText(places.get(position).getDetailType());
-//			}
-//			if (places.get(position).getTime().equals("中午")) {
-//				holder.dragImageView.setImageResource(R.drawable.launch);
-//				holder.detailView.setText("人均"
-//						+ String.valueOf(places.get(position).getCost()) + "元"
-//						+ "    " + places.get(position).getDetailType());
-//			}
-//			if (places.get(position).getTime().equals("下午")) {
-//				holder.dragImageView.setImageResource(R.drawable.afternoon);
-//				holder.detailView.setText(places.get(position).getDetailType());
-//
-//			}
-//			if (places.get(position).getTime().equals("晚餐")) {
-//				holder.dragImageView.setImageResource(R.drawable.dinner);
-//				holder.detailView.setText("人均"
-//						+ String.valueOf(places.get(position).getCost()) + "元"
-//						+ "    " + places.get(position).getDetailType());
-//			}
-//			if (places.get(position).getTime().equals("晚上")) {
-//				holder.dragImageView.setImageResource(R.drawable.evening);
-//				holder.detailView.setText(places.get(position).getDetailType());
-//			}
+			if (places.get(position).getTime().equals("上午")) {
+				holder.dragImageView.setImageResource(R.drawable.icon_morning);
+
+			}
+			if (places.get(position).getTime().equals("中午")) {
+				holder.dragImageView.setImageResource(R.drawable.icon_launch);
+
+			}
+			if (places.get(position).getTime().equals("下午")) {
+				holder.dragImageView
+						.setImageResource(R.drawable.icon_afternoon);
+
+			}
+			if (places.get(position).getTime().equals("晚餐")) {
+				holder.dragImageView.setImageResource(R.drawable.icon_dinner);
+
+			}
+			if (places.get(position).getTime().equals("晚上")) {
+				holder.dragImageView.setImageResource(R.drawable.icon_evening);
+
+			}
 			return v;
 		}
 	}
@@ -928,4 +968,45 @@ public class WarpDSLV extends FragmentActivity {
 
 	}
 
+	public List<String> calcDistances(List<place> places) {
+		List<String> distance = null;
+		distance = new ArrayList<String>();
+		DecimalFormat dcmFmt = new DecimalFormat("0.0");
+		distance.add(String.valueOf(dcmFmt.format(distanceByLngLat(loclng,
+				loclat, places.get(0).getPos_x(), places.get(0).getPos_y())))+"\nkm");
+		for (int i = 0; i < places.size() - 1; i++) {
+			distance.add(String.valueOf(dcmFmt
+					.format(distanceByLngLat(places.get(i).getPos_x(), places
+							.get(i).getPos_y(), places.get(i + 1).getPos_x(),
+							places.get(i + 1).getPos_y())))+"\nkm");
+		}
+		return distance;
+	}
+
+	/**
+	 * 根据经纬度，获取两点间的距离
+	 * 
+	 * @param lng1
+	 *            经度
+	 * @param lat1
+	 *            纬度
+	 * @param lng2
+	 * @param lat2
+	 * @return
+	 * 
+	 */
+	public double distanceByLngLat(double lng1, double lat1, double lng2,
+			double lat2) {
+		double radLat1 = lat1 * Math.PI / 180;
+		double radLat2 = lat2 * Math.PI / 180;
+		double a = radLat1 - radLat2;
+		double b = lng1 * Math.PI / 180 - lng2 * Math.PI / 180;
+		double s = 2 * Math.asin(Math.sqrt(Math.pow(Math.sin(a / 2), 2)
+				+ Math.cos(radLat1) * Math.cos(radLat2)
+				* Math.pow(Math.sin(b / 2), 2)));
+		s = s * 6378137.0;// 取WGS84标准参考椭球中的地球长半径(单位:m)
+		s = Math.floor(s * 10000) / 10000;
+		Log.i("s", String.valueOf(s));
+		return s/1000;
+	}
 }

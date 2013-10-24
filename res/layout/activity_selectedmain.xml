@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#12a6eb" >
-
+   
     <ImageView
         android:id="@+id/navigation_drawer"
         android:layout_width="wrap_content"
@@ -31,7 +31,7 @@
         android:layout_height="73dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        android:layout_marginBottom="79dp"
+        android:layout_marginBottom="30dp"
         android:src="@drawable/bg_cloudfull" />
 
     <ImageView
@@ -54,15 +54,7 @@
         android:text="亲子出行"
         android:textSize="19dp" />
 
-    <Button
-        android:id="@+id/button_go"
-        android:layout_width="43dp"
-        android:layout_height="34dp"
-        android:layout_below="@+id/button_type"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="19dp"
-        android:background="@drawable/button_style_go"
-        android:text=" " />
+    
 
     <TextView
         android:id="@+id/tuijianshangquan"
@@ -107,5 +99,14 @@
         android:textColor="#FFFFFF"
         android:textSize="35dp"
         android:layout_marginBottom="5dp" />
+ <Button
+        android:id="@+id/button_go"
+        android:layout_width="43dp"
+        android:layout_height="34dp"
+        android:layout_below="@+id/button_type"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/button_style_go"
+        android:text=" " />
 
 </RelativeLayout>
