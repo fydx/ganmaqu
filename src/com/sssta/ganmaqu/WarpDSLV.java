@@ -29,6 +29,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
@@ -43,6 +44,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -76,6 +78,7 @@ public class WarpDSLV extends FragmentActivity {
 	private TextView tvtitle;
 	private List<String> groups;
 	private String city;
+	private DragSortListView lv;
 	
 	private DragSortListView.DropListener onDrop = new DragSortListView.DropListener() {
 		@Override
@@ -171,7 +174,7 @@ public class WarpDSLV extends FragmentActivity {
 		connect = new Connect(ipString);
 		db = FinalDb.create(this);
 		db_user = FinalDb.create(this);
-		DragSortListView lv = (DragSortListView) findViewById(R.id.dslv_result);
+		lv = (DragSortListView) findViewById(R.id.dslv_result);
 		type = getIntent().getStringExtra("type");
 		circleString = getIntent().getStringExtra("circle");
 		loclat = getIntent().getDoubleExtra("loclat", 34.265733);
@@ -296,10 +299,10 @@ public class WarpDSLV extends FragmentActivity {
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
 				// TODO Auto-generated method stub
-				// Toast.makeText(
-				// getApplicationContext(),
-				// "This is " + String.valueOf(adapter.getItem(arg2))
-				// + " item", Toast.LENGTH_SHORT).show();
+//				 Toast.makeText(
+//				 getApplicationContext(),
+//				 "This is " + String.valueOf(adapter.getItem(arg2))
+//				 + " item", Toast.LENGTH_SHORT).show();
 				Intent intent = new Intent();
 				intent.setClass(getApplicationContext(), WebActivity.class);
 				intent.putExtra("shopId",
@@ -400,9 +403,10 @@ public class WarpDSLV extends FragmentActivity {
 			holder.costTextView.setText(String.valueOf(places.get(position)
 					.getCost()));
 			holder.distanceButton.setText(distances.get(position));
+			
 
 			// String detail = places.get(position).getAddress();
-			// Log.i("position", String.valueOf(position));
+			Log.i("position", String.valueOf(position));
 
 			if (places.get(position).getTime().equals("ÉÏÎç")) {
 				holder.dragImageView.setImageResource(R.drawable.icon_morning);
@@ -1009,4 +1013,5 @@ public class WarpDSLV extends FragmentActivity {
 		Log.i("s", String.valueOf(s));
 		return s/1000;
 	}
+	
 }
