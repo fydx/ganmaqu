@@ -1,0 +1,47 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fragment_profile"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ProfileFragment" 
+    android:background="@drawable/bg_rightmenu" >
+
+    <!-- TODO: Update blank fragment layout -->
+
+    <ImageView
+        android:id="@+id/imageView_user"
+        android:layout_width="90dp"
+        android:layout_height="90dp"
+      	android:layout_centerHorizontal="true"
+      	android:layout_marginTop="70dp"
+        android:src="@drawable/user_avater" />
+
+    <TextView
+        android:id="@+id/textView_currentCity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:text="当前城市:西安"
+        android:textColor="#FFFFFF" />
+
+    <GridView
+        android:id="@+id/gridView_rightMenu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/imageView_user"
+        android:layout_marginTop="29dp"
+        android:numColumns="3" >
+    </GridView>
+
+    <Button
+        android:id="@+id/button_back"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:text=" "
+        android:background="@drawable/button_back" />
+
+</RelativeLayout>

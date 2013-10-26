@@ -25,6 +25,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -47,8 +48,10 @@ import cn.sharesdk.framework.ShareSDK;
 
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.jeremyfeinstein.slidingmenu.lib.app.SlidingFragmentActivity;
+import com.sssta.ganmaqu.ProfileFragment.AddressRequestTask;
+import com.sssta.ganmaqu.ProfileFragment.OnFragmentInteractionListener;
 
-public class MainActivity extends SlidingFragmentActivity {
+public class MainActivity extends SlidingFragmentActivity implements OnFragmentInteractionListener {
 	private LocationManager locationManager;
 	private Location location;
 	private String provider;
@@ -68,7 +71,14 @@ public class MainActivity extends SlidingFragmentActivity {
 	private SharedPreferences userInfo;
 	private int count_first;
 	public Connect connect;
-
+	public static double getLat()
+	{
+		return lat;
+	}
+	public static double getLng(){
+		return lng;
+	}
+	  
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -199,13 +209,15 @@ public class MainActivity extends SlidingFragmentActivity {
 
 		// set sliding menu
 		menu = getSlidingMenu();
-		menu.setMode(SlidingMenu.LEFT);
+		menu.setMode(SlidingMenu.LEFT_RIGHT);
 
 		menu.setTouchModeAbove(SlidingMenu.TOUCHMODE_MARGIN);
 		menu.setShadowWidthRes(R.dimen.shadow_width);
 		menu.setShadowDrawable(R.drawable.shadow);
 		menu.setBehindOffsetRes(R.dimen.slidingmenu_offset);
 		menu.setFadeDegree(0.35f);
+		menu.setSecondaryMenu(R.layout.menu_right);
+		menu.setSecondaryShadowDrawable(R.drawable.shadowright);
 		// menu.attachToActivity(this, SlidingMenu.SLIDING_CONTENT);
 		// menu.setMenu(R.layout.menu);
 		db = FinalDb.create(this);
@@ -473,10 +485,15 @@ public class MainActivity extends SlidingFragmentActivity {
 			new getCurrentCircle().execute(String.valueOf(lng),
 					String.valueOf(lat), userInfo.getString("city", "西安市"));
 			Log.i("loaction", String.valueOf(lat) + " " + String.valueOf(lng));
-			if (count_first != 0) {
-				new getCurrentCircle().execute(String.valueOf(lng),
-						String.valueOf(lat), userInfo.getString("city", "西安市"));
-			}
+//			if (count_first != 0) {
+//				new getCurrentCircle().execute(String.valueOf(lng),
+//						String.valueOf(lat), userInfo.getString("city", "西安市"));
+//			}
+			ProfileFragment fragment = (ProfileFragment)getSupportFragmentManager().findFragmentById(R.id.menu_right);
+			fragment.new AddressRequestTask().execute(String.valueOf(lat),
+					String.valueOf(lng));
+			
+			
 
 		}
 		count++;
@@ -710,6 +727,11 @@ public class MainActivity extends SlidingFragmentActivity {
 		super.onDestroy();
 		ShareSDK.stopSDK(this);
 
+	}
+	@Override
+	public void onFragmentInteraction(Uri uri) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

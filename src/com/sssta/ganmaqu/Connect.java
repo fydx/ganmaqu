@@ -91,7 +91,7 @@ public final class Connect {
 
 	}
      /**
-      * 请求百度地图API 得到当前位置
+      * 请求百度地图URI API 得到当前位置
       * @param pos_x_add 经度坐标
       * @param pos_y_add 纬度坐标
       * @return json字符串 

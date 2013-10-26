@@ -80,7 +80,15 @@ public class NewMainActivity extends SlidingFragmentActivity {
 	private SharedPreferences userInfo;
 	private int count_first;
 	public Connect connect;
-
+	
+	public static double getLat()
+	{
+		return lat;
+	}
+	public static double getLng(){
+		return lng;
+	}
+	  
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
