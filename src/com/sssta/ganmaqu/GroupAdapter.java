@@ -60,14 +60,13 @@ public class GroupAdapter extends BaseAdapter {
         //holder.groupItem.setTextColor(Color.BLACK);  
         holder.groupItem.setText(list.get(position));  
         if (position==0) {
-			holder.groupItem.setBackgroundResource(R.drawable.marker_list_top);
+			
 			holder.imageView.setImageResource(R.drawable.icon_small_high);
 		}
         if (position==1) {
         	holder.imageView.setImageResource(R.drawable.icon_small_low);
 		}
         if (position==2) {
-        	holder.groupItem.setBackgroundResource(R.drawable.marker_list_bottom);
         	holder.imageView.setImageResource(R.drawable.icon_small_random);
 		}
         return convertView;  

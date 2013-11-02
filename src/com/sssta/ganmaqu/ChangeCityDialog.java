@@ -37,7 +37,7 @@ public class ChangeCityDialog extends Dialog {
 	private String lng, lat;
 	private SharedPreferences userInfo;
 	private Connect connect;
-	private TextView circleTextView;
+	private Button circleTextView;
 
 	public ChangeCityDialog(Context context) {
 		super(context, R.style.CustomDialog);
@@ -68,7 +68,7 @@ public class ChangeCityDialog extends Dialog {
 	public void setTextView(TextView textView_trans) {
 		this.textView = textView_trans;
 	}
-	public void setCircleTextView(TextView textView2)
+	public void setCircleTextView(Button textView2)
 	{
 		this.circleTextView= textView2;
 	}
@@ -160,11 +160,11 @@ public class ChangeCityDialog extends Dialog {
 				public void onClick(View v) {
 					// TODO Auto-generated method stub
 					currentCity = citiesInfo.get(position);
-					textView.setText(currentCity);
+					textView.setText("当前城市:"+currentCity);
 					userInfo.edit().putString("city", currentCity).commit();
 					
 					new getCurrentCircle().execute(String.valueOf(lng),
-							String.valueOf(lat), textView.getText().toString());
+							String.valueOf(lat),currentCity);
 					ChangeCityDialog.this.dismiss();
 
 				}
@@ -243,7 +243,7 @@ public class ChangeCityDialog extends Dialog {
 		protected void onPostExecute(String result) {
 			// circleString = result;
 			if (result == null) {
-				circleTextView.setText("暂时无法获取位置");
+				circleTextView.setText("正在获取..");
 			} else {
 				circleTextView.setText(result);
 			}

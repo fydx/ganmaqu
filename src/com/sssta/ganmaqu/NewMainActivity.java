@@ -213,7 +213,7 @@ public class NewMainActivity extends SlidingFragmentActivity {
 						NewMainActivity.this, String.valueOf(lng), String
 								.valueOf(lat));
 				changeCityDialog.setTextView(cityTextView);
-				changeCityDialog.setCircleTextView(circleTextView);
+				//changeCityDialog.setCircleTextView(circleTextView);
 				changeCityDialog.show();
 
 			}

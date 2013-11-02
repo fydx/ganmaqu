@@ -79,7 +79,7 @@ public class WarpDSLV extends FragmentActivity {
 	private List<String> groups;
 	private String city;
 	private DragSortListView lv;
-	
+
 	private DragSortListView.DropListener onDrop = new DragSortListView.DropListener() {
 		@Override
 		public void drop(int from, int to) {
@@ -223,7 +223,7 @@ public class WarpDSLV extends FragmentActivity {
 		} else {
 			places = (List<place>) getIntent().getSerializableExtra("places");
 		}
-		distances= calcDistances(places);
+		distances = calcDistances(places);
 		// button_saveToDB.setOnClickListener(new OnClickListener() {
 		//
 		// @Override
@@ -299,10 +299,10 @@ public class WarpDSLV extends FragmentActivity {
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
 				// TODO Auto-generated method stub
-//				 Toast.makeText(
-//				 getApplicationContext(),
-//				 "This is " + String.valueOf(adapter.getItem(arg2))
-//				 + " item", Toast.LENGTH_SHORT).show();
+				// Toast.makeText(
+				// getApplicationContext(),
+				// "This is " + String.valueOf(adapter.getItem(arg2))
+				// + " item", Toast.LENGTH_SHORT).show();
 				Intent intent = new Intent();
 				intent.setClass(getApplicationContext(), WebActivity.class);
 				intent.putExtra("shopId",
@@ -340,8 +340,16 @@ public class WarpDSLV extends FragmentActivity {
 	}
 
 	public void saveToDB(List<place> places) {
+		int route_num;
 		User user = db_user.findById(1, User.class);
-		int route_num = user.getRoute_num();
+		try {
+
+			route_num = user.getRoute_num();
+		} catch (Exception e) {
+			// TODO: handle exception
+			route_num = 1;
+		}
+
 		Log.i("user get route_num", String.valueOf(route_num));
 		for (int i = 0; i < places.size(); i++) {
 			places.get(i).setRoute_id(route_num + 1);
@@ -387,12 +395,12 @@ public class WarpDSLV extends FragmentActivity {
 						.findViewById(R.id.textView_address);
 				TextView cost = (TextView) v.findViewById(R.id.textView_cost);
 				ImageView iv = (ImageView) v.findViewById(R.id.imageView_rank);
-				Button bt = (Button)v.findViewById(R.id.drag_handle);
+				Button bt = (Button) v.findViewById(R.id.drag_handle);
 				holder.detailView = tv;
 				holder.addressTextView = address;
 				holder.costTextView = cost;
 				holder.dragImageView = iv;
-				holder.distanceButton=bt;
+				holder.distanceButton = bt;
 				// holder.dragImageView = iv;
 				v.setTag(holder);
 			}
@@ -403,7 +411,6 @@ public class WarpDSLV extends FragmentActivity {
 			holder.costTextView.setText(String.valueOf(places.get(position)
 					.getCost()));
 			holder.distanceButton.setText(distances.get(position));
-			
 
 			// String detail = places.get(position).getAddress();
 			Log.i("position", String.valueOf(position));
@@ -854,9 +861,9 @@ public class WarpDSLV extends FragmentActivity {
 			lv_group = (ListView) view.findViewById(R.id.lvGroup);
 			// 加载数据
 			groups = new ArrayList<String>();
-			groups.add("更奢侈");
-			groups.add("更便宜");
-			groups.add("随心换");
+			groups.add("  更奢侈");
+			groups.add("  更便宜");
+			groups.add("  随心换");
 			lv_group.setDividerHeight(0);
 
 			GroupAdapter groupAdapter = new GroupAdapter(this, groups);
@@ -977,12 +984,14 @@ public class WarpDSLV extends FragmentActivity {
 		distance = new ArrayList<String>();
 		DecimalFormat dcmFmt = new DecimalFormat("0.0");
 		distance.add(String.valueOf(dcmFmt.format(distanceByLngLat(loclng,
-				loclat, places.get(0).getPos_x(), places.get(0).getPos_y())))+"\nkm");
+				loclat, places.get(0).getPos_x(), places.get(0).getPos_y())))
+				+ "\nkm");
 		for (int i = 0; i < places.size() - 1; i++) {
 			distance.add(String.valueOf(dcmFmt
 					.format(distanceByLngLat(places.get(i).getPos_x(), places
 							.get(i).getPos_y(), places.get(i + 1).getPos_x(),
-							places.get(i + 1).getPos_y())))+"\nkm");
+							places.get(i + 1).getPos_y())))
+					+ "\nkm");
 		}
 		return distance;
 	}
@@ -1011,7 +1020,7 @@ public class WarpDSLV extends FragmentActivity {
 		s = s * 6378137.0;// 取WGS84标准参考椭球中的地球长半径(单位:m)
 		s = Math.floor(s * 10000) / 10000;
 		Log.i("s", String.valueOf(s));
-		return s/1000;
+		return s / 1000;
 	}
-	
+
 }

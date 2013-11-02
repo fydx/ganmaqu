@@ -109,4 +109,12 @@
         android:background="@drawable/button_style_go"
         android:text=" " />
 
+ <ImageView
+     android:id="@+id/imageView_last"
+     android:layout_width="20dp"
+     android:layout_height="20dp"
+     android:layout_alignParentRight="true"
+     android:layout_alignTop="@+id/navigation_drawer"
+     android:src="@drawable/button_changed" />
+
 </RelativeLayout>

@@ -45,10 +45,10 @@ import android.widget.Toast;
 import cn.sharesdk.framework.Platform;
 import cn.sharesdk.framework.PlatformActionListener;
 import cn.sharesdk.framework.ShareSDK;
+import cn.sharesdk.sina.weibo.SinaWeibo;
 
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.jeremyfeinstein.slidingmenu.lib.app.SlidingFragmentActivity;
-import com.sssta.ganmaqu.ProfileFragment.AddressRequestTask;
 import com.sssta.ganmaqu.ProfileFragment.OnFragmentInteractionListener;
 
 public class MainActivity extends SlidingFragmentActivity implements OnFragmentInteractionListener {
@@ -62,7 +62,8 @@ public class MainActivity extends SlidingFragmentActivity implements OnFragmentI
 	private static double lng;
 	private Dialog dialog;
 	private int count, count_city, count_type;
-	private Button circleButton, button_type, button_yes;
+	private static Button circleButton;
+	private Button button_type, button_yes;
 	private FinalDb db;
 	private String userid;
 	private static String city;
@@ -71,6 +72,7 @@ public class MainActivity extends SlidingFragmentActivity implements OnFragmentI
 	private SharedPreferences userInfo;
 	private int count_first;
 	public Connect connect;
+	private ImageView imageView_change;
 	public static double getLat()
 	{
 		return lat;
@@ -78,12 +80,15 @@ public class MainActivity extends SlidingFragmentActivity implements OnFragmentI
 	public static double getLng(){
 		return lng;
 	}
-	  
+	public static Button getCircleButton()
+	{
+		return circleButton;
+	}
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE); // no title bar
-		setBehindContentView(R.layout.menu);
+		setBehindContentView(R.layout.menu_right);
 		ShareSDK.initSDK(this);
 		ipString = getApplicationContext().getResources()
 				.getString(R.string.ip);
@@ -164,6 +169,7 @@ public class MainActivity extends SlidingFragmentActivity implements OnFragmentI
 		button_yes = (Button) findViewById(R.id.button_go);
 		ImageView cloud_top = (ImageView) findViewById(R.id.imageView_cloud_top);
 		ImageView cloud_bottom = (ImageView) findViewById(R.id.imageView_cloud_bottom);
+		imageView_change= (ImageView)findViewById(R.id.imageView_last);
 		/*
 		 * 设置动画
 		 */
@@ -172,11 +178,12 @@ public class MainActivity extends SlidingFragmentActivity implements OnFragmentI
 		textView2.setAnimation(animationSet);
 		circleButton.setAnimation(animationSet);
 		button_yes.setAnimation(animationSet);
+		imageView_change.setAnimation(animationSet);
 		cloud_top.setAnimation(animationSetTrans_top);
 		cloud_bottom.setAnimation(animationSetTrans);
 		// set sina authorize()
-		// final Platform weibo = ShareSDK.getPlatform(NewMainActivity.this,
-		// SinaWeibo.NAME);
+//		
+		db = FinalDb.create(this);
 		PlatformActionListener paListener = new PlatformActionListener() {
 
 			@Override
@@ -189,8 +196,8 @@ public class MainActivity extends SlidingFragmentActivity implements OnFragmentI
 			public void onComplete(Platform arg0, int arg1,
 					HashMap<String, Object> arg2) {
 				// TODO Auto-generated method stub
-				// String id=weibo.getDb().getUserId();
-				// Log.i("id", id);
+				 String id=arg0.getDb().getUserId();
+				 Log.i("id", id);
 
 			}
 
@@ -200,27 +207,52 @@ public class MainActivity extends SlidingFragmentActivity implements OnFragmentI
 
 			}
 		};
-		// String id=weibo.getDb().getUserId();
-		// Log.i("id2", id);
-		// weibo.setPlatformActionListener(paListener);
-		// weibo.authorize();
-		// weibo.showUser(id);
-		// weibo.setPlatformActionListener(paListener); // 设置分享事件回调
-
+//		final Platform weibo = ShareSDK.getPlatform(MainActivity.this,
+//				SinaWeibo.NAME);
+//		weibo.removeAccount();
+//		String id=weibo.getDb().getUserId();
+//		Log.i("id_in Main", id);
+		
+//		 weibo.setPlatformActionListener(paListener);
+//		weibo.authorize();
+	//	weibo.showUser(id);
+	//	 weibo.setPlatformActionListener(paListener); // 设置分享事件回调
+		imageView_change.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				List<place> placeList = db.findAll(place.class);
+				if (placeList.isEmpty()) {
+					Toast.makeText(getApplicationContext(), "啊哦，你还没有保存过路线",
+							Toast.LENGTH_SHORT).show();
+				} else {
+					int route_id = placeList.get(placeList.size() - 1)
+							.getRoute_id();
+					List<place> lastLine = db.findAllByWhere(place.class,
+							"route_id = " + String.valueOf(route_id));
+					Intent intent = new Intent();
+					intent.setClass(getApplicationContext(), WarpDSLV.class);
+					intent.putExtra("places", (Serializable) lastLine);
+					intent.putExtra("type", lastLine.get(0).getRouteType());
+					startActivity(intent);
+				}
+			}
+		});
 		// set sliding menu
 		menu = getSlidingMenu();
-		menu.setMode(SlidingMenu.LEFT_RIGHT);
+		menu.setMode(SlidingMenu.LEFT);
 
 		menu.setTouchModeAbove(SlidingMenu.TOUCHMODE_MARGIN);
 		menu.setShadowWidthRes(R.dimen.shadow_width);
 		menu.setShadowDrawable(R.drawable.shadow);
 		menu.setBehindOffsetRes(R.dimen.slidingmenu_offset);
 		menu.setFadeDegree(0.35f);
-		menu.setSecondaryMenu(R.layout.menu_right);
-		menu.setSecondaryShadowDrawable(R.drawable.shadowright);
+//		menu.setSecondaryMenu(R.layout.menu_right);
+//		menu.setSecondaryShadowDrawable(R.drawable.shadowright);
 		// menu.attachToActivity(this, SlidingMenu.SLIDING_CONTENT);
 		// menu.setMenu(R.layout.menu);
-		db = FinalDb.create(this);
+		
 		if (isConnect(this) == false) {
 			new AlertDialog.Builder(this)
 					.setTitle("网络错误")
