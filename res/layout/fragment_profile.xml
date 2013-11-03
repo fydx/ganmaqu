@@ -48,4 +48,13 @@
         android:textColor="#FFFFFF"
         android:text="未登录" />
 
+    <ImageView
+        android:id="@+id/imageView_usericon"
+        android:layout_width="40px"
+        android:layout_height="40px"
+        android:layout_alignBottom="@+id/textView_loginAccount"
+        android:layout_toRightOf="@+id/textView_loginAccount"
+        android:visibility="gone"
+        android:src="@android:drawable/alert_light_frame" />
+
 </RelativeLayout>

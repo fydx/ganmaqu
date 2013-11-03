@@ -87,9 +87,10 @@ public class MainActivity extends SlidingFragmentActivity implements OnFragmentI
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		ShareSDK.initSDK(this);
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE); // no title bar
 		setBehindContentView(R.layout.menu_right);
-		ShareSDK.initSDK(this);
+		
 		ipString = getApplicationContext().getResources()
 				.getString(R.string.ip);
 		connect = new Connect(ipString);
@@ -373,6 +374,7 @@ public class MainActivity extends SlidingFragmentActivity implements OnFragmentI
 		// new getCircles().execute("西安");
 
 		userid = userInfo.getString("userid", "root");
+		Log.i("id from sharedpreference", userid);
 		// 获取LocationManager服务
 		locationManager = (LocationManager) this
 				.getSystemService(Context.LOCATION_SERVICE);

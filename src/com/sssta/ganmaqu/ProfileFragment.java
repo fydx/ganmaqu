@@ -1,5 +1,10 @@
 package com.sssta.ganmaqu;
 
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.HashMap;
 
 import org.json.JSONException;
@@ -12,6 +17,8 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -26,12 +33,14 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import cn.sharesdk.framework.Platform;
 import cn.sharesdk.framework.PlatformActionListener;
 import cn.sharesdk.framework.ShareSDK;
 import cn.sharesdk.sina.weibo.SinaWeibo;
+import cn.sharesdk.tencent.qzone.QZone;
 
 /**
  * A simple {@link android.support.v4.app.Fragment} subclass. Activities that
@@ -63,10 +72,12 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
 	private Activity attach_activity;
 	private Platform weibo;
 	private String nickname;
+	private ImageView usericonImageView;
+
 	public String getARG_PARAM1() {
 		return ARG_PARAM1;
 	}
-	
+
 	/**
 	 * Use this factory method to create a new instance of this fragment using
 	 * the provided parameters.
@@ -99,23 +110,26 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
 			mParam2 = getArguments().getString(ARG_PARAM2);
 		}
 	}
-	class LooperThread extends Thread { 
-		public Handler mHandler;   
-        
-	      public void run() {   
-	          Looper.prepare();   
-	          Toast.makeText(getActivity().getApplicationContext(), "登陆成功", Toast.LENGTH_SHORT).show();
-	         
-	          mHandler = new Handler() {   
-	              public void handleMessage(Message msg) {   
-	                  // process incoming messages here   
-	            	
-	              }   
-	          };   
-	             
-	          Looper.loop();   
-	      }   
-	}  
+
+	class LooperThread extends Thread {
+		public Handler mHandler;
+
+		public void run() {
+			Looper.prepare();
+			Toast.makeText(getActivity().getApplicationContext(), "登陆成功",
+					Toast.LENGTH_SHORT).show();
+
+			mHandler = new Handler() {
+				public void handleMessage(Message msg) {
+					// process incoming messages here
+
+				}
+			};
+
+			Looper.loop();
+		}
+	}
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -128,9 +142,30 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
 				.getSharedPreferences("userInfo", 0);
 		accountTextView = (TextView) view_profile
 				.findViewById(R.id.textView_loginAccount);
+		usericonImageView = (ImageView) view_profile
+				.findViewById(R.id.imageView_usericon);
 		String username_init = userInfo.getString("userid", "NULL");
+		Log.i("已验证用户id", username_init);
 		if (!userInfo.getString("userid", "NULL").equals("NULL")) {
-			accountTextView.setText("已登录:" + username_init);
+			if (userInfo.getString("accountType", "NULL").equals("weibo")) {
+				Platform weibo = ShareSDK
+						.getPlatform(attach_activity.getApplicationContext(),
+								SinaWeibo.NAME);
+				nickname = weibo.getDb().getUserName();
+				new getuserIcon().execute(weibo.getDb().getUserIcon());
+				accountTextView.setText("已登录(新浪微博用户):" + nickname);
+			} else if (userInfo.getString("accountType", "NULL").equals(
+					"tencent")) {
+				final Platform tencent = ShareSDK.getPlatform(
+						attach_activity.getApplicationContext(), QZone.NAME);
+				nickname = tencent.getDb().getUserName();
+				Log.i("icon", tencent.getDb().getUserIcon());
+				new getuserIcon().execute(tencent.getDb().getUserIcon());
+				accountTextView.setText("已登录(QQ用户):" + nickname);
+			} else {
+				accountTextView.setText("已登录(原有用户系统):" + username_init);
+			}
+
 		}
 		ipString = view_profile.getContext().getResources()
 				.getString(R.string.ip);
@@ -139,7 +174,7 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
 		count_city = userInfo.getInt("count_city", 0);
 		settingsGridView = (myGridView) view_profile
 				.findViewById(R.id.gridView_rightMenu);
-		
+
 		settingsGridAdapter = new SettingsGridAdapter(view_profile.getContext());
 		settingsGridView.setOnItemClickListener(new OnItemClickListener() {
 
@@ -148,84 +183,133 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
 					int position, long arg3) {
 				// TODO Auto-generated method stub
 				switch (position) {
-				case 0:	
-					if (userInfo.getString("userid", "NULL").equals("NULL"))
-					{	
-					
-					final String[] LogMethods = {"通过新浪微博认证登陆","通过原有账号系统登陆"};
-					AlertDialog.Builder builder = new  AlertDialog.Builder(view_profile.getContext());
-					builder.setTitle("选择登录方式");
-					builder.setItems(LogMethods, new DialogInterface.OnClickListener() {
-						 PlatformActionListener paListener = new PlatformActionListener() {
+				case 0:
+					if (userInfo.getString("userid", "NULL").equals("NULL")) {
 
-								@Override
-								public void onError(Platform arg0, int arg1, Throwable arg2) {
-									// TODO Auto-generated method stub
-									Log.e("Throwable", arg2.toString());
-								}
+						final String[] LogMethods = { "通过新浪微博认证登陆", "通过QQ认证登陆",
+								"通过原有账号系统登陆" };
+						AlertDialog.Builder builder = new AlertDialog.Builder(
+								view_profile.getContext());
+						builder.setTitle("选择登录方式");
+						builder.setItems(LogMethods,
+								new DialogInterface.OnClickListener() {
+									PlatformActionListener paListener = new PlatformActionListener() {
 
-								@Override
-								public void onComplete(Platform platform, int arg1,
-										HashMap<String, Object> arg2) {
-									// TODO Auto-generated method stub
-									String id=platform.getDb().getUserId();
-									Log.i("id_sina_fragment", id);
-									nickname  = platform.getDb().getUserName();
-									Log.i("nickname", nickname);
-									userInfo.edit().putString("userid", id).commit();
-									new LooperThread().start();
-									 accountTextView.post(new Runnable() {
-										
 										@Override
-										public void run() {
+										public void onError(Platform arg0,
+												int arg1, Throwable arg2) {
 											// TODO Auto-generated method stub
-											accountTextView.setText("已登录(新浪微博):" + nickname);
+											Log.e("Throwable", arg2.toString());
 										}
-									});
-										
-									//userInfo.edit().putString("accountType", "weibo");
-									
-									
-								}
 
-								@Override
-								public void onCancel(Platform arg0, int arg1) {
-									// TODO Auto-generated method stub
+										@Override
+										public void onComplete(
+												Platform platform, int arg1,
+												HashMap<String, Object> arg2) {
+											// TODO Auto-generated method stub
+											Platform weibo = ShareSDK.getPlatform(
+													attach_activity
+															.getApplicationContext(),
+													SinaWeibo.NAME);
+											Platform tencent = ShareSDK.getPlatform(
+													attach_activity
+															.getApplicationContext(),
+													QZone.NAME);
 
-								}
-							};
-						@Override
-						public void onClick(DialogInterface dialog, int which) {
-							// TODO Auto-generated method stub
-							switch (which) {
-							case 0:
-								// set sina authorize()
-								
-								final Platform weibo = ShareSDK.getPlatform(attach_activity.getApplicationContext(),
-								SinaWeibo.NAME);
-//								try {
-//								String id=weibo.getDb().getUserId();
-//								 Log.i("id2_sina", id);
-//								} catch (Exception e) {
-//									// TODO: handle exception.
-//									Log.i("weibo account", "failed to be load");
-//								} 
-								
-								 weibo.setPlatformActionListener(paListener);
-								 weibo.authorize();
-								// weibo.showUser(account);
-								break;
-							case 1:
-								createLoginDialog(view_profile);
-							default:
-								break;
-							}
-						}
-					});
-					AlertDialog alert = builder.create();
-					alert.show();
+											String id = platform.getDb()
+													.getUserId();
+											Log.i("id_fragment", id);
+											nickname = platform.getDb()
+													.getUserName();
+											Log.i("nickname", nickname);
+											userInfo.edit()
+													.putString("userid", id)
+													.commit();
+											if (platform.equals(weibo)) {
+												userInfo.edit()
+														.putString(
+																"accountType",
+																"weibo")
+														.commit();
+											}
+											if (platform.equals(tencent)) {
+												userInfo.edit()
+														.putString(
+																"accountType",
+																"tencent")
+														.commit();
+											}
+											new LooperThread().start();
+											accountTextView
+													.post(new Runnable() {
+
+														@Override
+														public void run() {
+															// TODO
+															// Auto-generated
+															// method stub
+															accountTextView
+																	.setText("已登录:"
+																			+ nickname);
+														}
+													});
+											new getuserIcon().execute(platform.getDb().getUserIcon());
+										}
+
+										@Override
+										public void onCancel(Platform arg0,
+												int arg1) {
+											// TODO Auto-generated method stub
+
+										}
+									};
+
+									@Override
+									public void onClick(DialogInterface dialog,
+											int which) {
+										// TODO Auto-generated method stub
+										switch (which) {
+										case 0:
+											// set sina authorize()
+
+											Platform weibo = ShareSDK.getPlatform(
+													attach_activity
+															.getApplicationContext(),
+													SinaWeibo.NAME);
+											// try {
+											// String
+											// id=weibo.getDb().getUserId();
+											// Log.i("id2_sina", id);
+											// } catch (Exception e) {
+											// // TODO: handle exception.
+											// Log.i("weibo account",
+											// "failed to be load");
+											// }
+
+											weibo.setPlatformActionListener(paListener);
+											weibo.authorize();
+											// weibo.showUser(account);
+											break;
+										case 1:
+											Platform tencent = ShareSDK.getPlatform(
+													attach_activity
+															.getApplicationContext(),
+													QZone.NAME);
+											tencent.setPlatformActionListener(paListener);
+											tencent.authorize();
+											break;
+										case 2:
+											createLoginDialog(view_profile);
+											break;
+										default:
+											break;
+										}
+									}
+								});
+						AlertDialog alert = builder.create();
+						alert.show();
 					}
-					
+
 					else {
 						createLogoutDialog(view_profile);
 					}
@@ -437,11 +521,25 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						// TODO Auto-generated method stub
+						if (userInfo.getString("accountType", "NULL").equals(
+								"weibo")) {
+							Platform weibo = ShareSDK.getPlatform(
+									attach_activity.getApplicationContext(),
+									SinaWeibo.NAME);
+							weibo.removeAccount();
+						} else if (userInfo.getString("accountType", "NULL")
+								.equals("tencent")) {
+							Platform tencent = ShareSDK.getPlatform(
+									attach_activity.getApplicationContext(),
+									SinaWeibo.NAME);
+							tencent.removeAccount();
+						}
 						userInfo.edit().clear().commit();
+						usericonImageView.setVisibility(View.GONE);
 						TextView textview_account = (TextView) view_profile
 								.findViewById(R.id.textView_loginAccount);
 						textview_account.setText("未登录");
-					
+
 					}
 
 				})
@@ -564,5 +662,45 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
 						"注册失败\n" + "原因" + result, Toast.LENGTH_SHORT).show();
 			}
 		}
+	}
+
+	/**
+	 * 到Url下载图片
+	 * 
+	 * @param imgUrl
+	 * @return Bitmap
+	 */
+	private Bitmap getBitmapFromUrl(String imgUrl) {
+		URL url;
+		Bitmap bitmap = null;
+		try {
+			url = new URL(imgUrl);
+			InputStream is = url.openConnection().getInputStream();
+			BufferedInputStream bis = new BufferedInputStream(is);
+			bitmap = BitmapFactory.decodeStream(bis);
+			bis.close();
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return bitmap;
+	}
+
+	public class getuserIcon extends AsyncTask<String, Integer, Bitmap> {
+
+		@Override
+		protected Bitmap doInBackground(String... params) {
+			// TODO Auto-generated method stub
+			return getBitmapFromUrl(params[0]);
+		}
+
+		@Override
+		protected void onPostExecute(Bitmap bitmap) {
+			usericonImageView.setVisibility(View.VISIBLE);
+			usericonImageView.setImageBitmap(bitmap);
+
+		}
+
 	}
 }
