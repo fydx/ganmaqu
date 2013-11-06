@@ -1,26 +1,16 @@
 package com.sssta.ganmaqu;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.baidu.mapapi.BMapManager;
-import com.baidu.mapapi.map.ItemizedOverlay;
-import com.baidu.mapapi.map.MapView;
-import com.baidu.mapapi.map.OverlayItem;
-import com.baidu.mapapi.search.MKPoiInfo;
-import com.baidu.mapapi.search.MKSearch;
-import com.baidu.platform.comapi.basestruct.GeoPoint;
-import com.sssta.ganmaqu.NewMapActivity.OverlayTest;
-
 import android.app.Activity;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.Toast;
+
+import com.baidu.mapapi.map.ItemizedOverlay;
+import com.baidu.mapapi.map.MapView;
+import com.baidu.mapapi.map.OverlayItem;
+import com.baidu.platform.comapi.basestruct.GeoPoint;
 
 
 public class baidumapFragment extends android.support.v4.app.Fragment {

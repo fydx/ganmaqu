@@ -1,11 +1,16 @@
 package com.sssta.ganmaqu;
 
+import java.io.BufferedInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.tsz.afinal.FinalBitmap;
 import net.tsz.afinal.FinalDb;
 
 import org.apache.http.util.EncodingUtils;
@@ -18,10 +23,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.Gravity;
@@ -29,10 +38,10 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
 import android.view.animation.AnimationUtils;
@@ -44,11 +53,11 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.PopupWindow;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.mobeta.android.dslv.DragSortListView;
+import com.sina.weibo.sdk.constant.Constants.Msg;
 
 public class WarpDSLV extends FragmentActivity {
 
@@ -79,7 +88,11 @@ public class WarpDSLV extends FragmentActivity {
 	private List<String> groups;
 	private String city;
 	private DragSortListView lv;
-
+	private ImageView mapImageView;
+	 private FinalBitmap fb;
+	 private String[] picurls;
+	private int picCount;
+	private AnimationSet animationSet;
 	private DragSortListView.DropListener onDrop = new DragSortListView.DropListener() {
 		@Override
 		public void drop(int from, int to) {
@@ -129,9 +142,10 @@ public class WarpDSLV extends FragmentActivity {
 		setContentView(R.layout.warp_main);
 		userInfo = getSharedPreferences("userInfo", 0);
 		userid = userInfo.getString("userid", "root");
-		city = userInfo.getString("city", "Î÷°²ÊĞ");
+		city = userInfo.getString("city", "è¥¿å®‰å¸‚");
+		fb = FinalBitmap.create(this);
 		/*
-		 * actionbar ÉèÖÃ
+		 * actionbar è®¾ç½®
 		 */
 		ActionBar actionBar = this.getActionBar();
 		actionBar.setDisplayOptions(ActionBar.DISPLAY_HOME_AS_UP,
@@ -143,33 +157,42 @@ public class WarpDSLV extends FragmentActivity {
 		// actionBar.setSplitBackgroundDrawable(getResources().getDrawable(
 		// R.drawable.actionbar_split_bg));
 		actionBar.setDisplayShowHomeEnabled(false);
-		actionBar.setTitle("ÍÆ¼öÂ·Ïß");
+		actionBar.setTitle("æ¨èè·¯çº¿");
 		int titleId = Resources.getSystem().getIdentifier("action_bar_title",
 				"id", "android");
 		TextView title = (TextView) findViewById(titleId);
 		title.setTextColor(Color.parseColor("#FFFFFF"));
 		actionBar.setDisplayHomeAsUpEnabled(true);
+		// åˆ›å»ºä¸€ä¸ªAlphaAnimationå¯¹è±¡ï¼Œå‚æ•°ä»å®Œå…¨çš„é€æ˜åº¦ï¼Œåˆ°å®Œå…¨çš„ä¸é€æ˜
+		AlphaAnimation alphaAnimation = new AlphaAnimation(1, 0);
+		// è®¾ç½®åŠ¨ç”»æ‰§è¡Œçš„æ—¶é—´
+		alphaAnimation.setDuration(10000);
+		alphaAnimation.setRepeatCount(-1);
+		// å°†alphaAnimationå¯¹è±¡æ·»åŠ åˆ°AnimationSetå½“ä¸­
+
 		/*
-		 * ÉèÖÃÎ»ÒÆ¶¯»­
+		 * è®¾ç½®ä½ç§»åŠ¨ç”»
 		 */
-		AnimationSet animationSetTrans = new AnimationSet(false);
-		// ²ÎÊı2£ºxÖáµÄ¿ªÊ¼Î»ÖÃ
-		// ²ÎÊı4£ºxÖáµÄ½áÊøÎ»ÖÃ
-		// ²ÎÊı6£ºyÖáµÄ¿ªÊ¼Î»ÖÃ
-		// ²ÎÊı8£ºyÖáµÄ½áÊøÎ»ÖÃ
-		// ²ÎÊı1,3,5,7 : fromX/YType
+		animationSet = new AnimationSet(false);
+		// å‚æ•°2ï¼šxè½´çš„å¼€å§‹ä½ç½®
+		// å‚æ•°4ï¼šxè½´çš„ç»“æŸä½ç½®
+		// å‚æ•°6ï¼šyè½´çš„å¼€å§‹ä½ç½®
+		// å‚æ•°8ï¼šyè½´çš„ç»“æŸä½ç½®
+		// å‚æ•°1,3,5,7 : fromX/YType
 		TranslateAnimation translateAnimation = new TranslateAnimation(
-				Animation.RELATIVE_TO_SELF, -0.1f, Animation.RELATIVE_TO_SELF,
-				0.1f, Animation.RELATIVE_TO_SELF, 0f,
-				Animation.RELATIVE_TO_SELF, 0f);
-		translateAnimation.setDuration(40000);
-		translateAnimation.setStartOffset(200);
+				Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF,
+				-0.02f, Animation.RELATIVE_TO_SELF, 0f,
+				Animation.RELATIVE_TO_SELF, -0.02f);
+		translateAnimation.setDuration(9500);
+		translateAnimation.setStartOffset(500);
 		translateAnimation.setInterpolator(AnimationUtils.loadInterpolator(
-				WarpDSLV.this, android.R.anim.cycle_interpolator));
+				WarpDSLV.this, android.R.anim.linear_interpolator));
 		translateAnimation.setRepeatCount(-1);
-		animationSetTrans.addAnimation(translateAnimation);
-		// ImageView mapImageView = (ImageView)findViewById(R.id.map_preview);
-		// mapImageView.setAnimation(animationSetTrans);
+		animationSet.addAnimation(translateAnimation);
+	//	animationSet.addAnimation(alphaAnimation);
+		mapImageView = (ImageView) findViewById(R.id.map_preview);
+		mapImageView.setAnimation(animationSet);
+		
 		ipString = getResources().getString(R.string.ip);
 		connect = new Connect(ipString);
 		db = FinalDb.create(this);
@@ -224,6 +247,41 @@ public class WarpDSLV extends FragmentActivity {
 			places = (List<place>) getIntent().getSerializableExtra("places");
 		}
 		distances = calcDistances(places);
+		List<String> picUrlsList = new ArrayList<String>();
+		for (int i = 0; i < places.size(); i++) {
+			if ( !places.get(i).getPicUrl().equals(null)) {
+				picUrlsList.add( places.get(i).getPicUrl());
+			}
+		}
+		
+		picurls = picUrlsList.toArray(new String[picUrlsList.size()]);
+		 picCount =0 ;
+		 
+		 final Handler myHandler = new Handler() {// åˆ›å»ºä¸€ä¸ªHandlerå¯¹è±¡  
+	            public void handleMessage(Message msg) {// é‡å†™æ¥æ”¶æ¶ˆæ¯çš„æ–¹æ³•  
+	            	//mapImageView.clearAnimation();
+	            	fb.display(mapImageView, picurls[msg.what]);
+	            	//mapImageView.setAnimation(animationSet);
+	                super.handleMessage(msg);  
+	            }  
+	        };  
+		 new Thread() {  
+	            public void run() {  
+	                int i = 0;  
+	                while (true) {// å¾ªç¯  
+	                	myHandler.sendEmptyMessage((i++) % picurls.length);// å‘é€æ¶ˆæ¯  
+	                 
+	                    try {  
+	                        Thread.sleep(10000);  
+	                    } catch (Exception e) {  
+	                        e.printStackTrace();  
+	                    }  
+	                }  
+	  
+	            };  
+	        }.start();  
+	       
+	//	new getPic().execute(picurls);
 		// button_saveToDB.setOnClickListener(new OnClickListener() {
 		//
 		// @Override
@@ -239,7 +297,7 @@ public class WarpDSLV extends FragmentActivity {
 		// public void onClick(View v) {
 		// int tempCost = 0 ;
 		// for (int i = 0; i < places.size(); i++) {
-		// if(places.get(i).getMainType().equals("ÃÀÊ³"))
+		// if(places.get(i).getMainType().equals("ç¾é£Ÿ"))
 		// {
 		// tempCost+= places.get(i).getCost();
 		// }
@@ -259,7 +317,7 @@ public class WarpDSLV extends FragmentActivity {
 		// dialog.show();
 		// int tempCost = 0 ;
 		// for (int i = 0; i < places.size(); i++) {
-		// if(places.get(i).getMainType().equals("ÃÀÊ³"))
+		// if(places.get(i).getMainType().equals("ç¾é£Ÿ"))
 		// {
 		// tempCost+= places.get(i).getCost();
 		// }
@@ -280,8 +338,8 @@ public class WarpDSLV extends FragmentActivity {
 			list.add(places.get(i).getDetailType());
 			list_time.add(places.get(i).getTime());
 
-			if (places.get(i).getTime().equals("ÖĞÎç")
-					|| places.get(i).getTime().equals("Íí²Í")) {
+			if (places.get(i).getTime().equals("ä¸­åˆ")
+					|| places.get(i).getTime().equals("æ™šé¤")) {
 				// cost += places.get(i).getCost();
 				cost += places.get(i).getCost();
 			} else {
@@ -290,7 +348,7 @@ public class WarpDSLV extends FragmentActivity {
 
 		}
 
-		Log.i("cost", "ÈË¾ùÏû·Ñ" + String.valueOf(cost));
+		Log.i("cost", "äººå‡æ¶ˆè´¹" + String.valueOf(cost));
 		textView_cost.setText(String.valueOf(cost));
 
 		lv.setOnItemClickListener(new OnItemClickListener() {
@@ -321,16 +379,16 @@ public class WarpDSLV extends FragmentActivity {
 
 	}
 
-	// ´ÓassetsÖĞ¶ÁÈ¡Êı¾İ
+	// ä»assetsä¸­è¯»å–æ•°æ®
 	public String getFromAssets(String fileName) {
 		String result = "";
 		try {
 			InputStream in = getResources().getAssets().open(fileName);
-			// »ñÈ¡ÎÄ¼şµÄ×Ö½ÚÊı
+			// è·å–æ–‡ä»¶çš„å­—èŠ‚æ•°
 			int lenght = in.available();
-			// ´´½¨byteÊı×é
+			// åˆ›å»ºbyteæ•°ç»„
 			byte[] buffer = new byte[lenght];
-			// ½«ÎÄ¼şÖĞµÄÊı¾İ¶Áµ½byteÊı×éÖĞ
+			// å°†æ–‡ä»¶ä¸­çš„æ•°æ®è¯»åˆ°byteæ•°ç»„ä¸­
 			in.read(buffer);
 			result = EncodingUtils.getString(buffer, "UTF-8");
 		} catch (Exception e) {
@@ -415,24 +473,24 @@ public class WarpDSLV extends FragmentActivity {
 			// String detail = places.get(position).getAddress();
 			Log.i("position", String.valueOf(position));
 
-			if (places.get(position).getTime().equals("ÉÏÎç")) {
+			if (places.get(position).getTime().equals("ä¸Šåˆ")) {
 				holder.dragImageView.setImageResource(R.drawable.icon_morning);
 
 			}
-			if (places.get(position).getTime().equals("ÖĞÎç")) {
+			if (places.get(position).getTime().equals("ä¸­åˆ")) {
 				holder.dragImageView.setImageResource(R.drawable.icon_launch);
 
 			}
-			if (places.get(position).getTime().equals("ÏÂÎç")) {
+			if (places.get(position).getTime().equals("ä¸‹åˆ")) {
 				holder.dragImageView
 						.setImageResource(R.drawable.icon_afternoon);
 
 			}
-			if (places.get(position).getTime().equals("Íí²Í")) {
+			if (places.get(position).getTime().equals("æ™šé¤")) {
 				holder.dragImageView.setImageResource(R.drawable.icon_dinner);
 
 			}
-			if (places.get(position).getTime().equals("ÍíÉÏ")) {
+			if (places.get(position).getTime().equals("æ™šä¸Š")) {
 				holder.dragImageView.setImageResource(R.drawable.icon_evening);
 
 			}
@@ -478,8 +536,8 @@ public class WarpDSLV extends FragmentActivity {
 			cost = 0;
 			for (int i = 0; i < places.size(); i++) {
 
-				if (places.get(i).getTime().equals("ÖĞÎç")
-						|| places.get(i).getTime().equals("Íí²Í")) {
+				if (places.get(i).getTime().equals("ä¸­åˆ")
+						|| places.get(i).getTime().equals("æ™šé¤")) {
 					// cost += places.get(i).getCost();
 					cost += places.get(i).getCost();
 				} else {
@@ -488,7 +546,7 @@ public class WarpDSLV extends FragmentActivity {
 
 			}
 
-			Log.i("cost", "ÈË¾ùÏû·Ñ new" + String.valueOf(cost));
+			Log.i("cost", "äººå‡æ¶ˆè´¹ new" + String.valueOf(cost));
 			textView_cost.setText(String.valueOf(cost));
 		}
 	}
@@ -535,8 +593,8 @@ public class WarpDSLV extends FragmentActivity {
 			adapter.notifyDataSetChanged();
 			cost = 0;
 			for (int i = 0; i < places.size(); i++) {
-				if (places.get(i).getTime().equals("ÖĞÎç")
-						|| places.get(i).getTime().equals("Íí²Í")) {
+				if (places.get(i).getTime().equals("ä¸­åˆ")
+						|| places.get(i).getTime().equals("æ™šé¤")) {
 					// cost += places.get(i).getCost();
 					cost += places.get(i).getCost();
 				} else {
@@ -545,7 +603,7 @@ public class WarpDSLV extends FragmentActivity {
 
 			}
 
-			Log.i("cost", "ÈË¾ùÏû·Ñ new" + String.valueOf(cost));
+			Log.i("cost", "äººå‡æ¶ˆè´¹ new" + String.valueOf(cost));
 			textView_cost.setText(String.valueOf(cost));
 		}
 
@@ -581,8 +639,8 @@ public class WarpDSLV extends FragmentActivity {
 				cost = 0;
 				for (int i = 0; i < places.size(); i++) {
 
-					if (places.get(i).getTime().equals("ÖĞÎç")
-							|| places.get(i).getTime().equals("Íí²Í")) {
+					if (places.get(i).getTime().equals("ä¸­åˆ")
+							|| places.get(i).getTime().equals("æ™šé¤")) {
 						// cost += places.get(i).getCost();
 						cost += places.get(i).getCost();
 					} else {
@@ -591,7 +649,7 @@ public class WarpDSLV extends FragmentActivity {
 
 				}
 
-				Log.i("cost", "ÈË¾ùÏû·Ñ new" + String.valueOf(cost));
+				Log.i("cost", "äººå‡æ¶ˆè´¹ new" + String.valueOf(cost));
 				textView_cost.setText(String.valueOf(cost));
 
 			} catch (JSONException e) {
@@ -636,8 +694,8 @@ public class WarpDSLV extends FragmentActivity {
 					cost = 0;
 					for (int i = 0; i < places.size(); i++) {
 
-						if (places.get(i).getTime().equals("ÖĞÎç")
-								|| places.get(i).getTime().equals("Íí²Í")) {
+						if (places.get(i).getTime().equals("ä¸­åˆ")
+								|| places.get(i).getTime().equals("æ™šé¤")) {
 							// cost += places.get(i).getCost();
 							cost += places.get(i).getCost();
 						} else {
@@ -646,7 +704,7 @@ public class WarpDSLV extends FragmentActivity {
 
 					}
 
-					Log.i("cost", "ÈË¾ùÏû·Ñ new" + String.valueOf(cost));
+					Log.i("cost", "äººå‡æ¶ˆè´¹ new" + String.valueOf(cost));
 					textView_cost.setText(String.valueOf(cost));
 				}
 
@@ -689,8 +747,8 @@ public class WarpDSLV extends FragmentActivity {
 					cost = 0;
 					for (int i = 0; i < places.size(); i++) {
 
-						if (places.get(i).getTime().equals("ÖĞÎç")
-								|| places.get(i).getTime().equals("Íí²Í")) {
+						if (places.get(i).getTime().equals("ä¸­åˆ")
+								|| places.get(i).getTime().equals("æ™šé¤")) {
 							// cost += places.get(i).getCost();
 							cost += places.get(i).getCost();
 						} else {
@@ -699,7 +757,7 @@ public class WarpDSLV extends FragmentActivity {
 
 					}
 
-					Log.i("cost", "ÈË¾ùÏû·Ñ new" + String.valueOf(cost));
+					Log.i("cost", "äººå‡æ¶ˆè´¹ new" + String.valueOf(cost));
 					textView_cost.setText(String.valueOf(cost));
 				}
 
@@ -859,28 +917,28 @@ public class WarpDSLV extends FragmentActivity {
 			view = layoutInflater.inflate(R.layout.group_list, null);
 
 			lv_group = (ListView) view.findViewById(R.id.lvGroup);
-			// ¼ÓÔØÊı¾İ
+			// åŠ è½½æ•°æ®
 			groups = new ArrayList<String>();
-			groups.add("  ¸üÉİ³Ş");
-			groups.add("  ¸ü±ãÒË");
-			groups.add("  ËæĞÄ»»");
+			groups.add("  æ›´å¥¢ä¾ˆ");
+			groups.add("  æ›´ä¾¿å®œ");
+			groups.add("  éšå¿ƒæ¢");
 			lv_group.setDividerHeight(0);
 
 			GroupAdapter groupAdapter = new GroupAdapter(this, groups);
 			lv_group.setAdapter(groupAdapter);
-			// ´´½¨Ò»¸öPopuWidow¶ÔÏó
+			// åˆ›å»ºä¸€ä¸ªPopuWidowå¯¹è±¡
 			popupWindow = new CustomPopupWindow(view, 300, 200);
 		}
 
-		// Ê¹Æä¾Û¼¯
+		// ä½¿å…¶èšé›†
 		popupWindow.setFocusable(true);
-		// ÉèÖÃÔÊĞíÔÚÍâµã»÷ÏûÊ§
+		// è®¾ç½®å…è®¸åœ¨å¤–ç‚¹å‡»æ¶ˆå¤±
 		popupWindow.setOutsideTouchable(true);
 
-		// Õâ¸öÊÇÎªÁËµã»÷¡°·µ»ØBack¡±Ò²ÄÜÊ¹ÆäÏûÊ§£¬²¢ÇÒ²¢²»»áÓ°ÏìÄãµÄ±³¾°
+		// è¿™ä¸ªæ˜¯ä¸ºäº†ç‚¹å‡»â€œè¿”å›Backâ€ä¹Ÿèƒ½ä½¿å…¶æ¶ˆå¤±ï¼Œå¹¶ä¸”å¹¶ä¸ä¼šå½±å“ä½ çš„èƒŒæ™¯
 		popupWindow.setBackgroundDrawable(new BitmapDrawable());
 		WindowManager windowManager = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
-		// ÏÔÊ¾µÄÎ»ÖÃÎª:ÆÁÄ»µÄ¿í¶ÈµÄÒ»°ë-PopupWindowµÄ¸ß¶ÈµÄÒ»°ë
+		// æ˜¾ç¤ºçš„ä½ç½®ä¸º:å±å¹•çš„å®½åº¦çš„ä¸€åŠ-PopupWindowçš„é«˜åº¦çš„ä¸€åŠ
 		int xPos = windowManager.getDefaultDisplay().getWidth() / 2
 				- popupWindow.getWidth() / 2;
 		Log.i("coder", "xPos:" + xPos);
@@ -917,10 +975,10 @@ public class WarpDSLV extends FragmentActivity {
 	}
 
 	public void startExpensive() {
-		System.out.println("Éİ³Şµã Start");
+		System.out.println("å¥¢ä¾ˆç‚¹ Start");
 		tempCost = 0;
 		for (int i = 0; i < places.size(); i++) {
-			if (places.get(i).getMainType().equals("ÃÀÊ³")) {
+			if (places.get(i).getMainType().equals("ç¾é£Ÿ")) {
 				tempCost += places.get(i).getCost();
 			}
 		}
@@ -931,10 +989,10 @@ public class WarpDSLV extends FragmentActivity {
 	}
 
 	public void startCheap() {
-		System.out.println("±ãÒËµã Start");
+		System.out.println("ä¾¿å®œç‚¹ Start");
 		tempCost = 0;
 		for (int i = 0; i < places.size(); i++) {
-			if (places.get(i).getMainType().equals("ÃÀÊ³")) {
+			if (places.get(i).getMainType().equals("ç¾é£Ÿ")) {
 				tempCost += places.get(i).getCost();
 			}
 		}
@@ -950,20 +1008,20 @@ public class WarpDSLV extends FragmentActivity {
 		}
 
 		/**
-		 * ÔÚÖ¸¶¨¿Ø¼şÉÏ·½ÏÔÊ¾£¬Ä¬ÈÏx×ù±êÓëÖ¸¶¨¿Ø¼şµÄÖĞµãx×ù±êÏàÍ¬
+		 * åœ¨æŒ‡å®šæ§ä»¶ä¸Šæ–¹æ˜¾ç¤ºï¼Œé»˜è®¤xåº§æ ‡ä¸æŒ‡å®šæ§ä»¶çš„ä¸­ç‚¹xåº§æ ‡ç›¸åŒ
 		 * 
 		 * @param anchor
 		 * @param xoff
 		 * @param yoff
 		 */
 		public void showAsPullUp(View anchor, int xoff, int yoff) {
-			// ±£´æanchorÔÚÆÁÄ»ÖĞµÄÎ»ÖÃ
+			// ä¿å­˜anchoråœ¨å±å¹•ä¸­çš„ä½ç½®
 			int[] location = new int[2];
-			// ±£´æanchorÉÏ²¿ÖĞµã
+			// ä¿å­˜anchorä¸Šéƒ¨ä¸­ç‚¹
 			int[] anchorCenter = new int[2];
-			// ¶ÁÈ¡Î»ÖÃanchor×ù±ê
+			// è¯»å–ä½ç½®anchoråº§æ ‡
 			anchor.getLocationOnScreen(location);
-			// ¼ÆËãanchorÖĞµã
+			// è®¡ç®—anchorä¸­ç‚¹
 			anchorCenter[0] = location[0] + anchor.getWidth() / 2;
 			anchorCenter[1] = location[1];
 			super.showAtLocation(
@@ -997,12 +1055,12 @@ public class WarpDSLV extends FragmentActivity {
 	}
 
 	/**
-	 * ¸ù¾İ¾­Î³¶È£¬»ñÈ¡Á½µã¼äµÄ¾àÀë
+	 * æ ¹æ®ç»çº¬åº¦ï¼Œè·å–ä¸¤ç‚¹é—´çš„è·ç¦»
 	 * 
 	 * @param lng1
-	 *            ¾­¶È
+	 *            ç»åº¦
 	 * @param lat1
-	 *            Î³¶È
+	 *            çº¬åº¦
 	 * @param lng2
 	 * @param lat2
 	 * @return
@@ -1017,10 +1075,75 @@ public class WarpDSLV extends FragmentActivity {
 		double s = 2 * Math.asin(Math.sqrt(Math.pow(Math.sin(a / 2), 2)
 				+ Math.cos(radLat1) * Math.cos(radLat2)
 				* Math.pow(Math.sin(b / 2), 2)));
-		s = s * 6378137.0;// È¡WGS84±ê×¼²Î¿¼ÍÖÇòÖĞµÄµØÇò³¤°ë¾¶(µ¥Î»:m)
+		s = s * 6378137.0;// å–WGS84æ ‡å‡†å‚è€ƒæ¤­çƒä¸­çš„åœ°çƒé•¿åŠå¾„(å•ä½:m)
 		s = Math.floor(s * 10000) / 10000;
 		Log.i("s", String.valueOf(s));
 		return s / 1000;
 	}
 
+	/**
+	 * åˆ°Urlä¸‹è½½å›¾ç‰‡ å¹¶è¿›è¡Œè£å‰ª
+	 * 
+	 * @param imgUrl
+	 * @return Bitmap
+	 */
+	public class getPic extends AsyncTask<String, Integer, List<Bitmap>> {
+
+		@Override
+		protected List<Bitmap> doInBackground(String... params) {
+			// TODO Auto-generated method stub
+
+			return getBitmapFromUrl(params);
+		}
+		@Override
+		protected void onProgressUpdate(Integer... values)
+		{
+			Toast.makeText(getApplicationContext(), values[0].toString(), Toast.LENGTH_SHORT).show();
+		}
+		@Override
+		protected void onPostExecute(List<Bitmap> bitmapList) {
+			int index = 0  ;
+			while (true) {
+				index = index ++ % bitmapList.size();
+				
+				mapImageView.setImageBitmap(bitmapList.get(index));
+				
+			
+				
+				
+			}
+			
+		}
+
+	}
+
+	private List<Bitmap> getBitmapFromUrl(String... imgUrl) {
+		List<Bitmap> bitmapList = new ArrayList<Bitmap>();
+		
+		int cut_from_x = 40; // ä»å›¾ç‰‡çš„xè½´çš„xå¤„å¼€å§‹è£å‰ª
+		int cut_from_y = 13; // ä»å›¾ç‰‡çš„yè½´çš„yå¤„å¼€å§‹è£å‰ª
+		int image_width_x = 300; // è£å‰ªç”Ÿæˆæ–°å›¾çš®çš„å®½
+		int image_height_y = 130; // è£å‰ªç”Ÿæˆæ–°å›¾çš®çš„é«˜
+		for (int i = 0; i < imgUrl.length; i++) {
+			Log.i("urls", imgUrl[i]);
+			URL url;
+			Bitmap bitmap = null;
+			Bitmap cutBitmap = null;
+			try {
+				url = new URL(imgUrl[i]);
+				InputStream is = url.openConnection().getInputStream();
+				BufferedInputStream bis = new BufferedInputStream(is);
+				bitmap = BitmapFactory.decodeStream(bis);
+				bis.close();
+			} catch (MalformedURLException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			cutBitmap = Bitmap.createBitmap(bitmap, cut_from_x, cut_from_y,
+					image_width_x, image_height_y);
+			bitmapList.add(cutBitmap);
+		}
+		return bitmapList;
+	}
 }

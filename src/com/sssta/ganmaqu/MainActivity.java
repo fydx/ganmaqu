@@ -11,12 +11,14 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.R.integer;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.location.Address;
 import android.location.Criteria;
 import android.location.Geocoder;
@@ -29,6 +31,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -51,13 +54,14 @@ import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.jeremyfeinstein.slidingmenu.lib.app.SlidingFragmentActivity;
 import com.sssta.ganmaqu.ProfileFragment.OnFragmentInteractionListener;
 
-public class MainActivity extends SlidingFragmentActivity implements OnFragmentInteractionListener {
+public class MainActivity extends FragmentActivity implements OnFragmentInteractionListener {
 	private LocationManager locationManager;
+	private int status_finish_circle = 0;
 	private Location location;
 	private String provider;
 	private List<place> places;
 	private static String ipString;
-	final String Types[] = new String[] { "Ç××Ó³öĞĞ", "ÅóÓÑ³öĞĞ", "ÇéÂÂ³öĞĞ" };
+	final String Types[] = new String[] { "äº²å­å‡ºè¡Œ", "æœ‹å‹å‡ºè¡Œ", "æƒ…ä¾£å‡ºè¡Œ" };
 	private static double lat;
 	private static double lng;
 	private Dialog dialog;
@@ -71,7 +75,7 @@ public class MainActivity extends SlidingFragmentActivity implements OnFragmentI
 	private SlidingMenu menu;
 	private SharedPreferences userInfo;
 	private int count_first;
-	public Connect connect;
+	private Connect connect;
 	private ImageView imageView_change;
 	public static double getLat()
 	{
@@ -87,9 +91,9 @@ public class MainActivity extends SlidingFragmentActivity implements OnFragmentI
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		ShareSDK.initSDK(this);
+		ShareSDK.initSDK(MainActivity.this);
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE); // no title bar
-		setBehindContentView(R.layout.menu_right);
+		//setBehindContentView(R.layout.menu_right);
 		
 		ipString = getApplicationContext().getResources()
 				.getString(R.string.ip);
@@ -101,34 +105,34 @@ public class MainActivity extends SlidingFragmentActivity implements OnFragmentI
 		setContentView(R.layout.activity_selectedmain);
 		userInfo = getApplicationContext().getSharedPreferences("userInfo", 0);
 
-		city = userInfo.getString("city", "Î÷°²ÊĞ");
+		city = userInfo.getString("city", "è¥¿å®‰å¸‚");
 		count_first = userInfo.getInt("first", 0);
 		count_city = userInfo.getInt("count_city", 0);
 		Log.i("city from sharedperferece", city);
-		setSlidingActionBarEnabled(true);
+		//setSlidingActionBarEnabled(true);
 		/*
-		 * ÉèÖÃ½¥ÏÔ¶¯»­
+		 * è®¾ç½®æ¸æ˜¾åŠ¨ç”»
 		 */
-		// ´´½¨Ò»¸öAnimationSet¶ÔÏó£¬²ÎÊıÎªBooleanĞÍ£¬
-		// true±íÊ¾Ê¹ÓÃAnimationµÄinterpolator£¬falseÔòÊÇÊ¹ÓÃ×Ô¼ºµÄ
+		// åˆ›å»ºä¸€ä¸ªAnimationSetå¯¹è±¡ï¼Œå‚æ•°ä¸ºBooleanå‹ï¼Œ
+		// trueè¡¨ç¤ºä½¿ç”¨Animationçš„interpolatorï¼Œfalseåˆ™æ˜¯ä½¿ç”¨è‡ªå·±çš„
 		AnimationSet animationSet = new AnimationSet(true);
-		// ´´½¨Ò»¸öAlphaAnimation¶ÔÏó£¬²ÎÊı´ÓÍêÈ«µÄÍ¸Ã÷¶È£¬µ½ÍêÈ«µÄ²»Í¸Ã÷
+		// åˆ›å»ºä¸€ä¸ªAlphaAnimationå¯¹è±¡ï¼Œå‚æ•°ä»å®Œå…¨çš„é€æ˜åº¦ï¼Œåˆ°å®Œå…¨çš„ä¸é€æ˜
 		AlphaAnimation alphaAnimation = new AlphaAnimation(0, 1);
-		// ÉèÖÃ¶¯»­Ö´ĞĞµÄÊ±¼ä
+		// è®¾ç½®åŠ¨ç”»æ‰§è¡Œçš„æ—¶é—´
 		alphaAnimation.setDuration(3000);
-		// ÉèÖÃ¶¯»­ÑÓ³ÙÖ´ĞĞÊ±¼ä
+		// è®¾ç½®åŠ¨ç”»å»¶è¿Ÿæ‰§è¡Œæ—¶é—´
 		alphaAnimation.setStartOffset(1300);
-		// ½«alphaAnimation¶ÔÏóÌí¼Óµ½AnimationSetµ±ÖĞ
+		// å°†alphaAnimationå¯¹è±¡æ·»åŠ åˆ°AnimationSetå½“ä¸­
 		animationSet.addAnimation(alphaAnimation);
 		/*
-		 * ÉèÖÃÎ»ÒÆÏÂÃæÔÆ²ÊµÄ¶¯»­
+		 * è®¾ç½®ä½ç§»ä¸‹é¢äº‘å½©çš„åŠ¨ç”»
 		 */
 		AnimationSet animationSetTrans = new AnimationSet(false);
-		// ²ÎÊı2£ºxÖáµÄ¿ªÊ¼Î»ÖÃ
-		// ²ÎÊı4£ºxÖáµÄ½áÊøÎ»ÖÃ
-		// ²ÎÊı6£ºyÖáµÄ¿ªÊ¼Î»ÖÃ 
-		// ²ÎÊı8£ºyÖáµÄ½áÊøÎ»ÖÃ
-		// ²ÎÊı1,3,5,7 : fromX/YType
+		// å‚æ•°2ï¼šxè½´çš„å¼€å§‹ä½ç½®
+		// å‚æ•°4ï¼šxè½´çš„ç»“æŸä½ç½®
+		// å‚æ•°6ï¼šyè½´çš„å¼€å§‹ä½ç½® 
+		// å‚æ•°8ï¼šyè½´çš„ç»“æŸä½ç½®
+		// å‚æ•°1,3,5,7 : fromX/YType
 		TranslateAnimation translateAnimation = new TranslateAnimation(
 				Animation.RELATIVE_TO_SELF, -0.4f, Animation.RELATIVE_TO_SELF,
 				-0.2f, Animation.RELATIVE_TO_SELF, 0f,
@@ -140,14 +144,14 @@ public class MainActivity extends SlidingFragmentActivity implements OnFragmentI
 		translateAnimation.setRepeatCount(-1);
 		animationSetTrans.addAnimation(translateAnimation);
 		/*
-		 * ÉèÖÃÎ»ÒÆÉÏÃæÔÆ²ÊµÄ¶¯»­
+		 * è®¾ç½®ä½ç§»ä¸Šé¢äº‘å½©çš„åŠ¨ç”»
 		 */
 		AnimationSet animationSetTrans_top = new AnimationSet(false);
-		// ²ÎÊı2£ºxÖáµÄ¿ªÊ¼Î»ÖÃ
-		// ²ÎÊı4£ºxÖáµÄ½áÊøÎ»ÖÃ
-		// ²ÎÊı6£ºyÖáµÄ¿ªÊ¼Î»ÖÃ 
-		// ²ÎÊı8£ºyÖáµÄ½áÊøÎ»ÖÃ
-		// ²ÎÊı1,3,5,7 : fromX/YType
+		// å‚æ•°2ï¼šxè½´çš„å¼€å§‹ä½ç½®
+		// å‚æ•°4ï¼šxè½´çš„ç»“æŸä½ç½®
+		// å‚æ•°6ï¼šyè½´çš„å¼€å§‹ä½ç½® 
+		// å‚æ•°8ï¼šyè½´çš„ç»“æŸä½ç½®
+		// å‚æ•°1,3,5,7 : fromX/YType
 		TranslateAnimation translateAnimation_top = new TranslateAnimation(
 				Animation.RELATIVE_TO_SELF, 0.3f, Animation.RELATIVE_TO_SELF,
 				0.05f, Animation.RELATIVE_TO_SELF, 0f,
@@ -159,7 +163,7 @@ public class MainActivity extends SlidingFragmentActivity implements OnFragmentI
 		translateAnimation_top.setRepeatCount(-1);
 		animationSetTrans_top.addAnimation(translateAnimation_top);
 		/*
-		 * ¿Ø¼ş°ó¶¨
+		 * æ§ä»¶ç»‘å®š
 		 */
 		button_type = (Button) findViewById(R.id.button_type);
 		ImageView navigation_drawer = (ImageView) findViewById(R.id.navigation_drawer);
@@ -172,7 +176,7 @@ public class MainActivity extends SlidingFragmentActivity implements OnFragmentI
 		ImageView cloud_bottom = (ImageView) findViewById(R.id.imageView_cloud_bottom);
 		imageView_change= (ImageView)findViewById(R.id.imageView_last);
 		/*
-		 * ÉèÖÃ¶¯»­
+		 * è®¾ç½®åŠ¨ç”»
 		 */
 		navigation_drawer.setAnimation(animationSet);
 		textView1.setAnimation(animationSet);
@@ -217,7 +221,7 @@ public class MainActivity extends SlidingFragmentActivity implements OnFragmentI
 //		 weibo.setPlatformActionListener(paListener);
 //		weibo.authorize();
 	//	weibo.showUser(id);
-	//	 weibo.setPlatformActionListener(paListener); // ÉèÖÃ·ÖÏíÊÂ¼ş»Øµ÷
+	//	 weibo.setPlatformActionListener(paListener); // è®¾ç½®åˆ†äº«äº‹ä»¶å›è°ƒ
 		imageView_change.setOnClickListener(new OnClickListener() {
 			
 			@Override
@@ -225,7 +229,7 @@ public class MainActivity extends SlidingFragmentActivity implements OnFragmentI
 				// TODO Auto-generated method stub
 				List<place> placeList = db.findAll(place.class);
 				if (placeList.isEmpty()) {
-					Toast.makeText(getApplicationContext(), "°¡Å¶£¬Äã»¹Ã»ÓĞ±£´æ¹ıÂ·Ïß",
+					Toast.makeText(getApplicationContext(), "å•Šå“¦ï¼Œä½ è¿˜æ²¡æœ‰ä¿å­˜è¿‡è·¯çº¿",
 							Toast.LENGTH_SHORT).show();
 				} else {
 					int route_id = placeList.get(placeList.size() - 1)
@@ -241,7 +245,7 @@ public class MainActivity extends SlidingFragmentActivity implements OnFragmentI
 			}
 		});
 		// set sliding menu
-		menu = getSlidingMenu();
+		menu = new SlidingMenu(this);
 		menu.setMode(SlidingMenu.LEFT);
 
 		menu.setTouchModeAbove(SlidingMenu.TOUCHMODE_MARGIN);
@@ -251,14 +255,14 @@ public class MainActivity extends SlidingFragmentActivity implements OnFragmentI
 		menu.setFadeDegree(0.35f);
 //		menu.setSecondaryMenu(R.layout.menu_right);
 //		menu.setSecondaryShadowDrawable(R.drawable.shadowright);
-		// menu.attachToActivity(this, SlidingMenu.SLIDING_CONTENT);
-		// menu.setMenu(R.layout.menu);
+		menu.attachToActivity(this, SlidingMenu.SLIDING_CONTENT);
+		menu.setMenu(R.layout.menu_right);
 		
 		if (isConnect(this) == false) {
 			new AlertDialog.Builder(this)
-					.setTitle("ÍøÂç´íÎó")
-					.setMessage("ÍøÂçÁ¬½ÓÊ§°Ü£¬ÇëÈ·ÈÏÍøÂçÁ¬½Ó")
-					.setPositiveButton("È·¶¨",
+					.setTitle("ç½‘ç»œé”™è¯¯")
+					.setMessage("ç½‘ç»œè¿æ¥å¤±è´¥ï¼Œè¯·ç¡®è®¤ç½‘ç»œè¿æ¥")
+					.setPositiveButton("ç¡®å®š",
 							new DialogInterface.OnClickListener() {
 								@Override
 								public void onClick(DialogInterface arg0,
@@ -272,11 +276,20 @@ public class MainActivity extends SlidingFragmentActivity implements OnFragmentI
 							}).show();
 		}
 		if (count_first == 0) {
-
+			
+			Log.i("firstboot", "True");
+			db = FinalDb.create(this);
+			User user = new User(1,1);
+			db.save(user);
+			Editor e = userInfo.edit();
+			e.putInt("first", 2);
+			e.commit();
+			
 			// SimpleDialog SimpleDialog = new SimpleDialog(
 			// NewMainActivity.this, R.drawable.mainpageguide);
 			//
 			// SimpleDialog.show();
+			 
 
 		}
 
@@ -285,7 +298,7 @@ public class MainActivity extends SlidingFragmentActivity implements OnFragmentI
 			@Override
 			public void onClick(View v) {
 
-				// µã»÷·µ»Ø¼ü¹Ø±Õ»¬¶¯²Ëµ¥
+				// ç‚¹å‡»è¿”å›é”®å…³é—­æ»‘åŠ¨èœå•
 				if (menu.isMenuShowing()) {
 					menu.showContent();
 				} else {
@@ -333,7 +346,7 @@ public class MainActivity extends SlidingFragmentActivity implements OnFragmentI
 		// // TODO Auto-generated method stub
 		// List<place> placeList = db.findAll(place.class);
 		// if (placeList.isEmpty()) {
-		// Toast.makeText(getApplicationContext(), "°¡Å¶£¬Äã»¹Ã»ÓĞ±£´æ¹ıÂ·Ïß",
+		// Toast.makeText(getApplicationContext(), "å•Šå“¦ï¼Œä½ è¿˜æ²¡æœ‰ä¿å­˜è¿‡è·¯çº¿",
 		// Toast.LENGTH_SHORT).show();
 		// } else {
 		// int route_id = placeList.get(placeList.size() - 1)
@@ -362,35 +375,52 @@ public class MainActivity extends SlidingFragmentActivity implements OnFragmentI
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				circleDialog = new CircleDialog(MainActivity.this, city);
-				// circleDialog.setCity(city);
-				circleDialog.setbutton(circleButton);
-				circleDialog.show();
+				if (city!=null) {
+					circleDialog = new CircleDialog(MainActivity.this, userInfo.getString("city", "è¥¿å®‰å¸‚"));
+					// circleDialog.setCity(city);
+					circleDialog.setbutton(circleButton);
+					circleDialog.show();
+				}
+				else {
+					Toast.makeText(getApplicationContext(), "è¯·ç¨åç­‰å¾…è·å–åˆ°å½“å‰åŸå¸‚ï¼Œæˆ–æ‰‹åŠ¨é€‰æ‹©å½“å‰åŸå¸‚åç‚¹å‡»", Toast.LENGTH_SHORT).show();
+				}
 
 			}
 		});
 
 		count = 0;
-		// new getCircles().execute("Î÷°²");
+		// new getCircles().execute("è¥¿å®‰");
 
 		userid = userInfo.getString("userid", "root");
 		Log.i("id from sharedpreference", userid);
-		// »ñÈ¡LocationManager·şÎñ
+		// è·å–LocationManageræœåŠ¡
 		locationManager = (LocationManager) this
 				.getSystemService(Context.LOCATION_SERVICE);
-		// »ñÈ¡Location Provider
+		// è·å–Location Provider
 		getProvider();
-		// Èç¹ûÎ´ÉèÖÃÎ»ÖÃÔ´£¬´ò¿ªGPSÉèÖÃ½çÃæ
+		// å¦‚æœæœªè®¾ç½®ä½ç½®æºï¼Œæ‰“å¼€GPSè®¾ç½®ç•Œé¢
 		openGPS();
-		// »ñÈ¡Î»ÖÃ
-		location = locationManager.getLastKnownLocation(provider);
-		// ÏÔÊ¾Î»ÖÃĞÅÏ¢µ½ÎÄ×Ö±êÇ©
+		// è·å–ä½ç½®
+		try {
+			location = locationManager.getLastKnownLocation(provider);
+		} catch (Exception e) {
+			// TODO: handle exception
+			Toast.makeText(getApplicationContext(), "Provider is null", Toast.LENGTH_SHORT).show();
+		}
+	
+		// æ˜¾ç¤ºä½ç½®ä¿¡æ¯åˆ°æ–‡å­—æ ‡ç­¾
 		updateWithNewLocation(location);
-		// ×¢²á¼àÌıÆ÷locationListener£¬µÚ2¡¢3¸ö²ÎÊı¿ÉÒÔ¿ØÖÆ½ÓÊÕgpsÏûÏ¢µÄÆµ¶ÈÒÔ½ÚÊ¡µçÁ¦¡£µÚ2¸ö²ÎÊıÎªºÁÃë£¬
-		// ±íÊ¾µ÷ÓÃlistenerµÄÖÜÆÚ£¬µÚ3¸ö²ÎÊıÎªÃ×,±íÊ¾Î»ÖÃÒÆ¶¯Ö¸¶¨¾àÀëºó¾Íµ÷ÓÃlistener
-		locationManager.requestLocationUpdates(provider, 2000, 10,
-				locationListener);
+		// æ³¨å†Œç›‘å¬å™¨locationListenerï¼Œç¬¬2ã€3ä¸ªå‚æ•°å¯ä»¥æ§åˆ¶æ¥æ”¶gpsæ¶ˆæ¯çš„é¢‘åº¦ä»¥èŠ‚çœç”µåŠ›ã€‚ç¬¬2ä¸ªå‚æ•°ä¸ºæ¯«ç§’ï¼Œ
+		// è¡¨ç¤ºè°ƒç”¨listenerçš„å‘¨æœŸï¼Œç¬¬3ä¸ªå‚æ•°ä¸ºç±³,è¡¨ç¤ºä½ç½®ç§»åŠ¨æŒ‡å®šè·ç¦»åå°±è°ƒç”¨listener
+		try {
+			locationManager.requestLocationUpdates(provider, 2000, 10,
+					locationListener);
 
+		} catch (Exception e) {
+			// TODO: handle exception
+			Toast.makeText(getApplicationContext(), "æ— æ³•è·å–Provider", Toast.LENGTH_SHORT).show();
+		}
+		
 		// set gallery
 		Integer[] images = { R.drawable.child, R.drawable.friend,
 				R.drawable.couple };
@@ -403,9 +433,9 @@ public class MainActivity extends SlidingFragmentActivity implements OnFragmentI
 			@Override
 			public void onClick(View v) {
 
-				if (lat == 0.0 || lng == 0.0) {
+				if (lat == 0.0 || lng == 0.0||status_finish_circle==0) {
 					Toast.makeText(getApplicationContext(),
-							"¶¨Î»Ê§°Ü£¬Çë´ò¿ª¶¨Î»·şÎñ»òÉÔºóÔÙÊÔ", Toast.LENGTH_SHORT).show();
+							"å®šä½å¤±è´¥ï¼Œè¯·æ‰“å¼€å®šä½æœåŠ¡æˆ–ç¨åå†è¯•", Toast.LENGTH_SHORT).show();
 				} else {
 					dialog = new Dialog(MainActivity.this,
 							R.style.activity_translucent);
@@ -415,7 +445,7 @@ public class MainActivity extends SlidingFragmentActivity implements OnFragmentI
 					// Types[typeWheel.getCurrentItem()], Toast.LENGTH_SHORT)
 					// .show();
 					// Log.i("Current Item", Types[typeWheel.getCurrentItem()]);
-
+				
 					if (location == null) {
 						new RequestTask().execute(button_type.getText()
 								.toString());
@@ -424,7 +454,7 @@ public class MainActivity extends SlidingFragmentActivity implements OnFragmentI
 								.toString(), String.valueOf(location
 								.getLongitude()), String.valueOf(location
 								.getLatitude()), userInfo.getString("city",
-								"Î÷°²ÊĞ"));
+								"è¥¿å®‰å¸‚"));
 					}
 
 				}
@@ -433,72 +463,66 @@ public class MainActivity extends SlidingFragmentActivity implements OnFragmentI
 		// numberWheel.setCurrentItem(3);
 	}
 
-	// @Override
-	// public boolean onCreateOptionsMenu(Menu menu) {
-	// // Inflate the menu; this adds items to the action bar if it is present.
-	// getMenuInflater().inflate(R.menu.main, menu);
-	// return true;
-	// }
 
-	// ÅĞ¶ÏÊÇ·ñ¿ªÆôGPS£¬ÈôÎ´¿ªÆô£¬´ò¿ªGPSÉèÖÃ½çÃæ
+	// åˆ¤æ–­æ˜¯å¦å¼€å¯GPSï¼Œè‹¥æœªå¼€å¯ï¼Œæ‰“å¼€GPSè®¾ç½®ç•Œé¢
 	private void openGPS() {
 		if (locationManager
 				.isProviderEnabled(android.location.LocationManager.GPS_PROVIDER)
 				|| locationManager
 						.isProviderEnabled(android.location.LocationManager.NETWORK_PROVIDER)) {
-			Log.i("location service", "Î»ÖÃÔ´ÒÑÉèÖÃ£¡");
+			Log.i("location service", "ä½ç½®æºå·²è®¾ç½®ï¼");
 			// Toast.makeText(this, , Toast.LENGTH_SHORT).show();
 			return;
 		}
-		Toast.makeText(this, "ÄúÎ´¿ªÆô¶¨Î»·şÎñ", Toast.LENGTH_SHORT).show();
+		Toast.makeText(this, "æ‚¨æœªå¼€å¯å®šä½æœåŠ¡", Toast.LENGTH_SHORT).show();
 		createLogoutDialog();
 
 	}
 
-	// »ñÈ¡Location Provider
+	// è·å–Location Provider
 	private void getProvider() {
-		// ¹¹½¨Î»ÖÃ²éÑ¯Ìõ¼ş
+		// æ„å»ºä½ç½®æŸ¥è¯¢æ¡ä»¶
 		Criteria criteria = new Criteria();
-		// ²éÑ¯¾«¶È£º¸ß
+		// æŸ¥è¯¢ç²¾åº¦ï¼šé«˜
 		criteria.setAccuracy(Criteria.ACCURACY_FINE);
-		// ÊÇ·ñ²éÑ¯º£²¦£º·ñ
+		// æ˜¯å¦æŸ¥è¯¢æµ·æ‹¨ï¼šå¦
 		criteria.setAltitudeRequired(false);
-		// ÊÇ·ñ²éÑ¯·½Î»½Ç:·ñ
+		// æ˜¯å¦æŸ¥è¯¢æ–¹ä½è§’:å¦
 		criteria.setBearingRequired(false);
-		// ÊÇ·ñÔÊĞí¸¶·Ñ£ºÊÇ
+		// æ˜¯å¦å…è®¸ä»˜è´¹ï¼šæ˜¯
 		criteria.setCostAllowed(true);
-		// µçÁ¿ÒªÇó£ºµÍ
+		// ç”µé‡è¦æ±‚ï¼šä½
 		criteria.setPowerRequirement(Criteria.POWER_LOW);
-		// ·µ»Ø×îºÏÊÊµÄ·ûºÏÌõ¼şµÄprovider£¬µÚ2¸ö²ÎÊıÎªtrueËµÃ÷,Èç¹ûÖ»ÓĞÒ»¸öproviderÊÇÓĞĞ§µÄ,Ôò·µ»Øµ±Ç°provider
+		// è¿”å›æœ€åˆé€‚çš„ç¬¦åˆæ¡ä»¶çš„providerï¼Œç¬¬2ä¸ªå‚æ•°ä¸ºtrueè¯´æ˜,å¦‚æœåªæœ‰ä¸€ä¸ªprovideræ˜¯æœ‰æ•ˆçš„,åˆ™è¿”å›å½“å‰provider
 		provider = locationManager.getBestProvider(criteria, true);
 	}
 
-	// GpsÏûÏ¢¼àÌıÆ÷
+	// Gpsæ¶ˆæ¯ç›‘å¬å™¨
 	private final LocationListener locationListener = new LocationListener() {
-		// Î»ÖÃ·¢Éú¸Ä±äºóµ÷ÓÃ
+		// ä½ç½®å‘ç”Ÿæ”¹å˜åè°ƒç”¨
 		public void onLocationChanged(Location location) {
 
 			updateWithNewLocation(location);
 		}
 
-		// provider±»ÓÃ»§¹Ø±Õºóµ÷ÓÃ
+		// providerè¢«ç”¨æˆ·å…³é—­åè°ƒç”¨
 		public void onProviderDisabled(String provider) {
 			updateWithNewLocation(null);
 		}
 
-		// provider±»ÓÃ»§¿ªÆôºóµ÷ÓÃ
+		// providerè¢«ç”¨æˆ·å¼€å¯åè°ƒç”¨
 		public void onProviderEnabled(String provider) {
 
 		}
 
-		// provider×´Ì¬±ä»¯Ê±µ÷ÓÃ
+		// providerçŠ¶æ€å˜åŒ–æ—¶è°ƒç”¨
 		public void onStatusChanged(String provider, int status, Bundle extras) {
 
 		}
 
 	};
 
-	// Gps¼àÌıÆ÷µ÷ÓÃ£¬´¦ÀíÎ»ÖÃĞÅÏ¢
+	// Gpsç›‘å¬å™¨è°ƒç”¨ï¼Œå¤„ç†ä½ç½®ä¿¡æ¯
 	private void updateWithNewLocation(Location location) {
 		String latLongString;
 		// TextView myLocationText = (TextView)
@@ -506,49 +530,51 @@ public class MainActivity extends SlidingFragmentActivity implements OnFragmentI
 		if (location != null) {
 			lat = location.getLatitude();
 			lng = location.getLongitude();
-			latLongString = "Î³¶È:" + lat + "\n¾­¶È:" + lng;
+			latLongString = "çº¬åº¦:" + lat + "\nç»åº¦:" + lng;
 
 		} else {
-			latLongString = "ÎŞ·¨»ñÈ¡µØÀíĞÅÏ¢";
+			latLongString = "æ— æ³•è·å–åœ°ç†ä¿¡æ¯";
 		}
-		if (count == 0) {
+		if (count_first != 0) {
 			Log.i("address request start", "execute");
-			// TODO ĞŞ¸Ä×ø±ê
+			// TODO ä¿®æ”¹åæ ‡
 			// new AddressRequestTask().execute("34.238225","108.924703");
 			// //Test
 			new getCurrentCircle().execute(String.valueOf(lng),
-					String.valueOf(lat), userInfo.getString("city", "Î÷°²ÊĞ"));
+					String.valueOf(lat), userInfo.getString("city", "è¥¿å®‰å¸‚"));
 			Log.i("loaction", String.valueOf(lat) + " " + String.valueOf(lng));
 //			if (count_first != 0) {
 //				new getCurrentCircle().execute(String.valueOf(lng),
-//						String.valueOf(lat), userInfo.getString("city", "Î÷°²ÊĞ"));
+//						String.valueOf(lat), userInfo.getString("city", "è¥¿å®‰å¸‚"));
 //			}
-			ProfileFragment fragment = (ProfileFragment)getSupportFragmentManager().findFragmentById(R.id.menu_right);
-			fragment.new AddressRequestTask().execute(String.valueOf(lat),
-					String.valueOf(lng));
 			
-			
-
+				
 		}
-		count++;
+		else {
+			
+			new FirstRequestTask().execute(String.valueOf(lat),
+					String.valueOf(lng));
+		
+		}
+		//count++;
 		// Toast.makeText(
 		// getApplicationContext(),
-		// "(main)Äúµ±Ç°µÄÎ»ÖÃÊÇ: " + "\n" + latLongString + "\n"
+		// "(main)æ‚¨å½“å‰çš„ä½ç½®æ˜¯: " + "\n" + latLongString + "\n"
 		// + getAddressbyGeoPoint(location), Toast.LENGTH_LONG)
 		// .show();
-		// myLocationText.setText("Äúµ±Ç°µÄÎ»ÖÃÊÇ:/n" + latLongString + "/n"
+		// myLocationText.setText("æ‚¨å½“å‰çš„ä½ç½®æ˜¯:/n" + latLongString + "/n"
 		// + getAddressbyGeoPoint(location));
 
 	}
-
-	// »ñÈ¡µØÖ·ĞÅÏ¢
+	
+	// è·å–åœ°å€ä¿¡æ¯
 	private List<Address> getAddressbyGeoPoint(Location location) {
 		List<Address> result = null;
-		// ÏÈ½«Location×ª»»ÎªGeoPoint
+		// å…ˆå°†Locationè½¬æ¢ä¸ºGeoPoint
 		// GeoPoint gp=getGeoByLocation(location);
 		try {
 			if (location != null) {
-				// »ñÈ¡Geocoder£¬Í¨¹ıGeocoder¾Í¿ÉÒÔÄÃµ½µØÖ·ĞÅÏ¢
+				// è·å–Geocoderï¼Œé€šè¿‡Geocoderå°±å¯ä»¥æ‹¿åˆ°åœ°å€ä¿¡æ¯
 				Geocoder gc = new Geocoder(this, Locale.getDefault());
 				result = gc.getFromLocation(location.getLatitude(),
 						location.getLongitude(), 1);
@@ -583,7 +609,7 @@ public class MainActivity extends SlidingFragmentActivity implements OnFragmentI
 			return null;
 		}
 
-		protected void onProgressUpdate(Integer... progress) {// ÔÚµ÷ÓÃpublishProgressÖ®ºó±»µ÷ÓÃ£¬ÔÚuiÏß³ÌÖ´ĞĞ
+		protected void onProgressUpdate(Integer... progress) {// åœ¨è°ƒç”¨publishProgressä¹‹åè¢«è°ƒç”¨ï¼Œåœ¨uiçº¿ç¨‹æ‰§è¡Œ
 			// mProgressBar.setProgress(progress[0]);
 			Log.i("Progress", String.valueOf(progress[0]));
 		}
@@ -636,6 +662,7 @@ public class MainActivity extends SlidingFragmentActivity implements OnFragmentI
 		@Override
 		protected void onPostExecute(String result) {
 			try {
+				
 				HashMap<Integer, String> hashMapCircle = hashCircle(result);
 				Log.i("circle1", hashMapCircle.get(0));
 			} catch (JSONException e) {
@@ -679,8 +706,9 @@ public class MainActivity extends SlidingFragmentActivity implements OnFragmentI
 		@Override
 		protected void onPostExecute(String result) {
 			// circleString = result;
+			status_finish_circle = 1; //æ ‡è®°å·²ç»è·å–åˆ°å•†åœˆ
 			if (result == null) {
-				circleButton.setText("ÔİÊ±ÎŞ·¨»ñÈ¡Î»ÖÃ");
+				circleButton.setText("æš‚æ—¶æ— æ³•è·å–ä½ç½®");
 			} else {
 				circleButton.setText(result);
 			}
@@ -690,7 +718,7 @@ public class MainActivity extends SlidingFragmentActivity implements OnFragmentI
 
 	public void startrequest() {
 		new getCurrentCircle().execute(String.valueOf(lng),
-				String.valueOf(lat), userInfo.getString("city", "Î÷°²ÊĞ"));
+				String.valueOf(lat), userInfo.getString("city", "è¥¿å®‰å¸‚"));
 		Log.i("start", "start");
 	}
 
@@ -699,21 +727,21 @@ public class MainActivity extends SlidingFragmentActivity implements OnFragmentI
 	{
 
 		AlertDialog dlg = new AlertDialog.Builder(MainActivity.this)
-				.setTitle("ÌáÊ¾")
-				.setMessage("ÄúÃ»ÓĞ¿ªÆô¶¨Î»·şÎñ£¬Õâ»áÓ°Ïì¸ÉÂïÈ¥µÄÊ¹ÓÃĞ§¹û£¬ÊÇ·ñ½øÈëÉèÖÃ¿ªÆô¶¨Î»·şÎñ£¿")
-				.setPositiveButton("È·ÈÏ", new DialogInterface.OnClickListener() {
+				.setTitle("æç¤º")
+				.setMessage("æ‚¨æ²¡æœ‰å¼€å¯å®šä½æœåŠ¡ï¼Œè¿™ä¼šå½±å“å¹²å˜›å»çš„ä½¿ç”¨æ•ˆæœï¼Œæ˜¯å¦è¿›å…¥è®¾ç½®å¼€å¯å®šä½æœåŠ¡ï¼Ÿ")
+				.setPositiveButton("ç¡®è®¤", new DialogInterface.OnClickListener() {
 
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						// TODO Auto-generated method stub
-						// ×ªÖÁGPSÉèÖÃ½çÃæ
+						// è½¬è‡³GPSè®¾ç½®ç•Œé¢
 						Intent intent = new Intent(
 								Settings.ACTION_SECURITY_SETTINGS);
 						startActivityForResult(intent, 0);
 					}
 
 				})
-				.setNegativeButton("È¡Ïû", new DialogInterface.OnClickListener() {
+				.setNegativeButton("å–æ¶ˆ", new DialogInterface.OnClickListener() {
 
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
@@ -727,17 +755,17 @@ public class MainActivity extends SlidingFragmentActivity implements OnFragmentI
 
 	public static boolean isConnect(Context context) {
 
-		// »ñÈ¡ÊÖ»úËùÓĞÁ¬½Ó¹ÜÀí¶ÔÏó£¨°üÀ¨¶Ôwi-fi,netµÈÁ¬½ÓµÄ¹ÜÀí£©
+		// è·å–æ‰‹æœºæ‰€æœ‰è¿æ¥ç®¡ç†å¯¹è±¡ï¼ˆåŒ…æ‹¬å¯¹wi-fi,netç­‰è¿æ¥çš„ç®¡ç†ï¼‰
 		try {
 			ConnectivityManager connectivity = (ConnectivityManager) context
 					.getSystemService(Context.CONNECTIVITY_SERVICE);
 			if (connectivity != null) {
 
-				// »ñÈ¡ÍøÂçÁ¬½Ó¹ÜÀíµÄ¶ÔÏó
+				// è·å–ç½‘ç»œè¿æ¥ç®¡ç†çš„å¯¹è±¡
 				NetworkInfo info = connectivity.getActiveNetworkInfo();
 
 				if (info != null && info.isConnected()) {
-					// ÅĞ¶Ïµ±Ç°ÍøÂçÊÇ·ñÒÑ¾­Á¬½Ó
+					// åˆ¤æ–­å½“å‰ç½‘ç»œæ˜¯å¦å·²ç»è¿æ¥
 					if (info.getState() == NetworkInfo.State.CONNECTED) {
 						return true;
 					}
@@ -767,5 +795,62 @@ public class MainActivity extends SlidingFragmentActivity implements OnFragmentI
 		// TODO Auto-generated method stub
 		
 	}
+	public class FirstRequestTask extends AsyncTask<String, integer, String> {
+        private String pos_x,pos_y;
+		@Override
+		protected String doInBackground(String... params) {
+			// TODO Auto-generated method stub
+			pos_x = params[0];
+			pos_y = params[1];
+			return connect.GetCurrentAddress(params[0], params[1]);
+		}
 
+		@Override
+		protected void onPostExecute(String result) {
+
+			if (result == null) {
+			//	cityTextView.setText("åœ°ç‚¹æœªçŸ¥");
+				Toast.makeText(getApplicationContext(), "æŠ±æ­‰ï¼Œæš‚æ—¶æ— æ³•å¾—åˆ°æ‚¨çš„ä½ç½®", Toast.LENGTH_SHORT).show();
+			} else {
+				try {
+					Log.i("ADDRESS REQUEST", result);
+					JSONObject jsonObject = new JSONObject(result);
+					JSONObject jsonResult = new JSONObject(
+							jsonObject.getString("result"));
+					// Toast.makeText(getApplicationContext(),
+					// jsonResult.getString("formatted_address"),
+					// Toast.LENGTH_LONG).show();
+					// cityTextView.setText(jsonResult
+					// .getString("city"));
+					
+						city = null;
+						String addressComponent = jsonResult
+								.getString("addressComponent");
+						JSONObject address = new JSONObject(addressComponent);
+						city = new String(address.getString("city"));
+						Log.i("city_in asynctask", city);
+						//cityTextView.setText(city);
+						userInfo.edit().putString("city", city).commit();
+						count_city++;
+						
+						userInfo.edit().putInt("count_city", count_city)
+								.commit();
+						Toast.makeText(getApplicationContext(), "ç³»ç»Ÿæ£€æµ‹æ‚¨åœ¨" + city + "\næˆ‘ä»¬å·²å°†"+city +"è®¾ä¸ºæ‚¨çš„é»˜è®¤åŸå¸‚", Toast.LENGTH_SHORT).show();
+						ProfileFragment fragment = (ProfileFragment)getSupportFragmentManager().findFragmentById(R.id.menu_right);
+//						fragment.new AddressRequestTask().execute(String.valueOf(lat),
+//								String.valueOf(lng));
+						fragment.setCity(city);
+						
+						new getCurrentCircle().execute(String.valueOf(pos_x),
+								String.valueOf(pos_y),city);
+					
+				
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+
+		}
+	}
 }

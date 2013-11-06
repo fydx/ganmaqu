@@ -57,38 +57,38 @@ import com.baidu.mapapi.search.MKWalkingRouteResult;
 import com.baidu.platform.comapi.basestruct.GeoPoint;
 
 public class NewMapActivity extends Activity {
-	MapView mMapView = null; // µØÍ¼View
-	// UIÏà¹Ø
-	Button mBtnReverseGeoCode = null; // ½«×ø±ê·´±àÂëÎªµØÖ·
-	Button mBtnGeoCode = null; // ½«µØÖ·±àÂëÎª×ø±ê
+	MapView mMapView = null; // åœ°å›¾View
+	// UIç›¸å…³
+	Button mBtnReverseGeoCode = null; // å°†åæ ‡åç¼–ç ä¸ºåœ°å€
+	Button mBtnGeoCode = null; // å°†åœ°å€ç¼–ç ä¸ºåæ ‡
 	private Button preButton, nextButton;
-	MKSearch mSearch = null; // ËÑË÷Ä£¿é£¬Ò²¿ÉÈ¥µôµØÍ¼Ä£¿é¶ÀÁ¢Ê¹ÓÃ
+	MKSearch mSearch = null; // æœç´¢æ¨¡å—ï¼Œä¹Ÿå¯å»æ‰åœ°å›¾æ¨¡å—ç‹¬ç«‹ä½¿ç”¨
 	ArrayList<MKPoiInfo> mkpoi = null;
 	private OverlayTest itemOverlay = null;
 	private List<place> places;
 	private GeoPoint locGeoPoint;
 	private List<GeoPoint> geoPoints;
 	private PopupWindow mPopupWindow ;
-	private int searchType = -1;// ¼ÇÂ¼ËÑË÷µÄÀàĞÍ£¬Çø·Ö¼İ³µ/²½ĞĞºÍ¹«½»
+	private int searchType = -1;// è®°å½•æœç´¢çš„ç±»å‹ï¼ŒåŒºåˆ†é©¾è½¦/æ­¥è¡Œå’Œå…¬äº¤
 	String tmp = null;
 	RouteOverlay routeOverlay = null;
-	// ¶¨Î»Ïà¹Ø
+	// å®šä½ç›¸å…³
 	LocationClient mLocClient;
 	LocationData locData = null;
 	public MyLocationListenner myListener = new MyLocationListenner();
-	// ¶¨Î»Í¼²ã
+	// å®šä½å›¾å±‚
 	MyLocationOverlay myLocationOverlay = null;
-	// UIÏà¹Ø
+	// UIç›¸å…³
 	OnCheckedChangeListener radioButtonListener = null;
 	private int countRoute = 0,isFindBus = 0;
-	boolean isRequest = false;// ÊÇ·ñÊÖ¶¯´¥·¢ÇëÇó¶¨Î»
-	boolean isFirstLoc = true;// ÊÇ·ñÊ×´Î¶¨Î»
+	boolean isRequest = false;// æ˜¯å¦æ‰‹åŠ¨è§¦å‘è¯·æ±‚å®šä½
+	boolean isFirstLoc = true;// æ˜¯å¦é¦–æ¬¡å®šä½
 	private Button requestLocButton = null;
-	// ¹«½»Â·ÏßÏà¹Ø
-	TransitOverlay transitOverlay = null;// ±£´æ¹«½»Â·ÏßÍ¼²ãÊı¾İµÄ±äÁ¿£¬¹©ä¯ÀÀ½ÚµãÊ±Ê¹ÓÃ
+	// å…¬äº¤è·¯çº¿ç›¸å…³
+	TransitOverlay transitOverlay = null;// ä¿å­˜å…¬äº¤è·¯çº¿å›¾å±‚æ•°æ®çš„å˜é‡ï¼Œä¾›æµè§ˆèŠ‚ç‚¹æ—¶ä½¿ç”¨
 
 	/**
-	 * ÓÃMapControllerÍê³ÉµØÍ¼¿ØÖÆ
+	 * ç”¨MapControllerå®Œæˆåœ°å›¾æ§åˆ¶
 	 */
 	private MapController mMapController = null;
 	private MyOverlay mOverlay = null;
@@ -114,17 +114,17 @@ public class NewMapActivity extends Activity {
 		DemoApplication app = (DemoApplication) this.getApplication();
 		final int markers_id[] = { R.drawable.icon_1, R.drawable.icon_2,
 				R.drawable.icon_3, R.drawable.icon_4, R.drawable.icon_5 };
-		// BMapManager ±ØĞëÔÚsetContentviewÇ°Ãæ³õÊ¼»¯£¬·ñÔò±¨´í
+		// BMapManager å¿…é¡»åœ¨setContentviewå‰é¢åˆå§‹åŒ–ï¼Œå¦åˆ™æŠ¥é”™
 		if (app.mBMapManager == null) {
 			app.mBMapManager = new BMapManager(this);
 			app.mBMapManager.init(DemoApplication.strKey,
 					new DemoApplication.MyGeneralListener());
 		}
 		setContentView(R.layout.activity_new_map);
-		//³õÊ¼»¯sharedpreference
+		//åˆå§‹åŒ–sharedpreference
 		userInfo = getApplicationContext().getSharedPreferences("userInfo", 0);
 		mode = userInfo.getInt("mode", 0);
-		city = userInfo.getString("city", "Î÷°²ÊĞ");
+		city = userInfo.getString("city", "è¥¿å®‰å¸‚");
 		places = (List<place>) getIntent().getSerializableExtra("places");
 		Log.i("places nums", String.valueOf(places.size()));
 		requestLocButton = (Button) findViewById(R.id.button_loc);
@@ -143,7 +143,7 @@ public class NewMapActivity extends Activity {
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				if (countRoute < 0) {
-					Toast.makeText(getApplicationContext(), "ÕâÊÇµÚÒ»ÌõÂ·Ïß",
+					Toast.makeText(getApplicationContext(), "è¿™æ˜¯ç¬¬ä¸€æ¡è·¯çº¿",
 							Toast.LENGTH_SHORT).show();
 					countRoute = 0;
 					if (routeOverlay != null) {
@@ -182,34 +182,34 @@ public class NewMapActivity extends Activity {
 				countRoute++;
 				if (countRoute > 3) {
 					countRoute = 3;
-					Toast.makeText(getApplicationContext(), "ÕâÊÇ×îºóÒ»ÌõÂ·ÏßÁË",
+					Toast.makeText(getApplicationContext(), "è¿™æ˜¯æœ€åä¸€æ¡è·¯çº¿äº†",
 							Toast.LENGTH_SHORT).show();
 				}
 			}
 		});
 		
 		mkpoi = new ArrayList<MKPoiInfo>();
-		// µØÍ¼³õÊ¼»¯
+		// åœ°å›¾åˆå§‹åŒ–
 		mMapView = (MapView) findViewById(R.id.bmapsView);
 		/**
-		 * »ñÈ¡µØÍ¼¿ØÖÆÆ÷
+		 * è·å–åœ°å›¾æ§åˆ¶å™¨
 		 */
 		mMapController = mMapView.getController();
 		/**
-		 * ÉèÖÃµØÍ¼ÊÇ·ñÏìÓ¦µã»÷ÊÂ¼ş .
+		 * è®¾ç½®åœ°å›¾æ˜¯å¦å“åº”ç‚¹å‡»äº‹ä»¶ .
 		 */
 		mMapController.enableClick(true);
 		/**
-		 * ÉèÖÃµØÍ¼Ëõ·Å¼¶±ğ
+		 * è®¾ç½®åœ°å›¾ç¼©æ”¾çº§åˆ«
 		 */
 		mMapController.setZoom(14);
 		/**
-		 * ÏÔÊ¾ÄÚÖÃËõ·Å¿Ø¼ş
+		 * æ˜¾ç¤ºå†…ç½®ç¼©æ”¾æ§ä»¶
 		 */
 		//mMapView.setBuiltInZoomControls(true);
 
 		/**
-		 * Éè¶¨µØÍ¼ÖĞĞÄµã £¨Î÷°²ÖÓÂ¥£©
+		 * è®¾å®šåœ°å›¾ä¸­å¿ƒç‚¹ ï¼ˆè¥¿å®‰é’Ÿæ¥¼ï¼‰
 		 */
 		GeoPoint p = new GeoPoint((int) (34.265733 * 1E6),
 				(int) (108.953906 * 1E6));
@@ -217,12 +217,12 @@ public class NewMapActivity extends Activity {
 //				(int) (103.833222 * 1E6));
 		mMapController.setCenter(p);
 
-		// ¶¨Î»³õÊ¼»¯
+		// å®šä½åˆå§‹åŒ–
 		initLoc();
-		// ¶¨Î»²¿·Ö½áÊø
+		// å®šä½éƒ¨åˆ†ç»“æŸ
 		// setLocation(103.833222,36.065159);
 
-		// ·â×°µØµã×ø±êµ½listÖĞ
+		// å°è£…åœ°ç‚¹åæ ‡åˆ°listä¸­
 		geoPoints = null;
 		geoPoints = new ArrayList<GeoPoint>();
 		for (int i = 0; i < places.size(); i++) {
@@ -246,10 +246,10 @@ public class NewMapActivity extends Activity {
 		}
 		Log.i("overlay items ", String.valueOf(overlayItems.size()));
 
-		// ´´½¨IteminizedOverlay
+		// åˆ›å»ºIteminizedOverlay
 		itemOverlay = new OverlayTest(markers.get(0), mMapView);
 
-		// ½«IteminizedOverlayÌí¼Óµ½MapViewÖĞ
+		// å°†IteminizedOverlayæ·»åŠ åˆ°MapViewä¸­
 		itemOverlay.addItem(overlayItems);
 
 		// clearOverlay(mMapView);
@@ -267,7 +267,7 @@ public class NewMapActivity extends Activity {
 			}
 		};
 		timer.schedule(timerTask, 100);
-		// ³õÊ¼»¯ËÑË÷Ä£¿é£¬×¢²áÊÂ¼ş¼àÌı
+		// åˆå§‹åŒ–æœç´¢æ¨¡å—ï¼Œæ³¨å†Œäº‹ä»¶ç›‘å¬
 		mSearch = new MKSearch();
 		mSearch.init(app.mBMapManager, new MKSearchListener() {
 
@@ -318,9 +318,9 @@ public class NewMapActivity extends Activity {
 			@Override
 			public void onGetTransitRouteResult(MKTransitRouteResult res,
 					int error) {
-				// Æğµã»òÖÕµãÓĞÆçÒå£¬ĞèÒªÑ¡Ôñ¾ßÌåµÄ³ÇÊĞÁĞ±í»òµØÖ·ÁĞ±í
+				// èµ·ç‚¹æˆ–ç»ˆç‚¹æœ‰æ­§ä¹‰ï¼Œéœ€è¦é€‰æ‹©å…·ä½“çš„åŸå¸‚åˆ—è¡¨æˆ–åœ°å€åˆ—è¡¨
 				if (error == MKEvent.ERROR_ROUTE_ADDR) {
-					// ±éÀúËùÓĞµØÖ·
+					// éå†æ‰€æœ‰åœ°å€
 					// ArrayList<MKPoiInfo> stPois =
 					// res.getAddrResult().mStartPoiList;
 					// ArrayList<MKPoiInfo> enPois =
@@ -332,7 +332,7 @@ public class NewMapActivity extends Activity {
 					return;
 				}
 				if (error != 0 || res == null) {
-					// Toast.makeText(NewMapActivity.this, "±§Ç¸£¬Î´ÕÒµ½½á¹û",
+					// Toast.makeText(NewMapActivity.this, "æŠ±æ­‰ï¼Œæœªæ‰¾åˆ°ç»“æœ",
 					// Toast.LENGTH_SHORT).show();
 					return;
 				}
@@ -340,34 +340,34 @@ public class NewMapActivity extends Activity {
 				searchType = 1;
 				transitOverlay = new TransitOverlay(NewMapActivity.this,
 						mMapView);
-				// ´Ë´¦½öÕ¹Ê¾Ò»¸ö·½°¸×÷ÎªÊ¾Àı
+				// æ­¤å¤„ä»…å±•ç¤ºä¸€ä¸ªæ–¹æ¡ˆä½œä¸ºç¤ºä¾‹
 				transitOverlay.setData(res.getPlan(0));
-				// Çå³ıÆäËûÍ¼²ã
+				// æ¸…é™¤å…¶ä»–å›¾å±‚
 				// mMapView.getOverlays().clear();
-				// Ìí¼ÓÂ·ÏßÍ¼²ã
+				// æ·»åŠ è·¯çº¿å›¾å±‚
 				mMapView.getOverlays().add(transitOverlay);
-				// Ö´ĞĞË¢ĞÂÊ¹ÉúĞ§
+				// æ‰§è¡Œåˆ·æ–°ä½¿ç”Ÿæ•ˆ
 				mMapView.refresh();
-				// Ê¹ÓÃzoomToSpan()ÕÀ·ÅµØÍ¼£¬Ê¹Â·ÏßÄÜÍêÈ«ÏÔÊ¾ÔÚµØÍ¼ÉÏ
+				// ä½¿ç”¨zoomToSpan()ç»½æ”¾åœ°å›¾ï¼Œä½¿è·¯çº¿èƒ½å®Œå…¨æ˜¾ç¤ºåœ¨åœ°å›¾ä¸Š
 				mMapView.getController().zoomToSpan(
 						transitOverlay.getLatSpanE6(),
 						transitOverlay.getLonSpanE6());
-				// ÒÆ¶¯µØÍ¼µ½Æğµã
+				// ç§»åŠ¨åœ°å›¾åˆ°èµ·ç‚¹
 				mMapView.getController().animateTo(res.getStart().pt);
-				// ÖØÖÃÂ·Ïß½ÚµãË÷Òı£¬½Úµãä¯ÀÀÊ±Ê¹ÓÃ
+				// é‡ç½®è·¯çº¿èŠ‚ç‚¹ç´¢å¼•ï¼ŒèŠ‚ç‚¹æµè§ˆæ—¶ä½¿ç”¨
 				// nodeIndex = 0;
 				int num_line = res.getPlan(0).getNumLines() - 1;
 				Log.i("fydx",
-						"ĞèÒªµ¹"
+						"éœ€è¦å€’"
 								+ String.valueOf(res.getPlan(0).getNumLines() - 1)
-								+ "´Î³µ");
+								+ "æ¬¡è½¦");
 
 				if (num_line == 0) {
-					tmp = "´Ó " + res.getPlan(0).getLine(0).getGetOnStop().name
+					tmp = "ä» " + res.getPlan(0).getLine(0).getGetOnStop().name
 							+ " " + res.getPlan(0).getLine(0).getTip();
 				} else {
-					tmp = "´Ó" + res.getPlan(0).getLine(0).getGetOnStop().name
-							+ res.getPlan(0).getLine(0).getTip() + "\nÔÙ"
+					tmp = "ä»" + res.getPlan(0).getLine(0).getGetOnStop().name
+							+ res.getPlan(0).getLine(0).getTip() + "\nå†"
 							+ res.getPlan(0).getLine(1).getTip();
 				}
 //				Toast.makeText(getApplicationContext(), tmp, Toast.LENGTH_SHORT)
@@ -383,7 +383,7 @@ public class NewMapActivity extends Activity {
 					mPopupWindow.dismiss();
 				}
 				if (error == MKEvent.ERROR_ROUTE_ADDR) {
-					// ±éÀúËùÓĞµØÖ·
+					// éå†æ‰€æœ‰åœ°å€
 					// ArrayList<MKPoiInfo> stPois =
 					// res.getAddrResult().mStartPoiList;
 					// ArrayList<MKPoiInfo> enPois =
@@ -395,7 +395,7 @@ public class NewMapActivity extends Activity {
 					return;
 				}
 				if (error != 0 || res == null) {
-					// Toast.makeText(NewMapActivity.this, "±§Ç¸£¬Î´ÕÒµ½½á¹û",
+					// Toast.makeText(NewMapActivity.this, "æŠ±æ­‰ï¼Œæœªæ‰¾åˆ°ç»“æœ",
 					// Toast.LENGTH_SHORT).show();
 					return;
 				}
@@ -410,23 +410,23 @@ public class NewMapActivity extends Activity {
 				searchType = 1;
 				routeOverlay = new RouteOverlay(NewMapActivity.this, mMapView);
 
-				// ´Ë´¦½öÕ¹Ê¾Ò»¸ö·½°¸×÷ÎªÊ¾Àı
+				// æ­¤å¤„ä»…å±•ç¤ºä¸€ä¸ªæ–¹æ¡ˆä½œä¸ºç¤ºä¾‹
 				routeOverlay.setData(res.getPlan(0).getRoute(0));
 				routeOverlay.setEnMarker(getResources().getDrawable(
 						R.drawable.empty));
 				routeOverlay.setStMarker(getResources().getDrawable(
 						R.drawable.empty));
-				// Çå³ıÆäËûÍ¼²ã
+				// æ¸…é™¤å…¶ä»–å›¾å±‚
 				// mMapView.getOverlays().clear();
-				// Ìí¼ÓÂ·ÏßÍ¼²ã
+				// æ·»åŠ è·¯çº¿å›¾å±‚
 				mMapView.getOverlays().add(routeOverlay);
-				// Ö´ĞĞË¢ĞÂÊ¹ÉúĞ§
+				// æ‰§è¡Œåˆ·æ–°ä½¿ç”Ÿæ•ˆ
 				mMapView.refresh();
-				// Ê¹ÓÃzoomToSpan()ÕÀ·ÅµØÍ¼£¬Ê¹Â·ÏßÄÜÍêÈ«ÏÔÊ¾ÔÚµØÍ¼ÉÏ
+				// ä½¿ç”¨zoomToSpan()ç»½æ”¾åœ°å›¾ï¼Œä½¿è·¯çº¿èƒ½å®Œå…¨æ˜¾ç¤ºåœ¨åœ°å›¾ä¸Š
 				mMapView.getController().zoomToSpan(
 						routeOverlay.getLatSpanE6(),
 						routeOverlay.getLonSpanE6());
-				// ÒÆ¶¯µØÍ¼µ½Æğµã
+				// ç§»åŠ¨åœ°å›¾åˆ°èµ·ç‚¹
 				mMapView.getController().animateTo(res.getStart().pt);
 
 			}
@@ -436,13 +436,13 @@ public class NewMapActivity extends Activity {
 	}
 
 	class OverlayTest extends ItemizedOverlay<OverlayItem> {
-		// ÓÃMapView¹¹ÔìItemizedOverlay
+		// ç”¨MapViewæ„é€ ItemizedOverlay
 		public OverlayTest(Drawable mark, MapView mapView) {
 			super(mark, mapView);
 		}
 
 		protected boolean onTap(int index) {
-			// ÔÚ´Ë´¦Àíitemµã»÷ÊÂ¼ş
+			// åœ¨æ­¤å¤„ç†itemç‚¹å‡»äº‹ä»¶
 			System.out.println("item onTap: " + index);
 			Toast.makeText(getApplicationContext(),
 					places.get(index).getShopName(), Toast.LENGTH_LONG).show();
@@ -450,7 +450,7 @@ public class NewMapActivity extends Activity {
 		}
 
 		public boolean onTap(GeoPoint pt, MapView mapView) {
-			// ÔÚ´Ë´¦ÀíMapViewµÄµã»÷ÊÂ¼ş£¬µ±·µ»Ø trueÊ±
+			// åœ¨æ­¤å¤„ç†MapViewçš„ç‚¹å‡»äº‹ä»¶ï¼Œå½“è¿”å› trueæ—¶
 			super.onTap(pt, mapView);
 			return false;
 		}
@@ -482,7 +482,7 @@ public class NewMapActivity extends Activity {
 	}
 
 	/**
-	 * Çå³ıËùÓĞOverlay
+	 * æ¸…é™¤æ‰€æœ‰Overlay
 	 * 
 	 * @param view
 	 */
@@ -498,13 +498,13 @@ public class NewMapActivity extends Activity {
 	}
 
 	/**
-	 * ÖØĞÂÌí¼ÓOverlay
+	 * é‡æ–°æ·»åŠ Overlay
 	 * 
 	 * @param view
 	 */
 	public void resetOverlay(View view) {
 		clearOverlay(null);
-		// ÖØĞÂadd overlay
+		// é‡æ–°add overlay
 		mOverlay.addItem(mItems);
 		mMapView.refresh();
 	}
@@ -524,7 +524,7 @@ public class NewMapActivity extends Activity {
 	@Override
 	protected void onDestroy() {
 		mMapView.destroy();
-		// ÍË³öÊ±Ïú»Ù¶¨Î»
+		// é€€å‡ºæ—¶é”€æ¯å®šä½
 		if (mLocClient != null)
 			mLocClient.stop();
 
@@ -550,7 +550,7 @@ public class NewMapActivity extends Activity {
 	}
 
 	/**
-	 * ¶¨Î»SDK¼àÌıº¯Êı
+	 * å®šä½SDKç›‘å¬å‡½æ•°
 	 */
 	public class MyLocationListenner implements BDLocationListener {
 
@@ -561,16 +561,16 @@ public class NewMapActivity extends Activity {
 
 			locData.latitude = location.getLatitude();
 			locData.longitude = location.getLongitude();
-			// Èç¹û²»ÏÔÊ¾¶¨Î»¾«¶ÈÈ¦£¬½«accuracy¸³ÖµÎª0¼´¿É
+			// å¦‚æœä¸æ˜¾ç¤ºå®šä½ç²¾åº¦åœˆï¼Œå°†accuracyèµ‹å€¼ä¸º0å³å¯
 			locData.accuracy = location.getRadius();
 			locData.direction = location.getDerect();
-			// ¸üĞÂ¶¨Î»Êı¾İ
+			// æ›´æ–°å®šä½æ•°æ®
 			myLocationOverlay.setData(locData);
-			// ¸üĞÂÍ¼²ãÊı¾İÖ´ĞĞË¢ĞÂºóÉúĞ§
+			// æ›´æ–°å›¾å±‚æ•°æ®æ‰§è¡Œåˆ·æ–°åç”Ÿæ•ˆ
 			mMapView.refresh();
-			// ÊÇÊÖ¶¯´¥·¢ÇëÇó»òÊ×´Î¶¨Î»Ê±£¬ÒÆ¶¯µ½¶¨Î»µã
+			// æ˜¯æ‰‹åŠ¨è§¦å‘è¯·æ±‚æˆ–é¦–æ¬¡å®šä½æ—¶ï¼Œç§»åŠ¨åˆ°å®šä½ç‚¹
 			if (isRequest || isFirstLoc) {
-				// ÒÆ¶¯µØÍ¼µ½¶¨Î»µã
+				// ç§»åŠ¨åœ°å›¾åˆ°å®šä½ç‚¹
 				locGeoPoint = new GeoPoint((int) (locData.latitude * 1e6),
 						(int) (locData.longitude * 1e6));
 				mMapController.animateTo(locGeoPoint);
@@ -578,7 +578,7 @@ public class NewMapActivity extends Activity {
 
 				isRequest = false;
 			}
-			// Ê×´Î¶¨Î»Íê³É
+			// é¦–æ¬¡å®šä½å®Œæˆ
 			isFirstLoc = false;
 
 		}
@@ -613,48 +613,48 @@ public class NewMapActivity extends Activity {
 	}
 
 	/**
-	 * ¶¨Î»·½·¨
+	 * å®šä½æ–¹æ³•
 	 */
 	public void initLoc() {
-		// ¶¨Î»³õÊ¼»¯
+		// å®šä½åˆå§‹åŒ–
 		mLocClient = new LocationClient(getApplicationContext());
 
 		locData = new LocationData();
 		mLocClient.registerLocationListener(myListener);
 		LocationClientOption option = new LocationClientOption();
-		option.setOpenGps(true);// ´ò¿ªgps
-		option.setCoorType("bd09ll"); // ÉèÖÃ×ø±êÀàĞÍ
+		option.setOpenGps(true);// æ‰“å¼€gps
+		option.setCoorType("bd09ll"); // è®¾ç½®åæ ‡ç±»å‹
 		option.setScanSpan(5000);
 		mLocClient.setLocOption(option);
 		mLocClient.start();
 
-		// ¶¨Î»Í¼²ã³õÊ¼»¯
+		// å®šä½å›¾å±‚åˆå§‹åŒ–
 		myLocationOverlay = new MyLocationOverlay(mMapView);
-		// ÉèÖÃ¶¨Î»Êı¾İ
+		// è®¾ç½®å®šä½æ•°æ®
 		myLocationOverlay.setData(locData);
 
-		// Ìí¼Ó¶¨Î»Í¼²ã
+		// æ·»åŠ å®šä½å›¾å±‚
 		mMapView.getOverlays().add(myLocationOverlay);
 		// Toast.makeText(getApplicationContext(),
 		// String.valueOf(locData.longitude) + "  " +
 		// String.valueOf(locData.latitude), Toast.LENGTH_SHORT).show();
 		myLocationOverlay.enableCompass();
-		// ĞŞ¸Ä¶¨Î»Êı¾İºóË¢ĞÂÍ¼²ãÉúĞ§
+		// ä¿®æ”¹å®šä½æ•°æ®ååˆ·æ–°å›¾å±‚ç”Ÿæ•ˆ
 		mMapView.refresh();
 	}
 
 	/**
-	 * ÊÖ¶¯´¥·¢Ò»´Î¶¨Î»ÇëÇó
+	 * æ‰‹åŠ¨è§¦å‘ä¸€æ¬¡å®šä½è¯·æ±‚
 	 */
 	public void requestLocClick() {
 		isRequest = true;
 		mLocClient.requestLocation();
-		Toast.makeText(NewMapActivity.this, "ÕıÔÚ¶¨Î»¡­¡­", Toast.LENGTH_SHORT)
+		Toast.makeText(NewMapActivity.this, "æ­£åœ¨å®šä½â€¦â€¦", Toast.LENGTH_SHORT)
 				.show();
 	}
 
 	/**
-	 * ³õÊ¼»¯¹«½»Â·Ïß
+	 * åˆå§‹åŒ–å…¬äº¤è·¯çº¿
 	 */
 	public void initBusLine() {
 		MKPlanNode start = new MKPlanNode();

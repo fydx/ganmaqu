@@ -71,7 +71,7 @@ public class CircleDialog extends Dialog {
 	        setCustomView();  
 	    }  
 	/** 
-     * ÉèÖÃÕû¸öµ¯³ö¿òµÄÊÓÍ¼ 
+     * è®¾ç½®æ•´ä¸ªå¼¹å‡ºæ¡†çš„è§†å›¾ 
      */  
     private void setCustomView(){  
         View mView = LayoutInflater.from(getContext()).inflate(R.layout.dialog_main_circles, null);  
@@ -86,8 +86,8 @@ public class CircleDialog extends Dialog {
     }  
     @Override  
     public void setContentView(View view){  
-        //ÖØĞ´±¾·½·¨£¬Ê¹Íâ²¿µ÷ÓÃÊ±²»¿ÉÆÆ»µ¿Ø¼şµÄÊÓÍ¼¡£  
-        //Ò²¿ÉÒÔÊ¹ÓÃ±¾·½·¨¸Ä±äCustomDialogµÄÄÚÈİ²¿·ÖÊÓÍ¼£¬±ÈÈçÈÃÓÃ»§°ÑÄÚÈİÊÓÍ¼±ä³É¸´Ñ¡¿òÁĞ±í£¬Í¼Æ¬µÈ¡£ÕâĞèÒª»ñÈ¡mViewÊÓÍ¼ÀïµÄÆäËü¿Ø¼ş  
+        //é‡å†™æœ¬æ–¹æ³•ï¼Œä½¿å¤–éƒ¨è°ƒç”¨æ—¶ä¸å¯ç ´åæ§ä»¶çš„è§†å›¾ã€‚  
+        //ä¹Ÿå¯ä»¥ä½¿ç”¨æœ¬æ–¹æ³•æ”¹å˜CustomDialogçš„å†…å®¹éƒ¨åˆ†è§†å›¾ï¼Œæ¯”å¦‚è®©ç”¨æˆ·æŠŠå†…å®¹è§†å›¾å˜æˆå¤é€‰æ¡†åˆ—è¡¨ï¼Œå›¾ç‰‡ç­‰ã€‚è¿™éœ€è¦è·å–mViewè§†å›¾é‡Œçš„å…¶å®ƒæ§ä»¶  
     	 
     }  
     public class GridAdapter extends BaseAdapter {

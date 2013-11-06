@@ -34,7 +34,7 @@ public class RouteListActivity extends Activity {
 		User user = db_user.findById(1, User.class);
 		int route_num = user.getRoute_num() ;
 		/**
-		 * ÓÉÓÚÏÖÔÚÊı¾İ¿âUserÊÇ (1,1)£¬so£¬k´Ó1¿ªÊ¼£¬ÒòÎªÒÑ¾­¼ÓÁË1£¬ËùÒÔk´Ó2¿ªÊ¼£¬ÖÕÖ¹ÖµÊÇgetRoute_num
+		 * ç”±äºç°åœ¨æ•°æ®åº“Useræ˜¯ (1,1)ï¼Œsoï¼Œkä»1å¼€å§‹ï¼Œå› ä¸ºå·²ç»åŠ äº†1ï¼Œæ‰€ä»¥kä»2å¼€å§‹ï¼Œç»ˆæ­¢å€¼æ˜¯getRoute_num
 		 */
 		
 		for (int k = 2; k <= route_num; k++) {

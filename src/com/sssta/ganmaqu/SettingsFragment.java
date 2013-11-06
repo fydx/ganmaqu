@@ -40,7 +40,7 @@ public class SettingsFragment extends android.support.v4.app.Fragment {
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
-		// »ñÈ¡µ½¸¸ActivityµÄÒıÓÃ¡£
+		// è·å–åˆ°çˆ¶Activityçš„å¼•ç”¨ã€‚
 	}
 
 	@Override
@@ -101,7 +101,7 @@ public class SettingsFragment extends android.support.v4.app.Fragment {
 			}
 		});
 		if (!userInfo.getString("userid", "NULL").equals("NULL")) {
-			button_account.setText("ÒÑµÇÂ¼ : " + username_init);
+			button_account.setText("å·²ç™»å½• : " + username_init);
 		}
 		button_account.setOnClickListener(new OnClickListener() {
 
@@ -116,15 +116,15 @@ public class SettingsFragment extends android.support.v4.app.Fragment {
 
 				/*
 				 * AlertDialog dialog = new
-				 * AlertDialog.Builder(view.getContext()) .setTitle("µÇÂ¼ÌáÊ¾")
-				 * .setMessage("ÊÇ·ñµÇÂ¼") .setPositiveButton("È·¶¨", new
+				 * AlertDialog.Builder(view.getContext()) .setTitle("ç™»å½•æç¤º")
+				 * .setMessage("æ˜¯å¦ç™»å½•") .setPositiveButton("ç¡®å®š", new
 				 * DialogInterface.OnClickListener() { ProgressDialog p_dialog;
 				 * 
 				 * @Override public void onClick(DialogInterface dialog, int
 				 * which) { // TODO Auto-generated method stub
 				 * 
 				 * 
-				 * } }) .setNegativeButton("ÍË³ö", new
+				 * } }) .setNegativeButton("é€€å‡º", new
 				 * DialogInterface.OnClickListener() {
 				 * 
 				 * @Override public void onClick(DialogInterface dialog, int
@@ -147,9 +147,9 @@ public class SettingsFragment extends android.support.v4.app.Fragment {
 		LayoutInflater factory = LayoutInflater.from(view.getContext());
 		final View DialogView = factory.inflate(R.layout.dialog_login, null);
 		AlertDialog dlg = new AlertDialog.Builder(view.getContext())
-				.setTitle("µÇÂ½¿ò")
+				.setTitle("ç™»é™†æ¡†")
 				.setView(DialogView)
-				.setPositiveButton("È·¶¨", new DialogInterface.OnClickListener() {
+				.setPositiveButton("ç¡®å®š", new DialogInterface.OnClickListener() {
 					ProgressDialog p_dialog;
 
 					@Override
@@ -159,7 +159,7 @@ public class SettingsFragment extends android.support.v4.app.Fragment {
 						// method
 						// stub
 						p_dialog = ProgressDialog.show(view.getContext(),
-								"ÇëµÈ´ı", "ÕıÔÚÎªÄúµÇÂ¼...", true);
+								"è¯·ç­‰å¾…", "æ­£åœ¨ä¸ºæ‚¨ç™»å½•...", true);
 						new Thread() {
 							public void run() {
 								try {
@@ -185,7 +185,7 @@ public class SettingsFragment extends android.support.v4.app.Fragment {
 						}.start();
 					}
 				})
-				.setNegativeButton("×¢²á", new DialogInterface.OnClickListener() {
+				.setNegativeButton("æ³¨å†Œ", new DialogInterface.OnClickListener() {
 
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
@@ -204,9 +204,9 @@ public class SettingsFragment extends android.support.v4.app.Fragment {
 	{
 		LayoutInflater factory = LayoutInflater.from(view.getContext());
 		AlertDialog dlg = new AlertDialog.Builder(view.getContext())
-				.setTitle("ÌáÊ¾")
-				.setMessage("È·ÈÏµÇ³öÂğ£¿")
-				.setPositiveButton("È·ÈÏ", new DialogInterface.OnClickListener() {
+				.setTitle("æç¤º")
+				.setMessage("ç¡®è®¤ç™»å‡ºå—ï¼Ÿ")
+				.setPositiveButton("ç¡®è®¤", new DialogInterface.OnClickListener() {
 
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
@@ -214,11 +214,11 @@ public class SettingsFragment extends android.support.v4.app.Fragment {
 						userInfo.edit().clear().commit();
 						Button accountButton = (Button) view
 								.findViewById(R.id.button_account);
-						accountButton.setText("ÕË»§ÉèÖÃ");
+						accountButton.setText("è´¦æˆ·è®¾ç½®");
 					}
 
 				})
-				.setNegativeButton("È¡Ïû", new DialogInterface.OnClickListener() {
+				.setNegativeButton("å–æ¶ˆ", new DialogInterface.OnClickListener() {
 
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
@@ -234,9 +234,9 @@ public class SettingsFragment extends android.support.v4.app.Fragment {
 		LayoutInflater factory = LayoutInflater.from(view.getContext());
 		final View DialogView = factory.inflate(R.layout.dialog_login, null);
 		AlertDialog dlg = new AlertDialog.Builder(view.getContext())
-				.setTitle("×¢²á")
+				.setTitle("æ³¨å†Œ")
 				.setView(DialogView)
-				.setPositiveButton("È·¶¨", new DialogInterface.OnClickListener() {
+				.setPositiveButton("ç¡®å®š", new DialogInterface.OnClickListener() {
 					ProgressDialog p_dialog;
 
 					@Override
@@ -246,7 +246,7 @@ public class SettingsFragment extends android.support.v4.app.Fragment {
 						// method
 						// stub
 						p_dialog = ProgressDialog.show(view.getContext(),
-								"ÇëµÈ´ı", "ÕıÔÚÎªÄú×¢²á...", true);
+								"è¯·ç­‰å¾…", "æ­£åœ¨ä¸ºæ‚¨æ³¨å†Œ...", true);
 						new Thread() {
 							public void run() {
 								try {
@@ -272,7 +272,7 @@ public class SettingsFragment extends android.support.v4.app.Fragment {
 						}.start();
 					}
 				})
-				.setNegativeButton("È¡Ïû", new DialogInterface.OnClickListener() {
+				.setNegativeButton("å–æ¶ˆ", new DialogInterface.OnClickListener() {
 
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
@@ -299,14 +299,14 @@ public class SettingsFragment extends android.support.v4.app.Fragment {
 		@Override
 		protected void onPostExecute(String result) {
 			if (result.equals("login success")) {
-				Toast.makeText(view.getContext(), "µÇÂ½³É¹¦", Toast.LENGTH_SHORT)
+				Toast.makeText(view.getContext(), "ç™»é™†æˆåŠŸ", Toast.LENGTH_SHORT)
 						.show();
 				Button button_account = (Button) view
 						.findViewById(R.id.button_account);
-				button_account.setText("ÒÑµÇÂ¼ : " + username);
+				button_account.setText("å·²ç™»å½• : " + username);
 				userInfo.edit().putString("userid", username).commit();
 			} else {
-				Toast.makeText(view.getContext(), "µÇÂ¼Ê§°Ü\n" + "Ô­Òò" + result,
+				Toast.makeText(view.getContext(), "ç™»å½•å¤±è´¥\n" + "åŸå› " + result,
 						Toast.LENGTH_SHORT).show();
 			}
 		}
@@ -326,14 +326,14 @@ public class SettingsFragment extends android.support.v4.app.Fragment {
 		@Override
 		protected void onPostExecute(String result) {
 			if (result.equals("register successful")) {
-				Toast.makeText(view.getContext(), "×¢²á³É¹¦", Toast.LENGTH_SHORT)
+				Toast.makeText(view.getContext(), "æ³¨å†ŒæˆåŠŸ", Toast.LENGTH_SHORT)
 						.show();
 				Button button_account = (Button) view
 						.findViewById(R.id.button_account);
-				button_account.setText("ÒÑµÇÂ¼ : " + username);
+				button_account.setText("å·²ç™»å½• : " + username);
 				userInfo.edit().putString("userid", username).commit();
 			} else {
-				Toast.makeText(view.getContext(), "×¢²áÊ§°Ü\n" + "Ô­Òò" + result,
+				Toast.makeText(view.getContext(), "æ³¨å†Œå¤±è´¥\n" + "åŸå› " + result,
 						Toast.LENGTH_SHORT).show();
 			}
 		}
@@ -342,51 +342,51 @@ public class SettingsFragment extends android.support.v4.app.Fragment {
 	public void share() {
 		OnekeyShare oks = new OnekeyShare();
 
-		// ·ÖÏíÊ±NotificationµÄÍ¼±êºÍÎÄ×Ö
+		// åˆ†äº«æ—¶Notificationçš„å›¾æ ‡å’Œæ–‡å­—
 		oks.setNotification(R.drawable.ic_launcher, view.getContext()
 				.getString(R.string.app_name));
-		// addressÊÇ½ÓÊÕÈËµØÖ·£¬½öÔÚĞÅÏ¢ºÍÓÊ¼şÊ¹ÓÃ
+		// addressæ˜¯æ¥æ”¶äººåœ°å€ï¼Œä»…åœ¨ä¿¡æ¯å’Œé‚®ä»¶ä½¿ç”¨
 		oks.setAddress("12345678901");
-		// title±êÌâ£¬Ó¡Ïó±Ê¼Ç¡¢ÓÊÏä¡¢ĞÅÏ¢¡¢Î¢ĞÅ¡¢ÈËÈËÍøºÍQQ¿Õ¼äÊ¹ÓÃ
+		// titleæ ‡é¢˜ï¼Œå°è±¡ç¬”è®°ã€é‚®ç®±ã€ä¿¡æ¯ã€å¾®ä¿¡ã€äººäººç½‘å’ŒQQç©ºé—´ä½¿ç”¨
 		oks.setTitle(view.getContext().getString(R.string.share));
-		// titleUrlÊÇ±êÌâµÄÍøÂçÁ´½Ó£¬½öÔÚÈËÈËÍøºÍQQ¿Õ¼äÊ¹ÓÃ
+		// titleUrlæ˜¯æ ‡é¢˜çš„ç½‘ç»œé“¾æ¥ï¼Œä»…åœ¨äººäººç½‘å’ŒQQç©ºé—´ä½¿ç”¨
 		oks.setTitleUrl("http://sharesdk.cn");
-		// textÊÇ·ÖÏíÎÄ±¾£¬ËùÓĞÆ½Ì¨¶¼ĞèÒªÕâ¸ö×Ö¶Î
+		// textæ˜¯åˆ†äº«æ–‡æœ¬ï¼Œæ‰€æœ‰å¹³å°éƒ½éœ€è¦è¿™ä¸ªå­—æ®µ
 		oks.setText("ganmaqu");
-		// imagePathÊÇÍ¼Æ¬µÄ±¾µØÂ·¾¶£¬Linked-InÒÔÍâµÄÆ½Ì¨¶¼Ö§³Ö´Ë²ÎÊı
+		// imagePathæ˜¯å›¾ç‰‡çš„æœ¬åœ°è·¯å¾„ï¼ŒLinked-Inä»¥å¤–çš„å¹³å°éƒ½æ”¯æŒæ­¤å‚æ•°
 		// oks.setImagePath(MainActivity.TEST_IMAGE);
-		// imageUrlÊÇÍ¼Æ¬µÄÍøÂçÂ·¾¶£¬ĞÂÀËÎ¢²©¡¢ÈËÈËÍø¡¢QQ¿Õ¼ä¡¢
-		// Î¢ĞÅµÄÁ½¸öÆ½Ì¨¡¢Linked-InÖ§³Ö´Ë×Ö¶Î
+		// imageUrlæ˜¯å›¾ç‰‡çš„ç½‘ç»œè·¯å¾„ï¼Œæ–°æµªå¾®åšã€äººäººç½‘ã€QQç©ºé—´ã€
+		// å¾®ä¿¡çš„ä¸¤ä¸ªå¹³å°ã€Linked-Inæ”¯æŒæ­¤å­—æ®µ
 		// oks.setImageUrl("http://sharesdk.cn/ rest.png");
-		// url½öÔÚÎ¢ĞÅ£¨°üÀ¨ºÃÓÑºÍÅóÓÑÈ¦£©ÖĞÊ¹ÓÃ
+		// urlä»…åœ¨å¾®ä¿¡ï¼ˆåŒ…æ‹¬å¥½å‹å’Œæœ‹å‹åœˆï¼‰ä¸­ä½¿ç”¨
 		oks.setUrl("http://sharesdk.cn");
-		// appPathÊÇ´ı·ÖÏíÓ¦ÓÃ³ÌĞòµÄ±¾µØÂ·¾¢£¬½öÔÚÎ¢ĞÅÖĞÊ¹ÓÃ
+		// appPathæ˜¯å¾…åˆ†äº«åº”ç”¨ç¨‹åºçš„æœ¬åœ°è·¯åŠ²ï¼Œä»…åœ¨å¾®ä¿¡ä¸­ä½¿ç”¨
 		// oks.setAppPath(MainActivity.TEST_IMAGE);
-		// commentÊÇÎÒ¶ÔÕâÌõ·ÖÏíµÄÆÀÂÛ£¬½öÔÚÈËÈËÍøºÍQQ¿Õ¼äÊ¹ÓÃ
+		// commentæ˜¯æˆ‘å¯¹è¿™æ¡åˆ†äº«çš„è¯„è®ºï¼Œä»…åœ¨äººäººç½‘å’ŒQQç©ºé—´ä½¿ç”¨
 		oks.setComment(view.getContext().getString(R.string.share));
-		// siteÊÇ·ÖÏí´ËÄÚÈİµÄÍøÕ¾Ãû³Æ£¬½öÔÚQQ¿Õ¼äÊ¹ÓÃ
+		// siteæ˜¯åˆ†äº«æ­¤å†…å®¹çš„ç½‘ç«™åç§°ï¼Œä»…åœ¨QQç©ºé—´ä½¿ç”¨
 		oks.setSite(view.getContext().getString(R.string.app_name));
-		// siteUrlÊÇ·ÖÏí´ËÄÚÈİµÄÍøÕ¾µØÖ·£¬½öÔÚQQ¿Õ¼äÊ¹ÓÃ
+		// siteUrlæ˜¯åˆ†äº«æ­¤å†…å®¹çš„ç½‘ç«™åœ°å€ï¼Œä»…åœ¨QQç©ºé—´ä½¿ç”¨
 		oks.setSiteUrl("http://sharesdk.cn");
-		// venueNameÊÇ·ÖÏíÉçÇøÃû³Æ£¬½öÔÚFoursquareÊ¹ÓÃ
+		// venueNameæ˜¯åˆ†äº«ç¤¾åŒºåç§°ï¼Œä»…åœ¨Foursquareä½¿ç”¨
 		oks.setVenueName("Southeast in China");
-		// venueDescriptionÊÇ·ÖÏíÉçÇøÃèÊö£¬½öÔÚFoursquareÊ¹ÓÃ
+		// venueDescriptionæ˜¯åˆ†äº«ç¤¾åŒºæè¿°ï¼Œä»…åœ¨Foursquareä½¿ç”¨
 		oks.setVenueDescription("This is a beautiful place!");
-		// latitudeÊÇÎ¬¶ÈÊı¾İ£¬½öÔÚĞÂÀËÎ¢²©¡¢ÌÚÑ¶Î¢²©ºÍFoursquareÊ¹ÓÃ
+		// latitudeæ˜¯ç»´åº¦æ•°æ®ï¼Œä»…åœ¨æ–°æµªå¾®åšã€è…¾è®¯å¾®åšå’ŒFoursquareä½¿ç”¨
 		// oks.setLatitude(23.122619f);
-		// longitudeÊÇ¾­¶ÈÊı¾İ£¬½öÔÚĞÂÀËÎ¢²©¡¢ÌÚÑ¶Î¢²©ºÍFoursquareÊ¹ÓÃ
+		// longitudeæ˜¯ç»åº¦æ•°æ®ï¼Œä»…åœ¨æ–°æµªå¾®åšã€è…¾è®¯å¾®åšå’ŒFoursquareä½¿ç”¨
 		// oks.setLongitude(113.372338f);
-		// ÊÇ·ñÖ±½Ó·ÖÏí£¨trueÔòÖ±½Ó·ÖÏí£©
+		// æ˜¯å¦ç›´æ¥åˆ†äº«ï¼ˆtrueåˆ™ç›´æ¥åˆ†äº«ï¼‰
 		oks.setSilent(false);
-		// Ö¸¶¨·ÖÏíÆ½Ì¨£¬ºÍslientÒ»ÆğÊ¹ÓÃ¿ÉÒÔÖ±½Ó·ÖÏíµ½Ö¸¶¨µÄÆ½Ì¨
+		// æŒ‡å®šåˆ†äº«å¹³å°ï¼Œå’Œslientä¸€èµ·ä½¿ç”¨å¯ä»¥ç›´æ¥åˆ†äº«åˆ°æŒ‡å®šçš„å¹³å°
 		Platform platform = ShareSDK.getPlatform(view.getContext(),
 				SinaWeibo.NAME);
 		if (platform != null) {
 			oks.setPlatform(SinaWeibo.NAME);
 		}
-		// È¥³ı×¢ÊÍ¿ÉÍ¨¹ıOneKeyShareCallbackÀ´²¶»ñ¿ì½İ·ÖÏíµÄ´¦Àí½á¹û
+		// å»é™¤æ³¨é‡Šå¯é€šè¿‡OneKeyShareCallbackæ¥æ•è·å¿«æ·åˆ†äº«çš„å¤„ç†ç»“æœ
 		// oks.setCallback(new OneKeyShareCallback());
-		// Í¨¹ıOneKeyShareCallbackÀ´ĞŞ¸Ä²»Í¬Æ½Ì¨·ÖÏíµÄÄÚÈİ
+		// é€šè¿‡OneKeyShareCallbackæ¥ä¿®æ”¹ä¸åŒå¹³å°åˆ†äº«çš„å†…å®¹
 		oks.setShareContentCustomizeCallback(
 
 		new ShareContentCustomizeCallback() {
@@ -404,12 +404,12 @@ public class SettingsFragment extends android.support.v4.app.Fragment {
 	public void shareWeibo() {
 		Platform.ShareParams sp = new SinaWeibo.ShareParams();
 		sp.text = "ganmaqu";
-		// sp.imagePath = ¡°/mnt/sdcard/²âÊÔ·ÖÏíµÄÍ¼Æ¬.jpg¡±;
+		// sp.imagePath = â€œ/mnt/sdcard/æµ‹è¯•åˆ†äº«çš„å›¾ç‰‡.jpgâ€;
 
 		Platform weibo = ShareSDK
 				.getPlatform(view.getContext(), SinaWeibo.NAME);
-		// weibo.setPlatformActionListener(paListener); // ÉèÖÃ·ÖÏíÊÂ¼ş»Øµ÷
-		// Ö´ĞĞÍ¼ÎÄ·ÖÏí
+		// weibo.setPlatformActionListener(paListener); // è®¾ç½®åˆ†äº«äº‹ä»¶å›è°ƒ
+		// æ‰§è¡Œå›¾æ–‡åˆ†äº«
 		weibo.share(sp);
 	}
 }

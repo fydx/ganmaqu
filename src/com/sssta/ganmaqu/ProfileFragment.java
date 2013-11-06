@@ -403,7 +403,10 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
 		// TODO: Update argument type and name
 		public void onFragmentInteraction(Uri uri);
 	}
-
+	public void setCity(String city)
+	{
+		cityTextView.setText("当前城市:"+city);
+	}
 	public class AddressRequestTask extends AsyncTask<String, integer, String> {
 
 		@Override
@@ -419,7 +422,7 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
 				cityTextView.setText("地点未知");
 			} else {
 				try {
-					Log.i("ADDRESS REQUEST", result);
+					Log.i("ADDRESS REQUEST IN FRAGMENT", result);
 					JSONObject jsonObject = new JSONObject(result);
 					JSONObject jsonResult = new JSONObject(
 							jsonObject.getString("result"));
@@ -435,12 +438,12 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
 								.getString("addressComponent");
 						JSONObject address = new JSONObject(addressComponent);
 						city = new String(address.getString("city"));
-						Log.i("city", city);
+						Log.i("city in profilefragment", city);
 						cityTextView.setText(city);
 						userInfo.edit().putString("city", city).commit();
-						count_city++;
-						userInfo.edit().putInt("count_city", count_city)
-								.commit();
+						//count_city++;
+						//userInfo.edit().putInt("count_city", count_city)
+						//		.commit();
 
 					}
 

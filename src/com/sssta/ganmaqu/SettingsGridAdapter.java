@@ -1,22 +1,12 @@
 package com.sssta.ganmaqu;
 
-import com.sssta.ganmaqu.SettingsFragment.loginTask;
-import com.sssta.ganmaqu.SettingsFragment.regTask;
-
-import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.os.AsyncTask;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class SettingsGridAdapter extends BaseAdapter {
 	private final String settingsType[] = {"账号管理","偏好设置","系统设置","帮助","切换城市"};

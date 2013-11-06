@@ -88,6 +88,7 @@ public class decodeJson {
 		temp_place.setSuitType(jsonObject.getString("suitType"));
 		temp_place.setTelNumber(jsonObject.getString("telNumber"));
 		temp_place.setTime(jsonObject.getString("time"));
+		temp_place.setPicUrl(jsonObject.getString("url"));
 		return temp_place;
 	}
 }

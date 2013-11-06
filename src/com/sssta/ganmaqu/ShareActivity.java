@@ -24,14 +24,14 @@ import com.sina.weibo.sdk.api.WeiboMessage;
 public class ShareActivity extends Activity  implements  IWeiboHandler.Response{
 	private Button shareButton;
 	private String text;
-	/** Î¢²©OpenAPI·ÃÎÊÈë¿Ú */
+	/** å¾®åšOpenAPIè®¿é—®å…¥å£ */
     IWeiboAPI mWeiboAPI = null;
     private List<place> places;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_share);
-		// ´´½¨Î¢²©¶ÔÍâ½Ó¿ÚÊµÀı
+		// åˆ›å»ºå¾®åšå¯¹å¤–æ¥å£å®ä¾‹
         mWeiboAPI = WeiboSDK.createWeiboAPI(this, ConstantS.APP_KEY);
         mWeiboAPI.responseListener(getIntent(), this);
         Log.i("status_weibo", mWeiboAPI.toString());
@@ -43,7 +43,7 @@ public class ShareActivity extends Activity  implements  IWeiboHandler.Response{
 				ActionBar.DISPLAY_HOME_AS_UP);
 		actionBar.setBackgroundDrawable(getResources().getDrawable(R.drawable.actionbar_bg));
 		actionBar.setDisplayShowHomeEnabled(false);
-		actionBar.setTitle("·ÖÏí");
+		actionBar.setTitle("åˆ†äº«");
 		shareButton = (Button)findViewById(R.id.button_share);
 		shareButton.setOnClickListener(new OnClickListener() {
 			
@@ -69,28 +69,28 @@ public class ShareActivity extends Activity  implements  IWeiboHandler.Response{
         Log.i("status_weibo", mWeiboAPI.toString());
     }
 	/**
-     * ´Ó±¾Ó¦ÓÃ->Î¢²©->±¾Ó¦ÓÃ
-     * ½ÓÊÕÏìÓ¦Êı¾İ£¬¸Ã·½·¨±»µ÷ÓÃ¡£
-     * ×¢Òâ£ºÈ·±£{@link #onCreate(Bundle)} Óë {@link #onNewIntent(Intent)}ÖĞ£¬
-     * µ÷ÓÃ mWeiboAPI.responseListener(intent, this)
+     * ä»æœ¬åº”ç”¨->å¾®åš->æœ¬åº”ç”¨
+     * æ¥æ”¶å“åº”æ•°æ®ï¼Œè¯¥æ–¹æ³•è¢«è°ƒç”¨ã€‚
+     * æ³¨æ„ï¼šç¡®ä¿{@link #onCreate(Bundle)} ä¸ {@link #onNewIntent(Intent)}ä¸­ï¼Œ
+     * è°ƒç”¨ mWeiboAPI.responseListener(intent, this)
      */
     @Override
     public void onResponse(BaseResponse baseResp) {
         switch (baseResp.errCode) {
         case com.sina.weibo.sdk.constant.Constants.ErrorCode.ERR_OK:
-          //  Toast.makeText(this, "³É¹¦£¡£¡", Toast.LENGTH_LONG).show();
+          //  Toast.makeText(this, "æˆåŠŸï¼ï¼", Toast.LENGTH_LONG).show();
             break;
         case com.sina.weibo.sdk.constant.Constants.ErrorCode.ERR_CANCEL:
-         //   Toast.makeText(this, "ÓÃ»§È¡Ïû£¡£¡", Toast.LENGTH_LONG).show();
+         //   Toast.makeText(this, "ç”¨æˆ·å–æ¶ˆï¼ï¼", Toast.LENGTH_LONG).show();
             break;
         case com.sina.weibo.sdk.constant.Constants.ErrorCode.ERR_FAIL:
-         //   Toast.makeText(this, baseResp.errMsg + ":Ê§°Ü£¡£¡", Toast.LENGTH_LONG).show();
+         //   Toast.makeText(this, baseResp.errMsg + ":å¤±è´¥ï¼ï¼", Toast.LENGTH_LONG).show();
             break;
         }
     }
 
 //    /**
-//     * ÓÃ»§µã»÷·ÖÏí°´Å¥£¬»½ÆğÎ¢²©¿Í»§¶Ë½øĞĞ·ÖÏí¡£
+//     * ç”¨æˆ·ç‚¹å‡»åˆ†äº«æŒ‰é’®ï¼Œå”¤èµ·å¾®åšå®¢æˆ·ç«¯è¿›è¡Œåˆ†äº«ã€‚
 //     */
 //    @Override
 //    public void onClick(View v) {
@@ -102,43 +102,43 @@ public class ShareActivity extends Activity  implements  IWeiboHandler.Response{
     private void reqMsg() {
         
         if (mWeiboAPI.isWeiboAppSupportAPI()) {
-         //   Toast.makeText(this, "µ±Ç°Î¢²©°æ±¾Ö§³ÖSDK·ÖÏí", Toast.LENGTH_SHORT).show();
+         //   Toast.makeText(this, "å½“å‰å¾®åšç‰ˆæœ¬æ”¯æŒSDKåˆ†äº«", Toast.LENGTH_SHORT).show();
             
             int supportApi = mWeiboAPI.getWeiboAppSupportAPI();
             if (supportApi >= 10351) {
                 reqSingleMsg();
             }
         } else {
-            Toast.makeText(this, "Sorry,Ò»¼ü·ÖÏíĞè¹Ù·½×îĞÂ°æÎ¢²©Ö§³Ö£¬Çë°²×°Î¢²©android¿Í»§¶Ë", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Sorry,ä¸€é”®åˆ†äº«éœ€å®˜æ–¹æœ€æ–°ç‰ˆå¾®åšæ”¯æŒï¼Œè¯·å®‰è£…å¾®åšandroidå®¢æˆ·ç«¯", Toast.LENGTH_SHORT).show();
         }
     }
     /**
-     * µÚÈı·½Ó¦ÓÃ·¢ËÍÇëÇóÏûÏ¢µ½Î¢²©£¬»½ÆğÎ¢²©·ÖÏí½çÃæ¡£
-     * µ±isWeiboAppSupportAPI() < 10351 Ö»Ö§³Ö·ÖÏíµ¥ÌõÏûÏ¢£¬¼´
-     * ÎÄ±¾¡¢Í¼Æ¬¡¢ÍøÒ³¡¢ÒôÀÖ¡¢ÊÓÆµÖĞµÄÒ»ÖÖ£¬²»Ö§³ÖVoiceÏûÏ¢¡£
+     * ç¬¬ä¸‰æ–¹åº”ç”¨å‘é€è¯·æ±‚æ¶ˆæ¯åˆ°å¾®åšï¼Œå”¤èµ·å¾®åšåˆ†äº«ç•Œé¢ã€‚
+     * å½“isWeiboAppSupportAPI() < 10351 åªæ”¯æŒåˆ†äº«å•æ¡æ¶ˆæ¯ï¼Œå³
+     * æ–‡æœ¬ã€å›¾ç‰‡ã€ç½‘é¡µã€éŸ³ä¹ã€è§†é¢‘ä¸­çš„ä¸€ç§ï¼Œä¸æ”¯æŒVoiceæ¶ˆæ¯ã€‚
      * 
-     * @param hasText    ·ÖÏíµÄÄÚÈİÊÇ·ñÓĞÎÄ±¾
-     * @param hasImage   ·ÖÏíµÄÄÚÈİÊÇ·ñÓĞÍ¼Æ¬
-     * @param hasWebpage ·ÖÏíµÄÄÚÈİÊÇ·ñÓĞÍøÒ³
-     * @param hasMusic   ·ÖÏíµÄÄÚÈİÊÇ·ñÓĞÒôÀÖ
-     * @param hasVideo   ·ÖÏíµÄÄÚÈİÊÇ·ñÓĞÊÓÆµ
+     * @param hasText    åˆ†äº«çš„å†…å®¹æ˜¯å¦æœ‰æ–‡æœ¬
+     * @param hasImage   åˆ†äº«çš„å†…å®¹æ˜¯å¦æœ‰å›¾ç‰‡
+     * @param hasWebpage åˆ†äº«çš„å†…å®¹æ˜¯å¦æœ‰ç½‘é¡µ
+     * @param hasMusic   åˆ†äº«çš„å†…å®¹æ˜¯å¦æœ‰éŸ³ä¹
+     * @param hasVideo   åˆ†äº«çš„å†…å®¹æ˜¯å¦æœ‰è§†é¢‘
      */
     private void reqSingleMsg() {
         
-        // 1. ³õÊ¼»¯Î¢²©µÄ·ÖÏíÏûÏ¢
-        // ÓÃ»§¿ÉÒÔ·ÖÏíÎÄ±¾¡¢Í¼Æ¬¡¢ÍøÒ³¡¢ÒôÀÖ¡¢ÊÓÆµÖĞµÄÒ»ÖÖ
+        // 1. åˆå§‹åŒ–å¾®åšçš„åˆ†äº«æ¶ˆæ¯
+        // ç”¨æˆ·å¯ä»¥åˆ†äº«æ–‡æœ¬ã€å›¾ç‰‡ã€ç½‘é¡µã€éŸ³ä¹ã€è§†é¢‘ä¸­çš„ä¸€ç§
         WeiboMessage weiboMessage = new WeiboMessage();
             weiboMessage.mediaObject = getTextObj();
         
         
         
-        // 2. ³õÊ¼»¯´ÓµÚÈı·½µ½Î¢²©µÄÏûÏ¢ÇëÇó
+        // 2. åˆå§‹åŒ–ä»ç¬¬ä¸‰æ–¹åˆ°å¾®åšçš„æ¶ˆæ¯è¯·æ±‚
         SendMessageToWeiboRequest req = new SendMessageToWeiboRequest();
-        // ÓÃtransactionÎ¨Ò»±êÊ¶Ò»¸öÇëÇó
+        // ç”¨transactionå”¯ä¸€æ ‡è¯†ä¸€ä¸ªè¯·æ±‚
         req.transaction = String.valueOf(System.currentTimeMillis());
         req.message = weiboMessage;
         
-        // 3. ·¢ËÍÇëÇóÏûÏ¢µ½Î¢²©£¬»½ÆğÎ¢²©·ÖÏí½çÃæ
+        // 3. å‘é€è¯·æ±‚æ¶ˆæ¯åˆ°å¾®åšï¼Œå”¤èµ·å¾®åšåˆ†äº«ç•Œé¢
         mWeiboAPI.sendRequest(this, req);
     }
 
@@ -146,9 +146,9 @@ public class ShareActivity extends Activity  implements  IWeiboHandler.Response{
         return "http://sina.com?eet" + System.currentTimeMillis();
     }
     /**
-     * ÎÄ±¾ÏûÏ¢¹¹Ôì·½·¨¡£
+     * æ–‡æœ¬æ¶ˆæ¯æ„é€ æ–¹æ³•ã€‚
      * 
-     * @return ÎÄ±¾ÏûÏ¢¶ÔÏó¡£
+     * @return æ–‡æœ¬æ¶ˆæ¯å¯¹è±¡ã€‚
      */
     private TextObject getTextObj() {
         TextObject textObject = new TextObject();
@@ -156,9 +156,9 @@ public class ShareActivity extends Activity  implements  IWeiboHandler.Response{
         return textObject;
     }
     /**
-     * Í¼Æ¬ÏûÏ¢¹¹Ôì·½·¨¡£
+     * å›¾ç‰‡æ¶ˆæ¯æ„é€ æ–¹æ³•ã€‚
      * 
-     * @return Í¼Æ¬ÏûÏ¢¶ÔÏó¡£
+     * @return å›¾ç‰‡æ¶ˆæ¯å¯¹è±¡ã€‚
      */
 //    private ImageObject getImageObj() {
 //        ImageObject imageObject = new ImageObject();
@@ -169,7 +169,7 @@ public class ShareActivity extends Activity  implements  IWeiboHandler.Response{
     public String codeToString(List<place> places)
     {
 		StringBuffer route = new StringBuffer();
-		route.append("ÎÒÔÚÓÃ¡°¸ÉÂïÈ¥¡±,Ò»¼üÍÆ¼ö³öĞĞÂ·ÏßµÄÀûÆ÷£¡ÎÒµÄÂ·ÏßÊÇ£º");
+		route.append("æˆ‘åœ¨ç”¨â€œå¹²å˜›å»â€,ä¸€é”®æ¨èå‡ºè¡Œè·¯çº¿çš„åˆ©å™¨ï¼æˆ‘çš„è·¯çº¿æ˜¯ï¼š");
 		for(int i = 0;i<places.size()-1;i++)
 		{
 			route.append(places.get(i).getShopName());

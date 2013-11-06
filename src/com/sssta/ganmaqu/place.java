@@ -6,13 +6,13 @@ public class place implements Serializable {
 	/**
 	 * Serializable 
 	 */
-	private int _id; //Êı¾İ¿âÖ÷¼ü
+	private int _id; //æ•°æ®åº“ä¸»é”®
 	private static final long serialVersionUID = 1L;
 	private String address;
 	private int cost;
 	private String detailType;
 	private int id;
-	private int route_id; //Â·ÏßµÄid
+	private int route_id; //è·¯çº¿çš„id
 	private String mainType;
 	private double pos_x;
 	private double pos_y;
@@ -22,6 +22,15 @@ public class place implements Serializable {
 	private String telNumber;
 	private String time;
 	private String routeType;
+	private String picUrl;
+	
+	public String getPicUrl() {
+		return picUrl;
+	}
+
+	public void setPicUrl(String picUrl) {
+		this.picUrl = picUrl;
+	}
 
 	public String getRouteType() {
 		return routeType;

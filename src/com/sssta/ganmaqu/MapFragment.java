@@ -39,7 +39,7 @@ public class MapFragment extends android.support.v4.app.Fragment {
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
 		this.activity_1 = activity;
-		// »ñÈ¡µ½¸¸ActivityµÄÒıÓÃ¡£
+		// è·å–åˆ°çˆ¶Activityçš„å¼•ç”¨ã€‚
 	}
 
 	@Override
@@ -54,7 +54,7 @@ public class MapFragment extends android.support.v4.app.Fragment {
 				"places");
 		Log.i("places nums", String.valueOf(places.size()));
 		WebSettings webSettings = mapView.getSettings();
-		// WebView ¿ªÆô javascript
+		// WebView å¼€å¯ javascript
 		webSettings.setJavaScriptEnabled(true);
 		webSettings.setJavaScriptCanOpenWindowsAutomatically(true);
 		webSettings.setDefaultTextEncodingName("utf-8");  
@@ -83,9 +83,9 @@ public class MapFragment extends android.support.v4.app.Fragment {
 //		mapView.loadUrl("javascript:calcRoute2("+String.valueOf(places.get(0).getPos_y())+","+
 //				String.valueOf(places.get(0).getPos_x()+")"));
 		
-		//¾­¹ı²âÊÔ£¬ÕâÀï±ØĞëÉèÖÃtimer²ÅÄÜÖ´ĞĞ£¬Ò²¾ÍÊÇÒ³ÃæÎÄ¼şĞèÒª¼ÓÔØÍê±Ïºó²ÅÄÜÊ¹ÓÃÆäËûµÄjs·½·¨
-		//Ê±¼äÉè¶¨Îª0.2s¼´¿É
-		Timer timer = new Timer(); //ÉèÖÃTimer
+		//ç»è¿‡æµ‹è¯•ï¼Œè¿™é‡Œå¿…é¡»è®¾ç½®timeræ‰èƒ½æ‰§è¡Œï¼Œä¹Ÿå°±æ˜¯é¡µé¢æ–‡ä»¶éœ€è¦åŠ è½½å®Œæ¯•åæ‰èƒ½ä½¿ç”¨å…¶ä»–çš„jsæ–¹æ³•
+		//æ—¶é—´è®¾å®šä¸º0.2så³å¯
+		Timer timer = new Timer(); //è®¾ç½®Timer
 		TimerTask task = new TimerTask() {
 			@Override
 			public void run() {
@@ -99,7 +99,7 @@ public class MapFragment extends android.support.v4.app.Fragment {
 					String	contentString ;
 					contentString ="<p><b>" + places.get(i).getShopName() + "</b></p>" + "<p>"
 					    + places.get(i).getAddress() + "</p>" + "<p><a href=http://m.dianping.com/shop/" + 
-							String.valueOf(places.get(i).getId()) + ">" + "ÏêÏ¸ĞÅÏ¢>></a>" ;
+							String.valueOf(places.get(i).getId()) + ">" + "è¯¦ç»†ä¿¡æ¯>></a>" ;
 //					String loadString = "javascript:addMessage(" +String.valueOf(places.get(i).getPos_y())+","+
 //							String.valueOf(places.get(i).getPos_x()+ "," +  "\"" +  contentString + "\""+")");
 //					String loadString = "javascript:codeAddress(" + "\"" +  places.get(i).getShopName() +"\"" + "," +  "\"" +  contentString + "\"" +  "," +String.valueOf(places.get(i).getPos_x())+","+
@@ -113,7 +113,7 @@ public class MapFragment extends android.support.v4.app.Fragment {
 					String loadString = "javascript:codeAddress(" + "\"" +  places.get(i).getShopName() +"\"" + "," +  "\"" +  contentString + "\"" +  ")" ; 
 					Log.i("load String", loadString);
 					mapView.loadUrl(loadString);
-					//µØÍ¼¼ÓÔØÍê±Ïºó update location
+					//åœ°å›¾åŠ è½½å®Œæ¯•å update location
 //					try {
 //						Thread.sleep(300);
 //					} catch (InterruptedException e) {
@@ -127,7 +127,7 @@ public class MapFragment extends android.support.v4.app.Fragment {
 		};
 		timer.schedule(task, 1500 * 1);
 		
-		Timer timer_2 = new Timer(); //ÉèÖÃTimer
+		Timer timer_2 = new Timer(); //è®¾ç½®Timer
 		TimerTask task_2 = new TimerTask() {
 			@Override
 			public void run() {
@@ -175,86 +175,86 @@ public class MapFragment extends android.support.v4.app.Fragment {
 	// methods for fragment
 	public void setLocationManager() {
 		/**
-		 * ÉèÖÃLocationManager ÉèÖÃµØÀíÎ»ÖÃ·şÎñ
+		 * è®¾ç½®LocationManager è®¾ç½®åœ°ç†ä½ç½®æœåŠ¡
 		 */
-		// »ñÈ¡LocationManager·şÎñ
+		// è·å–LocationManageræœåŠ¡
 		locationManager = (LocationManager) activity_1.getSystemService(
 				Context.LOCATION_SERVICE);
-		// »ñÈ¡Location Provider
+		// è·å–Location Provider
 		getProvider();
-		// Èç¹ûÎ´ÉèÖÃÎ»ÖÃÔ´£¬´ò¿ªGPSÉèÖÃ½çÃæ
+		// å¦‚æœæœªè®¾ç½®ä½ç½®æºï¼Œæ‰“å¼€GPSè®¾ç½®ç•Œé¢
 		openGPS();
-		// »ñÈ¡Î»ÖÃ
+		// è·å–ä½ç½®
 		location = locationManager.getLastKnownLocation(provider);
-		// ÏÔÊ¾Î»ÖÃĞÅÏ¢µ½ÎÄ×Ö±êÇ©
+		// æ˜¾ç¤ºä½ç½®ä¿¡æ¯åˆ°æ–‡å­—æ ‡ç­¾
 
-		// ×¢²á¼àÌıÆ÷locationListener£¬µÚ2¡¢3¸ö²ÎÊı¿ÉÒÔ¿ØÖÆ½ÓÊÕgpsÏûÏ¢µÄÆµ¶ÈÒÔ½ÚÊ¡µçÁ¦¡£µÚ2¸ö²ÎÊıÎªºÁÃë£¬
-		// ±íÊ¾µ÷ÓÃlistenerµÄÖÜÆÚ£¬µÚ3¸ö²ÎÊıÎªÃ×,±íÊ¾Î»ÖÃÒÆ¶¯Ö¸¶¨¾àÀëºó¾Íµ÷ÓÃlistener
+		// æ³¨å†Œç›‘å¬å™¨locationListenerï¼Œç¬¬2ã€3ä¸ªå‚æ•°å¯ä»¥æ§åˆ¶æ¥æ”¶gpsæ¶ˆæ¯çš„é¢‘åº¦ä»¥èŠ‚çœç”µåŠ›ã€‚ç¬¬2ä¸ªå‚æ•°ä¸ºæ¯«ç§’ï¼Œ
+		// è¡¨ç¤ºè°ƒç”¨listenerçš„å‘¨æœŸï¼Œç¬¬3ä¸ªå‚æ•°ä¸ºç±³,è¡¨ç¤ºä½ç½®ç§»åŠ¨æŒ‡å®šè·ç¦»åå°±è°ƒç”¨listener
 		locationManager.requestLocationUpdates(provider, 2000, 10,
 				locationListener);
 	}
 
-	// ÅĞ¶ÏÊÇ·ñ¿ªÆôGPS£¬ÈôÎ´¿ªÆô£¬´ò¿ªGPSÉèÖÃ½çÃæ
+	// åˆ¤æ–­æ˜¯å¦å¼€å¯GPSï¼Œè‹¥æœªå¼€å¯ï¼Œæ‰“å¼€GPSè®¾ç½®ç•Œé¢
 	public void openGPS() {
 		if (locationManager
 				.isProviderEnabled(android.location.LocationManager.GPS_PROVIDER)
 				|| locationManager
 						.isProviderEnabled(android.location.LocationManager.NETWORK_PROVIDER)) {
-			Toast.makeText(getActivity().getApplicationContext(), "Î»ÖÃÔ´ÒÑÉèÖÃ£¡",
+			Toast.makeText(getActivity().getApplicationContext(), "ä½ç½®æºå·²è®¾ç½®ï¼",
 					Toast.LENGTH_SHORT).show();
 			return;
 		}
-		Toast.makeText(getActivity().getApplicationContext(), "Î»ÖÃÔ´Î´ÉèÖÃ£¡",
+		Toast.makeText(getActivity().getApplicationContext(), "ä½ç½®æºæœªè®¾ç½®ï¼",
 				Toast.LENGTH_SHORT).show();
-		// ×ªÖÁGPSÉèÖÃ½çÃæ
+		// è½¬è‡³GPSè®¾ç½®ç•Œé¢
 		Intent intent = new Intent(Settings.ACTION_SECURITY_SETTINGS);
 		startActivityForResult(intent, 0);
 	}
 
-	// »ñÈ¡Location Provider
+	// è·å–Location Provider
 	public void getProvider() {
-		// ¹¹½¨Î»ÖÃ²éÑ¯Ìõ¼ş
+		// æ„å»ºä½ç½®æŸ¥è¯¢æ¡ä»¶
 		Criteria criteria = new Criteria();
-		// ²éÑ¯¾«¶È£º¸ß
+		// æŸ¥è¯¢ç²¾åº¦ï¼šé«˜
 		criteria.setAccuracy(Criteria.ACCURACY_FINE);
-		// ÊÇ·ñ²éÑ¯º£²¦£º·ñ
+		// æ˜¯å¦æŸ¥è¯¢æµ·æ‹¨ï¼šå¦
 		criteria.setAltitudeRequired(false);
-		// ÊÇ·ñ²éÑ¯·½Î»½Ç:·ñ
+		// æ˜¯å¦æŸ¥è¯¢æ–¹ä½è§’:å¦
 		criteria.setBearingRequired(false);
-		// ÊÇ·ñÔÊĞí¸¶·Ñ£ºÊÇ
+		// æ˜¯å¦å…è®¸ä»˜è´¹ï¼šæ˜¯
 		criteria.setCostAllowed(true);
-		// µçÁ¿ÒªÇó£ºµÍ
+		// ç”µé‡è¦æ±‚ï¼šä½
 		criteria.setPowerRequirement(Criteria.POWER_LOW);
-		// ·µ»Ø×îºÏÊÊµÄ·ûºÏÌõ¼şµÄprovider£¬µÚ2¸ö²ÎÊıÎªtrueËµÃ÷,Èç¹ûÖ»ÓĞÒ»¸öproviderÊÇÓĞĞ§µÄ,Ôò·µ»Øµ±Ç°provider
+		// è¿”å›æœ€åˆé€‚çš„ç¬¦åˆæ¡ä»¶çš„providerï¼Œç¬¬2ä¸ªå‚æ•°ä¸ºtrueè¯´æ˜,å¦‚æœåªæœ‰ä¸€ä¸ªprovideræ˜¯æœ‰æ•ˆçš„,åˆ™è¿”å›å½“å‰provider
 		provider = locationManager.getBestProvider(criteria, true);
 	}
 
-	// GpsÏûÏ¢¼àÌıÆ÷
+	// Gpsæ¶ˆæ¯ç›‘å¬å™¨
 	public final LocationListener locationListener = new LocationListener() {
-		// Î»ÖÃ·¢Éú¸Ä±äºóµ÷ÓÃ
+		// ä½ç½®å‘ç”Ÿæ”¹å˜åè°ƒç”¨
 		public void onLocationChanged(Location location) {
 
 			updateWithNewLocation(location);
 		}
 
-		// provider±»ÓÃ»§¹Ø±Õºóµ÷ÓÃ
+		// providerè¢«ç”¨æˆ·å…³é—­åè°ƒç”¨
 		public void onProviderDisabled(String provider) {
 			updateWithNewLocation(null);
 		}
 
-		// provider±»ÓÃ»§¿ªÆôºóµ÷ÓÃ
+		// providerè¢«ç”¨æˆ·å¼€å¯åè°ƒç”¨
 		public void onProviderEnabled(String provider) {
 
 		}
 
-		// provider×´Ì¬±ä»¯Ê±µ÷ÓÃ
+		// providerçŠ¶æ€å˜åŒ–æ—¶è°ƒç”¨
 		public void onStatusChanged(String provider, int status, Bundle extras) {
 
 		}
 
 	};
 
-	// Gps¼àÌıÆ÷µ÷ÓÃ£¬´¦ÀíÎ»ÖÃĞÅÏ¢
+	// Gpsç›‘å¬å™¨è°ƒç”¨ï¼Œå¤„ç†ä½ç½®ä¿¡æ¯
 	private void updateWithNewLocation(Location location) {
 		String latLongString;
 		double lat = 0;
@@ -264,13 +264,13 @@ public class MapFragment extends android.support.v4.app.Fragment {
 		if (location != null) {
 			lat = location.getLatitude();
 			lng = location.getLongitude();
-			latLongString = "Î³¶È:" + lat + "\n¾­¶È:" + lng;
+			latLongString = "çº¬åº¦:" + lat + "\nç»åº¦:" + lng;
 		} else {
-			latLongString = "ÎŞ·¨»ñÈ¡µØÀíĞÅÏ¢";
+			latLongString = "æ— æ³•è·å–åœ°ç†ä¿¡æ¯";
 		}
 		Log.i("LatLongString",latLongString);
 //		Toast.makeText(getActivity().getApplicationContext(),
-//				"Äúµ±Ç°µÄÎ»ÖÃÊÇ: " + "\n" + latLongString + "\n", Toast.LENGTH_LONG)
+//				"æ‚¨å½“å‰çš„ä½ç½®æ˜¯: " + "\n" + latLongString + "\n", Toast.LENGTH_LONG)
 //				.show();
 		
 		// mapView.loadUrl("javascript:deleteLocation()");
@@ -282,7 +282,7 @@ public class MapFragment extends android.support.v4.app.Fragment {
 		 mapView.loadUrl("javascript:setLocation_1(" +String.valueOf(lng)+
 		 ","+String.valueOf(lat) +")");
 
-		// myLocationText.setText("Äúµ±Ç°µÄÎ»ÖÃÊÇ:/n" + latLongString + "/n"
+		// myLocationText.setText("æ‚¨å½“å‰çš„ä½ç½®æ˜¯:/n" + latLongString + "/n"
 		// + getAddressbyGeoPoint(location));
 
 	}

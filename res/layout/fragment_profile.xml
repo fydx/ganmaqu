@@ -23,7 +23,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
-        android:text="当前城市:西安"
+        android:text="获取当前城市中..."
         android:layout_margin="5dp"
         android:textColor="#FFFFFF" />
 

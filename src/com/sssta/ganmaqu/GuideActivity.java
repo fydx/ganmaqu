@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -25,6 +26,7 @@ public class GuideActivity extends Activity {
 	ViewGroup main, group;
 	TextView textView;
 	TextView[] textViews;
+	SharedPreferences sp;
 	int count ;
 
 	@Override
@@ -75,7 +77,9 @@ public class GuideActivity extends Activity {
 		}
 
 		setContentView(main);
-		count = getIntent().getIntExtra("count", 0);
+		sp=getApplicationContext().getSharedPreferences("userInfo", 0);
+		
+		count =sp.getInt("first", 0);
 		Log.i("count onCreate", String.valueOf(count));
 		viewPager.setAdapter(new MyAdapter());
 		viewPager.setOnPageChangeListener(new MyListener());
@@ -186,10 +190,10 @@ public class GuideActivity extends Activity {
 	{
 		Log.i("count JumpToMain", String.valueOf(count));
 		if (count == 0) {
-			Intent intent = new Intent();
-			Log.i("selected", "select");
-			intent.setClass(getApplicationContext(), NewMainActivity.class);
-			startActivity(intent);
+		//	Intent intent = new Intent();
+		//	Log.i("selected", "select");
+		//	intent.setClass(getApplicationContext(), MainActivity.class);
+		//	startActivity(intent);
 			overridePendingTransition(android.R.anim.fade_in,
 					android.R.anim.fade_out);
 			finish();

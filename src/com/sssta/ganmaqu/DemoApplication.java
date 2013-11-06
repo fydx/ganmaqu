@@ -9,6 +9,7 @@ import android.widget.Toast;
 import com.baidu.mapapi.BMapManager;
 import com.baidu.mapapi.MKGeneralListener;
 import com.baidu.mapapi.map.MKEvent;
+import com.sssta.ganmaqu.ProfileFragment.loginTask;
 
 
 public class DemoApplication extends Application {
@@ -68,8 +69,9 @@ public class DemoApplication extends Application {
         public void onGetPermissionState(int iError) {
             if (iError ==  MKEvent.ERROR_PERMISSION_DENIED) {
                 //授权Key错误：
-                Toast.makeText(DemoApplication.getInstance().getApplicationContext(), 
-                        "请在 DemoApplication.java文件输入正确的授权Key！", Toast.LENGTH_LONG).show();
+//                Toast.makeText(DemoApplication.getInstance().getApplicationContext(), 
+//                        "请在 DemoApplication.java文件输入正确的授权Key！", Toast.LENGTH_LONG).show();
+            	Log.e("BAIDU KEY", "请在 DemoApplication.java文件输入正确的授权Key！");
                 DemoApplication.getInstance().m_bKeyRight = false;
             }
         }
