@@ -3,38 +3,19 @@
     android:id="@+id/fragment_profile"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ProfileFragment" 
-    android:background="@drawable/bg_rightmenu" >
+    android:background="#eeeeee"
+    tools:context=".ProfileFragment" >
 
     <!-- TODO: Update blank fragment layout -->
-
-    <ImageView
-        android:id="@+id/imageView_user"
-        android:layout_width="90dp"
-        android:layout_height="90dp"
-      	android:layout_centerHorizontal="true"
-      	android:layout_marginTop="70dp"
-        android:src="@drawable/user_avater"
-        android:visibility="invisible" />
-
-    <TextView
-        android:id="@+id/textView_currentCity"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:text="获取当前城市中..."
-        android:layout_margin="5dp"
-        android:textColor="#FFFFFF" />
 
     <com.sssta.ganmaqu.myGridView
         android:id="@+id/gridView_rightMenu"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_below="@+id/imageView_user"
         android:layout_marginTop="29dp"
-        android:numColumns="3" >
+        android:numColumns="3" 
+        android:visibility="gone">
     </com.sssta.ganmaqu.myGridView>
 
     <TextView
@@ -42,11 +23,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_alignTop="@+id/imageView_user"
         android:layout_marginTop="34dp"
-    
+        android:text="未登录"
         android:textColor="#FFFFFF"
-        android:text="未登录" />
+        android:visibility="gone" />
 
     <ImageView
         android:id="@+id/imageView_usericon"
@@ -54,7 +34,86 @@
         android:layout_height="40px"
         android:layout_alignBottom="@+id/textView_loginAccount"
         android:layout_toRightOf="@+id/textView_loginAccount"
-        android:visibility="gone"
-        android:src="@android:drawable/alert_light_frame" />
+        android:src="@android:drawable/alert_light_frame"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/textView_currentCity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_margin="5dp"
+        android:text="获取当前城市中..."
+        android:textColor="#000000" />
+
+    <TextView
+        android:id="@+id/textView_chuxingshijian"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_margin="10dp"
+        android:text="出行时间"
+        android:textSize = "20dp" />
+
+<RadioGroup
+    android:id="@+id/radioGroup"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignLeft="@+id/textView_chuxingshijian"
+    android:layout_below="@+id/textView_chuxingshijian"
+     android:orientation="horizontal" >
+
+     <RadioButton
+        android:id="@+id/radioButton_full"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="全天" />
+      <RadioButton
+        android:id="@+id/radioButton_part"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="部分" />
+</RadioGroup>
+
+<TextView
+    android:id="@+id/textView_didianfenlei"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignLeft="@+id/radioGroup"
+    android:layout_below="@+id/radioGroup"
+    android:layout_marginTop="18dp"
+    android:text="地点分类" 
+     android:textSize = "20dp"/>
+
+<GridView
+    android:id="@+id/gridView_placesType"
+    android:layout_width="match_parent"
+    android:layout_height="180dp"
+    android:layout_alignLeft="@+id/textView_didianfenlei"
+    android:layout_below="@+id/textView_didianfenlei"
+    android:numColumns="3" >
+</GridView>
+
+<GridView
+    android:id="@+id/gridView_settings"
+    android:layout_width="match_parent"
+    android:layout_height="90dp"
+    android:layout_above="@+id/textView_currentCity"
+    android:layout_alignLeft="@+id/gridView_placesType"
+    
+    android:numColumns="3" >
+</GridView>
+
+<TextView
+    android:id="@+id/textView_shezhi"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_above="@+id/gridView_settings"
+    android:layout_alignLeft="@+id/gridView_settings"
+    android:layout_marginBottom="2dp"
+    android:text="常用功能"
+      android:textSize = "20dp" />
 
 </RelativeLayout>

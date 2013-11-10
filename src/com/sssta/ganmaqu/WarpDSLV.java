@@ -164,12 +164,16 @@ public class WarpDSLV extends FragmentActivity {
 		title.setTextColor(Color.parseColor("#FFFFFF"));
 		actionBar.setDisplayHomeAsUpEnabled(true);
 		// 创建一个AlphaAnimation对象，参数从完全的透明度，到完全的不透明
-		AlphaAnimation alphaAnimation = new AlphaAnimation(1, 0);
+		AlphaAnimation alphaAnimation_out = new AlphaAnimation(1, 0);
 		// 设置动画执行的时间
-		alphaAnimation.setDuration(10000);
-		alphaAnimation.setRepeatCount(-1);
+		alphaAnimation_out.setDuration(1000);
+		alphaAnimation_out.setStartOffset(9000);
+		alphaAnimation_out.setRepeatCount(-1);
 		// 将alphaAnimation对象添加到AnimationSet当中
-
+		AlphaAnimation alphaAnimation_in = new AlphaAnimation(0, 1);
+		alphaAnimation_in.setDuration(10000);
+		alphaAnimation_in.setInterpolator(AnimationUtils.loadInterpolator(
+				WarpDSLV.this, android.R.anim.accelerate_decelerate_interpolator));
 		/*
 		 * 设置位移动画
 		 */
@@ -189,7 +193,8 @@ public class WarpDSLV extends FragmentActivity {
 				WarpDSLV.this, android.R.anim.linear_interpolator));
 		translateAnimation.setRepeatCount(-1);
 		animationSet.addAnimation(translateAnimation);
-	//	animationSet.addAnimation(alphaAnimation);
+		animationSet.addAnimation(alphaAnimation_out);
+		//animationSet.addAnimation(alphaAnimation_in);
 		mapImageView = (ImageView) findViewById(R.id.map_preview);
 		mapImageView.setAnimation(animationSet);
 		
@@ -255,7 +260,7 @@ public class WarpDSLV extends FragmentActivity {
 		}
 		
 		picurls = picUrlsList.toArray(new String[picUrlsList.size()]);
-		 picCount =0 ;
+		picCount =0 ;
 		 
 		 final Handler myHandler = new Handler() {// 创建一个Handler对象  
 	            public void handleMessage(Message msg) {// 重写接收消息的方法  

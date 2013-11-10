@@ -54,7 +54,7 @@ import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.jeremyfeinstein.slidingmenu.lib.app.SlidingFragmentActivity;
 import com.sssta.ganmaqu.ProfileFragment.OnFragmentInteractionListener;
 
-public class MainActivity extends FragmentActivity implements OnFragmentInteractionListener {
+public class MainActivity extends SlidingFragmentActivity implements OnFragmentInteractionListener {
 	private LocationManager locationManager;
 	private int status_finish_circle = 0;
 	private Location location;

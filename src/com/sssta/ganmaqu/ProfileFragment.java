@@ -33,6 +33,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -66,7 +67,7 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
 	private SharedPreferences userInfo;
 	private Connect connect;
 	private String city;
-	private myGridView settingsGridView;
+	private GridView settingsGridView;
 	private SettingsGridAdapter settingsGridAdapter;
 	private View view_profile;
 	private Activity attach_activity;
@@ -172,9 +173,9 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
 		city = userInfo.getString("city", "西安市");
 		cityTextView.setText("当前城市:" + city);
 		count_city = userInfo.getInt("count_city", 0);
-		settingsGridView = (myGridView) view_profile
-				.findViewById(R.id.gridView_rightMenu);
-
+		settingsGridView = (GridView) view_profile
+				.findViewById(R.id.gridView_settings);
+		
 		settingsGridAdapter = new SettingsGridAdapter(view_profile.getContext());
 		settingsGridView.setOnItemClickListener(new OnItemClickListener() {
 
@@ -329,14 +330,7 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
 					startActivity(intent2);
 					break;
 				case 4:
-					ChangeCityDialog changeCityDialog = new ChangeCityDialog(
-							view_profile.getContext(), String
-									.valueOf(MainActivity.getLng()), String
-									.valueOf(MainActivity.getLng()));
-					changeCityDialog.setTextView(cityTextView);
-					changeCityDialog.setCircleTextView(MainActivity
-							.getCircleButton());
-					changeCityDialog.show();
+				
 					break;
 				default:
 					break;
@@ -346,15 +340,22 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
 		});
 		settingsGridView.setAdapter(settingsGridAdapter);
 		connect = new Connect(ipString);
-		cityTextView.setOnClickListener(new OnClickListener() {
-
+		
+cityTextView.setOnClickListener(new OnClickListener() {
+			
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-
+				ChangeCityDialog changeCityDialog = new ChangeCityDialog(
+						view_profile.getContext(), String
+								.valueOf(MainActivity.getLng()), String
+								.valueOf(MainActivity.getLng()));
+				changeCityDialog.setTextView(cityTextView);
+				changeCityDialog.setCircleTextView(MainActivity
+						.getCircleButton());
+				changeCityDialog.show();
 			}
 		});
-
 		// new
 		// AddressRequestTask().execute(String.valueOf(MainActivity.getLat()),
 		// String.valueOf(MainActivity.getLng()));

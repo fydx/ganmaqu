@@ -9,8 +9,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 public class SettingsGridAdapter extends BaseAdapter {
-	private final String settingsType[] = {"账号管理","偏好设置","系统设置","帮助","切换城市"};
-	private final int settingsDrawable[] = {R.drawable.button_account,R.drawable.button_prefer,R.drawable.button_setting,R.drawable.help,R.drawable.change};
+	private final String settingsType[] = {"收藏路线","设置","帮助"};
+	private final int settingsDrawable[] = {R.drawable.button_prefer,R.drawable.button_setting,R.drawable.help};
 	private Context context;
 	private LayoutInflater mInflater;
 	private class holder{

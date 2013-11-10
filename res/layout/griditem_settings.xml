@@ -1,23 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
     android:orientation="vertical" 
+    android:gravity="center"
     android:padding="8dp">
 
     <ImageView
         android:id="@+id/button_settingsItem"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
+        android:layout_width="51dp"
+        android:layout_height="51dp"
         android:src="@drawable/button_account" />
 
     <TextView
         android:id="@+id/textView_settingsItem"
-        android:layout_width="48dp"
+        android:layout_width="51dp"
         android:layout_height="wrap_content"
         android:text="系统设置"
         android:gravity="center_horizontal"
         android:textColor="#474747"
-        android:textSize="11dp" />
+        android:textSize="12dp" />
 
 </LinearLayout>
