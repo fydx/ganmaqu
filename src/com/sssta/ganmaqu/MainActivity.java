@@ -54,7 +54,7 @@ import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.jeremyfeinstein.slidingmenu.lib.app.SlidingFragmentActivity;
 import com.sssta.ganmaqu.ProfileFragment.OnFragmentInteractionListener;
 
-public class MainActivity extends SlidingFragmentActivity implements OnFragmentInteractionListener {
+public class MainActivity extends FragmentActivity implements OnFragmentInteractionListener {
 	private LocationManager locationManager;
 	private int status_finish_circle = 0;
 	private Location location;
@@ -275,8 +275,7 @@ public class MainActivity extends SlidingFragmentActivity implements OnFragmentI
 								}
 							}).show();
 		}
-		if (count_first == 0) {
-			
+		if (count_first == 0) {	
 			Log.i("firstboot", "True");
 			db = FinalDb.create(this);
 			User user = new User(1,1);
@@ -284,15 +283,7 @@ public class MainActivity extends SlidingFragmentActivity implements OnFragmentI
 			Editor e = userInfo.edit();
 			e.putInt("first", 2);
 			e.commit();
-			
-			// SimpleDialog SimpleDialog = new SimpleDialog(
-			// NewMainActivity.this, R.drawable.mainpageguide);
-			//
-			// SimpleDialog.show();
-			 
-
 		}
-
 		navigation_drawer.setOnClickListener(new OnClickListener() {
 
 			@Override

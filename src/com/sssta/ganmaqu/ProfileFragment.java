@@ -3,9 +3,13 @@ package com.sssta.ganmaqu;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.List;
+
+import net.tsz.afinal.FinalDb;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -54,7 +58,7 @@ import cn.sharesdk.tencent.qzone.QZone;
 public class ProfileFragment extends android.support.v4.app.Fragment {
 	// TODO: Rename parameter arguments, choose names that match
 	// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-
+	private FinalDb db;
 	private static final String ARG_PARAM1 = "param1";
 	private static final String ARG_PARAM2 = "param2";
 	private String ipString;
@@ -135,6 +139,7 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		// Inflate the layout for this fragment
+		db = FinalDb.create(attach_activity.getApplicationContext());
 		view_profile = inflater.inflate(R.layout.fragment_profile, container,
 				false);
 		cityTextView = (TextView) view_profile
@@ -185,153 +190,166 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
 				// TODO Auto-generated method stub
 				switch (position) {
 				case 0:
-					if (userInfo.getString("userid", "NULL").equals("NULL")) {
-
-						final String[] LogMethods = { "通过新浪微博认证登陆", "通过QQ认证登陆",
-								"通过原有账号系统登陆" };
-						AlertDialog.Builder builder = new AlertDialog.Builder(
-								view_profile.getContext());
-						builder.setTitle("选择登录方式");
-						builder.setItems(LogMethods,
-								new DialogInterface.OnClickListener() {
-									PlatformActionListener paListener = new PlatformActionListener() {
-
-										@Override
-										public void onError(Platform arg0,
-												int arg1, Throwable arg2) {
-											// TODO Auto-generated method stub
-											Log.e("Throwable", arg2.toString());
-										}
-
-										@Override
-										public void onComplete(
-												Platform platform, int arg1,
-												HashMap<String, Object> arg2) {
-											// TODO Auto-generated method stub
-											Platform weibo = ShareSDK.getPlatform(
-													attach_activity
-															.getApplicationContext(),
-													SinaWeibo.NAME);
-											Platform tencent = ShareSDK.getPlatform(
-													attach_activity
-															.getApplicationContext(),
-													QZone.NAME);
-
-											String id = platform.getDb()
-													.getUserId();
-											Log.i("id_fragment", id);
-											nickname = platform.getDb()
-													.getUserName();
-											Log.i("nickname", nickname);
-											userInfo.edit()
-													.putString("userid", id)
-													.commit();
-											if (platform.equals(weibo)) {
-												userInfo.edit()
-														.putString(
-																"accountType",
-																"weibo")
-														.commit();
-											}
-											if (platform.equals(tencent)) {
-												userInfo.edit()
-														.putString(
-																"accountType",
-																"tencent")
-														.commit();
-											}
-											new LooperThread().start();
-											accountTextView
-													.post(new Runnable() {
-
-														@Override
-														public void run() {
-															// TODO
-															// Auto-generated
-															// method stub
-															accountTextView
-																	.setText("已登录:"
-																			+ nickname);
-														}
-													});
-											new getuserIcon().execute(platform.getDb().getUserIcon());
-										}
-
-										@Override
-										public void onCancel(Platform arg0,
-												int arg1) {
-											// TODO Auto-generated method stub
-
-										}
-									};
-
-									@Override
-									public void onClick(DialogInterface dialog,
-											int which) {
-										// TODO Auto-generated method stub
-										switch (which) {
-										case 0:
-											// set sina authorize()
-
-											Platform weibo = ShareSDK.getPlatform(
-													attach_activity
-															.getApplicationContext(),
-													SinaWeibo.NAME);
-											// try {
-											// String
-											// id=weibo.getDb().getUserId();
-											// Log.i("id2_sina", id);
-											// } catch (Exception e) {
-											// // TODO: handle exception.
-											// Log.i("weibo account",
-											// "failed to be load");
-											// }
-
-											weibo.setPlatformActionListener(paListener);
-											weibo.authorize();
-											// weibo.showUser(account);
-											break;
-										case 1:
-											Platform tencent = ShareSDK.getPlatform(
-													attach_activity
-															.getApplicationContext(),
-													QZone.NAME);
-											tencent.setPlatformActionListener(paListener);
-											tencent.authorize();
-											break;
-										case 2:
-											createLoginDialog(view_profile);
-											break;
-										default:
-											break;
-										}
-									}
-								});
-						AlertDialog alert = builder.create();
-						alert.show();
-					}
-
-					else {
-						createLogoutDialog(view_profile);
+//					if (userInfo.getString("userid", "NULL").equals("NULL")) {
+//
+//						final String[] LogMethods = { "通过新浪微博认证登陆", "通过QQ认证登陆",
+//								"通过原有账号系统登陆" };
+//						AlertDialog.Builder builder = new AlertDialog.Builder(
+//								view_profile.getContext());
+//						builder.setTitle("选择登录方式");
+//						builder.setItems(LogMethods,
+//								new DialogInterface.OnClickListener() {
+//									PlatformActionListener paListener = new PlatformActionListener() {
+//
+//										@Override
+//										public void onError(Platform arg0,
+//												int arg1, Throwable arg2) {
+//											// TODO Auto-generated method stub
+//											Log.e("Throwable", arg2.toString());
+//										}
+//
+//										@Override
+//										public void onComplete(
+//												Platform platform, int arg1,
+//												HashMap<String, Object> arg2) {
+//											// TODO Auto-generated method stub
+//											Platform weibo = ShareSDK.getPlatform(
+//													attach_activity
+//															.getApplicationContext(),
+//													SinaWeibo.NAME);
+//											Platform tencent = ShareSDK.getPlatform(
+//													attach_activity
+//															.getApplicationContext(),
+//													QZone.NAME);
+//
+//											String id = platform.getDb()
+//													.getUserId();
+//											Log.i("id_fragment", id);
+//											nickname = platform.getDb()
+//													.getUserName();
+//											Log.i("nickname", nickname);
+//											userInfo.edit()
+//													.putString("userid", id)
+//													.commit();
+//											if (platform.equals(weibo)) {
+//												userInfo.edit()
+//														.putString(
+//																"accountType",
+//																"weibo")
+//														.commit();
+//											}
+//											if (platform.equals(tencent)) {
+//												userInfo.edit()
+//														.putString(
+//																"accountType",
+//																"tencent")
+//														.commit();
+//											}
+//											new LooperThread().start();
+//											accountTextView
+//													.post(new Runnable() {
+//
+//														@Override
+//														public void run() {
+//															// TODO
+//															// Auto-generated
+//															// method stub
+//															accountTextView
+//																	.setText("已登录:"
+//																			+ nickname);
+//														}
+//													});
+//											new getuserIcon().execute(platform.getDb().getUserIcon());
+//										}
+//
+//										@Override
+//										public void onCancel(Platform arg0,
+//												int arg1) {
+//											// TODO Auto-generated method stub
+//
+//										}
+//									};
+//
+//									@Override
+//									public void onClick(DialogInterface dialog,
+//											int which) {
+//										// TODO Auto-generated method stub
+//										switch (which) {
+//										case 0:
+//											// set sina authorize()
+//
+//											Platform weibo = ShareSDK.getPlatform(
+//													attach_activity
+//															.getApplicationContext(),
+//													SinaWeibo.NAME);
+//											// try {
+//											// String
+//											// id=weibo.getDb().getUserId();
+//											// Log.i("id2_sina", id);
+//											// } catch (Exception e) {
+//											// // TODO: handle exception.
+//											// Log.i("weibo account",
+//											// "failed to be load");
+//											// }
+//
+//											weibo.setPlatformActionListener(paListener);
+//											weibo.authorize();
+//											// weibo.showUser(account);
+//											break;
+//										case 1:
+//											Platform tencent = ShareSDK.getPlatform(
+//													attach_activity
+//															.getApplicationContext(),
+//													QZone.NAME);
+//											tencent.setPlatformActionListener(paListener);
+//											tencent.authorize();
+//											break;
+//										case 2:
+//											createLoginDialog(view_profile);
+//											break;
+//										default:
+//											break;
+//										}
+//									}
+//								});
+//						AlertDialog alert = builder.create();
+//						alert.show();
+//					}
+//
+//					else {
+//						createLogoutDialog(view_profile);
+//					}
+					List<place> placeList = db.findAll(place.class);
+					if (placeList.isEmpty()) {
+						Toast.makeText(view_profile.getContext(), "啊哦，你还没有保存过路线",
+								Toast.LENGTH_SHORT).show();
+					} else {
+						int route_id = placeList.get(placeList.size() - 1)
+								.getRoute_id();
+						List<place> lastLine = db.findAllByWhere(place.class,
+								"route_id = " + String.valueOf(route_id));
+						Intent intent = new Intent();
+						intent.setClass(view_profile.getContext(), WarpDSLV.class);
+						intent.putExtra("places", (Serializable) lastLine);
+						intent.putExtra("type", lastLine.get(0).getRouteType());
+						startActivity(intent);
 					}
 					break;
 				case 1:
 					Intent intent = new Intent();
 					intent.setClass(getActivity().getApplicationContext(),
-							DislikeActivity.class);
+							SettingsActivity.class);
 
 					startActivity(intent);
 					break;
-				case 3:
+				case 2:
 					Intent intent2 = new Intent();
 					intent2.setClass(getActivity().getApplicationContext(),
 							GuideActivity.class);
 
 					startActivity(intent2);
 					break;
-				case 4:
-				
-					break;
+			
 				default:
 					break;
 				}

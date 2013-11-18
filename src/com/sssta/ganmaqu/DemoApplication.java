@@ -1,6 +1,9 @@
 ﻿package com.sssta.ganmaqu;
 
 
+import java.security.PublicKey;
+import java.util.HashMap;
+
 import android.app.Application;
 import android.content.Context;
 import android.util.Log;
@@ -17,7 +20,9 @@ public class DemoApplication extends Application {
     private static DemoApplication mInstance = null;
     public boolean m_bKeyRight = true;
     BMapManager mBMapManager = null;
-
+    public boolean[] selectType; 
+    public enum types {EAT,SHOP,MOVIE,SCENE,COFFEE,KTV};
+    
     //public static final String strKey = "970293a9a6573c4517821ee70a7e30a5";  // for baiduapi 
      public static final String strKey = "397c8e382ee8dcc520182990a807b1b9"; // for XPS 
      
@@ -75,5 +80,6 @@ public class DemoApplication extends Application {
                 DemoApplication.getInstance().m_bKeyRight = false;
             }
         }
+       
     }
 }
