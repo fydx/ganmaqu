@@ -6,7 +6,9 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.zip.Inflater;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -43,8 +45,19 @@ public class SettingsActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+		getWindow().requestFeature(Window.FEATURE_ACTION_BAR); // Add this line
 		setContentView(R.layout.activity_settings);
+		view =(View)findViewById(R.id.rtlayout_settings);
+		ActionBar actionBar = this.getActionBar();
+		actionBar.setDisplayOptions(ActionBar.DISPLAY_HOME_AS_UP,
+				ActionBar.DISPLAY_HOME_AS_UP);
+//		actionBar.setBackgroundDrawable(getResources().getDrawable(
+//				R.drawable.actionbar_banner));
+		
+		actionBar.setBackgroundDrawable(getResources().getDrawable(R.drawable.actionbar_bg));
+		actionBar.setDisplayShowHomeEnabled(false);
+		actionBar.setTitle("设置");
+		actionBar.setDisplayHomeAsUpEnabled(true);
 		final Button button_account = (Button) findViewById(R.id.button_account);
 		Button button_about = (Button) findViewById(R.id.button_about);
 		Button button_prefer = (Button) findViewById(R.id.button_prefer);
@@ -118,9 +131,7 @@ public class SettingsActivity extends Activity {
 				startActivity(intent);
 			}
 		});
-		if (!userInfo.getString("userid", "NULL").equals("NULL")) {
-			button_account.setText("已登录 : " + username_init);
-		}
+		
 		button_account.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -134,6 +145,7 @@ public class SettingsActivity extends Activity {
 					builder.setTitle("选择登录方式");
 					builder.setItems(LogMethods,
 							new DialogInterface.OnClickListener() {
+							String addString;
 								PlatformActionListener paListener = new PlatformActionListener() {
 
 									@Override
@@ -148,13 +160,14 @@ public class SettingsActivity extends Activity {
 											Platform platform, int arg1,
 											HashMap<String, Object> arg2) {
 										// TODO Auto-generated method stub
+									
 										Platform weibo = ShareSDK.getPlatform(
 														getApplicationContext(),
 												SinaWeibo.NAME);
 										Platform tencent = ShareSDK.getPlatform(
 														getApplicationContext(),
 												QZone.NAME);
-
+										
 										String id = platform.getDb()
 												.getUserId();
 										Log.i("id_fragment", id);
@@ -170,6 +183,7 @@ public class SettingsActivity extends Activity {
 															"accountType",
 															"weibo")
 													.commit();
+											addString = "(新浪微博用户)";
 										}
 										if (platform.equals(tencent)) {
 											userInfo.edit()
@@ -177,6 +191,7 @@ public class SettingsActivity extends Activity {
 															"accountType",
 															"tencent")
 													.commit();
+											addString = "(QQ用户)";
 										}
 										new LooperThread().start();
 										button_account
@@ -189,7 +204,7 @@ public class SettingsActivity extends Activity {
 														// method stub
 														button_account
 																.setText("已登录:"
-																		+ nickname);
+																		+addString + " " + nickname);
 													}
 												});
 										new getuserIcon().execute(platform.getDb().getUserIcon());
@@ -231,7 +246,6 @@ public class SettingsActivity extends Activity {
 										break;
 									case 1:
 										Platform tencent = ShareSDK.getPlatform(
-												
 														getApplicationContext(),
 												QZone.NAME);
 										tencent.setPlatformActionListener(paListener);

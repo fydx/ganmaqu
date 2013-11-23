@@ -52,7 +52,7 @@ public class GroupAdapter extends BaseAdapter {
             convertView.setTag(holder);  
               
             holder.groupItem=(TextView) convertView.findViewById(R.id.textView_group);  
-             holder.imageView = (ImageView)convertView.findViewById(R.id.imageView_menu);
+          //   holder.imageView = (ImageView)convertView.findViewById(R.id.imageView_menu);
         }  
         else{  
             holder=(ViewHolder) convertView.getTag();  
@@ -60,14 +60,16 @@ public class GroupAdapter extends BaseAdapter {
         //holder.groupItem.setTextColor(Color.BLACK);  
         holder.groupItem.setText(list.get(position));  
         if (position==0) {
-			
-			holder.imageView.setImageResource(R.drawable.icon_small_high);
+			holder.groupItem.setBackgroundResource(R.drawable.bg_listview_top);
+		//	holder.imageView.setImageResource(R.drawable.icon_small_high);
 		}
         if (position==1) {
-        	holder.imageView.setImageResource(R.drawable.icon_small_low);
+        	holder.groupItem.setBackgroundResource(R.drawable.bg_listview_middle);
+        //	holder.imageView.setImageResource(R.drawable.icon_small_low);
 		}
         if (position==2) {
-        	holder.imageView.setImageResource(R.drawable.icon_small_random);
+        	holder.groupItem.setBackgroundResource(R.drawable.bg_listview_bottom);
+        //	holder.imageView.setImageResource(R.drawable.icon_small_random);
 		}
         return convertView;  
     }  

@@ -90,6 +90,53 @@ public final class Connect {
 		return null;
 
 	}
+	/**
+	 * 获取“部分”方式得到的路线
+	 * @param city 城市名
+	 * @param circleName 商圈名
+	 * @param json 根据用户所选发送的json数据
+	 * @param id 用户id
+	 * @return 地点，json形式
+	 */
+	public  String GetPartRoute(String city, String circleName, String json, String id)
+	{
+		try
+		{
+			DefaultHttpClient httpclient = new DefaultHttpClient();
+			
+			HttpPost httpPost = new HttpPost("http://"+ipString+":8080/");
+			List<NameValuePair> params = new ArrayList<NameValuePair>();
+			params.add(new BasicNameValuePair("command", "part"));
+//			System.out.println(eat);
+			params.add(new BasicNameValuePair("circleName", circleName));
+			params.add(new BasicNameValuePair("city", city));
+			params.add(new BasicNameValuePair("json", json));
+//			params.add(new BasicNameValuePair("eat", eat));
+//			params.add(new BasicNameValuePair("enjoy", enjoy));
+//			params.add(new BasicNameValuePair("costlow", costLow + ""));
+//			params.add(new BasicNameValuePair("costhigh", costHigh + ""));
+			params.add(new BasicNameValuePair("id", id));
+			UrlEncodedFormEntity encodedValues = new UrlEncodedFormEntity(params, "UTF-8");
+			httpPost.setEntity(encodedValues);
+			HttpResponse httpResponse = httpclient.execute(httpPost);
+//			System.out.println("ok");
+//			System.out.println(httpResponse.getStatusLine().getStatusCode());
+			HttpEntity entity = httpResponse.getEntity();
+			InputStreamReader isr = new InputStreamReader(entity.getContent(), "utf-8");
+			BufferedReader br = new BufferedReader(isr);
+			String line = null;
+			while ((line = br.readLine()) != null)
+			{
+				return line;
+			}
+		}
+		catch (Exception e)
+		{
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		return "EXCEPTION";
+	}
      /**
       * 请求百度地图URI API 得到当前位置
       * @param pos_x_add 经度坐标
@@ -650,4 +697,5 @@ public final class Connect {
 		}
 		return "EXCPTION IN REG";
 	}
+	
 }

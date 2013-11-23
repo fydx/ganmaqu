@@ -96,7 +96,7 @@
      	  android:layout_marginBottom="-50dp"
      	  android:layout_marginLeft="-50dp"
         android:scaleType="centerCrop"
-        android:src="@drawable/thumb_simple" />
+        android:src="@drawable/xian_01" />
 </RelativeLayout>
     <TextView
         android:id="@+id/textView_everycost"

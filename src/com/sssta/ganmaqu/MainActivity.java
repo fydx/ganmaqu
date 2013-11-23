@@ -7,11 +7,11 @@ import java.util.Locale;
 
 import net.tsz.afinal.FinalDb;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.R.integer;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -40,34 +40,40 @@ import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
 import android.view.animation.AnimationUtils;
+import android.view.animation.ScaleAnimation;
 import android.view.animation.TranslateAnimation;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
-import cn.sharesdk.framework.Platform;
-import cn.sharesdk.framework.PlatformActionListener;
 import cn.sharesdk.framework.ShareSDK;
-import cn.sharesdk.sina.weibo.SinaWeibo;
 
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
-import com.jeremyfeinstein.slidingmenu.lib.app.SlidingFragmentActivity;
 import com.sssta.ganmaqu.ProfileFragment.OnFragmentInteractionListener;
+import com.sssta.ganmaqu.ProfileFragment.loginTask;
 
-public class MainActivity extends FragmentActivity implements OnFragmentInteractionListener {
+public class MainActivity extends FragmentActivity implements
+		OnFragmentInteractionListener {
 	private LocationManager locationManager;
 	private int status_finish_circle = 0;
 	private Location location;
 	private String provider;
 	private List<place> places;
 	private static String ipString;
+	private int typeCount;
 	final String Types[] = new String[] { "亲子出行", "朋友出行", "情侣出行" };
+	private final String[] types = { "美食", "购物", "电影院", "风景", "咖啡/甜点", "KTV" };
 	private static double lat;
 	private static double lng;
 	private Dialog dialog;
 	private int count, count_city, count_type;
 	private static Button circleButton;
 	private Button button_type, button_yes;
+	private RadioButton familyRadioButton, friendRadioButton,
+			coupleRadioButton;
 	private FinalDb db;
 	private String userid;
 	private static String city;
@@ -77,24 +83,29 @@ public class MainActivity extends FragmentActivity implements OnFragmentInteract
 	private int count_first;
 	private Connect connect;
 	private ImageView imageView_change;
-	public static double getLat()
-	{
+	private DemoApplication demoApplication;
+	private RadioGroup typeRadioGroup;
+	private Animation ToLargeScaleAnimation,ToSmallScaleAnimation;
+	public static double getLat() {
 		return lat;
 	}
-	public static double getLng(){
+
+	public static double getLng() {
 		return lng;
 	}
-	public static Button getCircleButton()
-	{
+
+	public static Button getCircleButton() {
 		return circleButton;
 	}
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		ShareSDK.initSDK(MainActivity.this);
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE); // no title bar
-		//setBehindContentView(R.layout.menu_right);
-		
+		//typeCount = 0;
+		// setBehindContentView(R.layout.menu_right);
+		demoApplication = (DemoApplication) getApplication();
 		ipString = getApplicationContext().getResources()
 				.getString(R.string.ip);
 		connect = new Connect(ipString);
@@ -109,7 +120,7 @@ public class MainActivity extends FragmentActivity implements OnFragmentInteract
 		count_first = userInfo.getInt("first", 0);
 		count_city = userInfo.getInt("count_city", 0);
 		Log.i("city from sharedperferece", city);
-		//setSlidingActionBarEnabled(true);
+		// setSlidingActionBarEnabled(true);
 		/*
 		 * 设置渐显动画
 		 */
@@ -130,7 +141,7 @@ public class MainActivity extends FragmentActivity implements OnFragmentInteract
 		AnimationSet animationSetTrans = new AnimationSet(false);
 		// 参数2：x轴的开始位置
 		// 参数4：x轴的结束位置
-		// 参数6：y轴的开始位置 
+		// 参数6：y轴的开始位置
 		// 参数8：y轴的结束位置
 		// 参数1,3,5,7 : fromX/YType
 		TranslateAnimation translateAnimation = new TranslateAnimation(
@@ -149,7 +160,7 @@ public class MainActivity extends FragmentActivity implements OnFragmentInteract
 		AnimationSet animationSetTrans_top = new AnimationSet(false);
 		// 参数2：x轴的开始位置
 		// 参数4：x轴的结束位置
-		// 参数6：y轴的开始位置 
+		// 参数6：y轴的开始位置
 		// 参数8：y轴的结束位置
 		// 参数1,3,5,7 : fromX/YType
 		TranslateAnimation translateAnimation_top = new TranslateAnimation(
@@ -165,16 +176,21 @@ public class MainActivity extends FragmentActivity implements OnFragmentInteract
 		/*
 		 * 控件绑定
 		 */
-		button_type = (Button) findViewById(R.id.button_type);
+		// button_type = (Button) findViewById(R.id.button_type);
 		ImageView navigation_drawer = (ImageView) findViewById(R.id.navigation_drawer);
 		TextView textView1 = (TextView) findViewById(R.id.tuijianshangquan);
 		TextView textView2 = (TextView) findViewById(R.id.chuxingleixing);
 		circleButton = (Button) findViewById(R.id.button_circle);
-		button_type.setAnimation(animationSet);
+		button_type = (Button)findViewById(R.id.button_type);
 		button_yes = (Button) findViewById(R.id.button_go);
 		ImageView cloud_top = (ImageView) findViewById(R.id.imageView_cloud_top);
 		ImageView cloud_bottom = (ImageView) findViewById(R.id.imageView_cloud_bottom);
-		imageView_change= (ImageView)findViewById(R.id.imageView_last);
+		imageView_change = (ImageView) findViewById(R.id.imageView_last);
+//		familyRadioButton = (RadioButton) findViewById(R.id.radioButton_family);
+//		friendRadioButton = (RadioButton) findViewById(R.id.radioButton_friend);
+//		coupleRadioButton = (RadioButton) findViewById(R.id.radioButton_couple);
+	//	typeRadioGroup = (RadioGroup) findViewById(R.id.radioGroup_type);
+
 		/*
 		 * 设置动画
 		 */
@@ -184,46 +200,13 @@ public class MainActivity extends FragmentActivity implements OnFragmentInteract
 		circleButton.setAnimation(animationSet);
 		button_yes.setAnimation(animationSet);
 		imageView_change.setAnimation(animationSet);
+		 button_type.setAnimation(animationSet);
 		cloud_top.setAnimation(animationSetTrans_top);
 		cloud_bottom.setAnimation(animationSetTrans);
-		// set sina authorize()
-//		
+
 		db = FinalDb.create(this);
-		PlatformActionListener paListener = new PlatformActionListener() {
-
-			@Override
-			public void onError(Platform arg0, int arg1, Throwable arg2) {
-				// TODO Auto-generated method stub
-
-			}
-
-			@Override
-			public void onComplete(Platform arg0, int arg1,
-					HashMap<String, Object> arg2) {
-				// TODO Auto-generated method stub
-				 String id=arg0.getDb().getUserId();
-				 Log.i("id", id);
-
-			}
-
-			@Override
-			public void onCancel(Platform arg0, int arg1) {
-				// TODO Auto-generated method stub
-
-			}
-		};
-//		final Platform weibo = ShareSDK.getPlatform(MainActivity.this,
-//				SinaWeibo.NAME);
-//		weibo.removeAccount();
-//		String id=weibo.getDb().getUserId();
-//		Log.i("id_in Main", id);
-		
-//		 weibo.setPlatformActionListener(paListener);
-//		weibo.authorize();
-	//	weibo.showUser(id);
-	//	 weibo.setPlatformActionListener(paListener); // 设置分享事件回调
 		imageView_change.setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
@@ -244,6 +227,101 @@ public class MainActivity extends FragmentActivity implements OnFragmentInteract
 				}
 			}
 		});
+		
+		ToLargeScaleAnimation = new ScaleAnimation(0.7f, 1.0f,0.7f,1.0f,Animation.RELATIVE_TO_SELF,0.5f,Animation.RELATIVE_TO_SELF,0.5f);
+		ToLargeScaleAnimation.setDuration(500);
+		ToLargeScaleAnimation.setInterpolator(AnimationUtils.loadInterpolator(
+				MainActivity.this, android.R.anim.anticipate_overshoot_interpolator));       
+		ToLargeScaleAnimation.setFillAfter(true);
+		ToLargeScaleAnimation.setFillEnabled(true);
+		
+		 
+		ToSmallScaleAnimation = new ScaleAnimation(1.0f, 0.7f,1.0f,0.7f,Animation.RELATIVE_TO_SELF,0.5f,Animation.RELATIVE_TO_SELF,0.5f);
+		ToSmallScaleAnimation.setDuration(500);
+		ToSmallScaleAnimation.setInterpolator(AnimationUtils.loadInterpolator(
+				MainActivity.this, android.R.anim.anticipate_overshoot_interpolator));   
+		ToSmallScaleAnimation.setFillAfter(true);
+		ToSmallScaleAnimation.setFillEnabled(true);
+
+		
+	/*	typeRadioGroup
+				.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+
+					@Override
+					public void onCheckedChanged(RadioGroup group, int checkedId) {
+						// TODO Auto-generated method stub
+						if (familyRadioButton.getId() == checkedId) {
+							if (friendRadioButton.isChecked()) {
+								friendRadioButton.clearAnimation();
+								familyRadioButton.clearAnimation();
+								coupleRadioButton.clearAnimation();
+								friendRadioButton.startAnimation(ToSmallScaleAnimation);
+								familyRadioButton.startAnimation(ToLargeScaleAnimation);
+							}
+							else {
+								friendRadioButton.clearAnimation();
+								familyRadioButton.clearAnimation();
+								coupleRadioButton.clearAnimation();
+								coupleRadioButton.startAnimation(ToSmallScaleAnimation);
+								familyRadioButton.startAnimation(ToLargeScaleAnimation);
+							}
+							
+							}
+							typeCount = 0;
+						}
+						if (friendRadioButton.getId() == checkedId) {
+							switch (typeCount) {
+							case 0:
+								friendRadioButton.clearAnimation();
+								familyRadioButton.clearAnimation();
+								coupleRadioButton.clearAnimation();
+								familyRadioButton.startAnimation(ToSmallScaleAnimation);
+								friendRadioButton.startAnimation(ToLargeScaleAnimation);
+								Log.i("friend selected", "family"+ String.valueOf(typeCount));
+								break;
+							case 2:
+								friendRadioButton.clearAnimation();
+								familyRadioButton.clearAnimation();
+								coupleRadioButton.clearAnimation();
+								coupleRadioButton.startAnimation(ToSmallScaleAnimation);
+								friendRadioButton.startAnimation(ToLargeScaleAnimation);
+								Log.i("friend selected", "couple"+ String.valueOf(typeCount));
+								break;
+							default:
+								break;
+							}
+							
+							typeCount = 1;
+
+						}
+						
+						if (coupleRadioButton.getId() == checkedId) {
+							switch (typeCount) {
+							case 0:
+								friendRadioButton.clearAnimation();
+								familyRadioButton.clearAnimation();
+								coupleRadioButton.clearAnimation();
+								familyRadioButton.startAnimation(ToSmallScaleAnimation);
+								coupleRadioButton.startAnimation(ToLargeScaleAnimation);
+								Log.i("couple selected", "family"+ String.valueOf(typeCount));
+								break;
+							case 1:
+								friendRadioButton.clearAnimation();
+								familyRadioButton.clearAnimation();
+								coupleRadioButton.clearAnimation();
+								friendRadioButton.startAnimation(ToSmallScaleAnimation);
+								coupleRadioButton.startAnimation(ToLargeScaleAnimation);
+								Log.i("couple selected", "friend"+ String.valueOf(typeCount));
+								break;
+							default:
+								break;
+							}
+							typeCount = 2;
+							
+						
+						}
+					}
+				}); */
 		// set sliding menu
 		menu = new SlidingMenu(this);
 		menu.setMode(SlidingMenu.LEFT);
@@ -253,11 +331,11 @@ public class MainActivity extends FragmentActivity implements OnFragmentInteract
 		menu.setShadowDrawable(R.drawable.shadow);
 		menu.setBehindOffsetRes(R.dimen.slidingmenu_offset);
 		menu.setFadeDegree(0.35f);
-//		menu.setSecondaryMenu(R.layout.menu_right);
-//		menu.setSecondaryShadowDrawable(R.drawable.shadowright);
+		// menu.setSecondaryMenu(R.layout.menu_right);
+		// menu.setSecondaryShadowDrawable(R.drawable.shadowright);
 		menu.attachToActivity(this, SlidingMenu.SLIDING_CONTENT);
 		menu.setMenu(R.layout.menu_right);
-		
+
 		if (isConnect(this) == false) {
 			new AlertDialog.Builder(this)
 					.setTitle("网络错误")
@@ -275,10 +353,10 @@ public class MainActivity extends FragmentActivity implements OnFragmentInteract
 								}
 							}).show();
 		}
-		if (count_first == 0) {	
+		if (count_first == 0) {
 			Log.i("firstboot", "True");
 			db = FinalDb.create(this);
-			User user = new User(1,1);
+			User user = new User(1, 1);
 			db.save(user);
 			Editor e = userInfo.edit();
 			e.putInt("first", 2);
@@ -298,82 +376,31 @@ public class MainActivity extends FragmentActivity implements OnFragmentInteract
 			}
 		});
 
-		button_type.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				button_type.setText(Types[count_type % 3]);
-				count_type++;
-			}
-		});
-		// RelativeLayout relativeLayout = (RelativeLayout)
-		// findViewById(R.id.city);
-		// relativeLayout.getBackground().setAlpha(100);
-
-		// cityTextView = (TextView) findViewById(R.id.textView_city);
-		// cityTextView.setText(city);
-		// changecityButton = (Button) findViewById(R.id.button_changecity);
-		// changecityButton.setOnClickListener(new OnClickListener() {
-		//
-		// @Override
-		// public void onClick(View v) {
-		// // TODO Auto-generated method stub
-		// ChangeCityDialog changeCityDialog = new ChangeCityDialog(
-		// MainActivity.this, String.valueOf(lng), String
-		// .valueOf(lat));
-		// changeCityDialog.setTextView(cityTextView);
-		// changeCityDialog.setcircleButton(circleButton);
-		// changeCityDialog.show();
-		//
-		// }
-		// });
-		// Button button_right = (Button) actionbar_title
-		// .findViewById(R.id.button_right);
-		// button_right.setOnClickListener(new OnClickListener() {
-		//
-		// @Override
-		// public void onClick(View v) {
-		// // TODO Auto-generated method stub
-		// List<place> placeList = db.findAll(place.class);
-		// if (placeList.isEmpty()) {
-		// Toast.makeText(getApplicationContext(), "啊哦，你还没有保存过路线",
-		// Toast.LENGTH_SHORT).show();
-		// } else {
-		// int route_id = placeList.get(placeList.size() - 1)
-		// .getRoute_id();
-		// List<place> lastLine = db.findAllByWhere(place.class,
-		// "route_id = " + String.valueOf(route_id));
-		// Intent intent = new Intent();
-		// intent.setClass(getApplicationContext(), WarpDSLV.class);
-		// intent.putExtra("places", (Serializable) lastLine);
-		// intent.putExtra("type", lastLine.get(0).getRouteType());
-		// startActivity(intent);
-		// }
-		// }
-		// });
-		// actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-		// LayoutParams params = new ActionBar.LayoutParams(
-		// ActionBar.LayoutParams.MATCH_PARENT,
-		// ActionBar.LayoutParams.MATCH_PARENT, Gravity.CENTER);
-		// actionBar.setCustomView(actionbar_title, params);
-		// actionBar.setDisplayShowCustomEnabled(true);
-
-		// locTextView.setBackgroundColor(0xe0FFFFFF);
+		 button_type.setOnClickListener(new OnClickListener() {
+		
+		 @Override
+		 public void onClick(View v) {
+		 // TODO Auto-generated method stub
+		 button_type.setText(Types[count_type % 3]);
+		 count_type++;
+		 }
+		 });
 
 		circleButton.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				if (city!=null) {
-					circleDialog = new CircleDialog(MainActivity.this, userInfo.getString("city", "西安市"));
+				if (city != null) {
+					circleDialog = new CircleDialog(MainActivity.this, userInfo
+							.getString("city", "西安市"));
 					// circleDialog.setCity(city);
 					circleDialog.setbutton(circleButton);
 					circleDialog.show();
-				}
-				else {
-					Toast.makeText(getApplicationContext(), "请稍后等待获取到当前城市，或手动选择当前城市后点击", Toast.LENGTH_SHORT).show();
+				} else {
+					Toast.makeText(getApplicationContext(),
+							"请稍后等待获取到当前城市，或手动选择当前城市后点击", Toast.LENGTH_SHORT)
+							.show();
 				}
 
 			}
@@ -396,9 +423,10 @@ public class MainActivity extends FragmentActivity implements OnFragmentInteract
 			location = locationManager.getLastKnownLocation(provider);
 		} catch (Exception e) {
 			// TODO: handle exception
-			Toast.makeText(getApplicationContext(), "Provider is null", Toast.LENGTH_SHORT).show();
+			Toast.makeText(getApplicationContext(), "Provider is null",
+					Toast.LENGTH_SHORT).show();
 		}
-	
+
 		// 显示位置信息到文字标签
 		updateWithNewLocation(location);
 		// 注册监听器locationListener，第2、3个参数可以控制接收gps消息的频度以节省电力。第2个参数为毫秒，
@@ -409,9 +437,10 @@ public class MainActivity extends FragmentActivity implements OnFragmentInteract
 
 		} catch (Exception e) {
 			// TODO: handle exception
-			Toast.makeText(getApplicationContext(), "无法获取Provider", Toast.LENGTH_SHORT).show();
+			Toast.makeText(getApplicationContext(), "无法获取Provider",
+					Toast.LENGTH_SHORT).show();
 		}
-		
+
 		// set gallery
 		Integer[] images = { R.drawable.child, R.drawable.friend,
 				R.drawable.couple };
@@ -423,10 +452,32 @@ public class MainActivity extends FragmentActivity implements OnFragmentInteract
 
 			@Override
 			public void onClick(View v) {
+				int checkSelect = 0;
+				Log.i("allday/partday", String.valueOf(demoApplication.allDay));
+				for (int j = 0; j < types.length; j++) {
 
-				if (lat == 0.0 || lng == 0.0||status_finish_circle==0) {
+					Log.i(types[j],
+							String.valueOf(demoApplication.selectType[j]));
+					if (demoApplication.selectType[j] == true) {
+						checkSelect = 1;
+						break;
+					}
+
+				}
+				if (location == null) {
+					// TODO 如果没有location时？
+				}
+				
+				if (lat == 0.0 || lng == 0.0 || status_finish_circle == 0) {
+					Log.i("lat", String.valueOf(lat));
+					Log.i("lng", String.valueOf(lng));
+					Log.i("status_finish_circle", String.valueOf(status_finish_circle));
 					Toast.makeText(getApplicationContext(),
 							"定位失败，请打开定位服务或稍后再试", Toast.LENGTH_SHORT).show();
+				} else if (checkSelect == 0  && demoApplication.allDay == false) {
+					Toast.makeText(getApplicationContext(),
+							"您选择的是“部分”模式，请在侧边栏里选择你想要出行的地点类型",
+							Toast.LENGTH_SHORT).show();
 				} else {
 					dialog = new Dialog(MainActivity.this,
 							R.style.activity_translucent);
@@ -436,24 +487,51 @@ public class MainActivity extends FragmentActivity implements OnFragmentInteract
 					// Types[typeWheel.getCurrentItem()], Toast.LENGTH_SHORT)
 					// .show();
 					// Log.i("Current Item", Types[typeWheel.getCurrentItem()]);
-				
-					if (location == null) {
-						new RequestTask().execute(button_type.getText()
-								.toString());
-					} else {
+
+					if (demoApplication.allDay == true) {
+						Log.i("lat", String.valueOf(lat));
+						Log.i("lng", String.valueOf(lng));
+						Log.i("status_finish_circle", String.valueOf(status_finish_circle));
 						new RequestTask().execute(button_type.getText()
 								.toString(), String.valueOf(location
 								.getLongitude()), String.valueOf(location
 								.getLatitude()), userInfo.getString("city",
 								"西安市"));
-					}
+					} else {
+						JSONObject json = new JSONObject();
+						JSONArray item = new JSONArray();
+						for (int i = 0; i < types.length; i++) {
+							if (demoApplication.selectType[i] == true) {
+								item.put(types[i]);
+							}
 
+						}
+						try {
+							json.put("item", item);
+						} catch (JSONException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+
+						try {
+							new RequestPartTask().execute(
+									userInfo.getString("city", "西安市"),
+									circleButton.getText().toString(),
+									json.getString("item"), userid);
+						} catch (JSONException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						Log.i("PART CIRCLE", circleButton.getText().toString());
+						Log.i("PART JSON", json.toString());
+						Log.i("PART USER", userid);
+					}
 				}
+
 			}
 		});
 		// numberWheel.setCurrentItem(3);
 	}
-
 
 	// 判断是否开启GPS，若未开启，打开GPS设置界面
 	private void openGPS() {
@@ -534,20 +612,18 @@ public class MainActivity extends FragmentActivity implements OnFragmentInteract
 			new getCurrentCircle().execute(String.valueOf(lng),
 					String.valueOf(lat), userInfo.getString("city", "西安市"));
 			Log.i("loaction", String.valueOf(lat) + " " + String.valueOf(lng));
-//			if (count_first != 0) {
-//				new getCurrentCircle().execute(String.valueOf(lng),
-//						String.valueOf(lat), userInfo.getString("city", "西安市"));
-//			}
-			
-				
-		}
-		else {
-			
+			// if (count_first != 0) {
+			// new getCurrentCircle().execute(String.valueOf(lng),
+			// String.valueOf(lat), userInfo.getString("city", "西安市"));
+			// }
+
+		} else {
+
 			new FirstRequestTask().execute(String.valueOf(lat),
 					String.valueOf(lng));
-		
+
 		}
-		//count++;
+		// count++;
 		// Toast.makeText(
 		// getApplicationContext(),
 		// "(main)您当前的位置是: " + "\n" + latLongString + "\n"
@@ -557,7 +633,7 @@ public class MainActivity extends FragmentActivity implements OnFragmentInteract
 		// + getAddressbyGeoPoint(location));
 
 	}
-	
+
 	// 获取地址信息
 	private List<Address> getAddressbyGeoPoint(Location location) {
 		List<Address> result = null;
@@ -577,24 +653,23 @@ public class MainActivity extends FragmentActivity implements OnFragmentInteract
 	}
 
 	public class RequestTask extends AsyncTask<String, integer, String> {
-		private String typeString;
 
 		@Override
 		protected String doInBackground(String... params) {
-			typeString = params[0];
+
 			double pos_x = 108.947039, pos_y = 34.259203;
 
 			if (params.length > 1) {
 				pos_x = Double.parseDouble(params[1]);
 				pos_y = Double.parseDouble(params[2]);
 			}
-			
+
 			try {
 				return connect.GetFullRoute(params[0], pos_x, pos_y, userid,
 						circleButton.getText().toString(), params[3]);
 
 			} catch (JSONException e) {
-				
+
 				e.printStackTrace();
 			}
 			return null;
@@ -633,7 +708,60 @@ public class MainActivity extends FragmentActivity implements OnFragmentInteract
 			intent.putExtra("type", button_type.getText().toString());
 			intent.putExtra("loclat", lat);
 			intent.putExtra("loclng", lng);
-			intent.putExtra("type", typeString);
+			// intent.putExtra("type", typeString);
+
+			intent.putExtra("circle", circleButton.getText().toString());
+			dialog.dismiss();
+			startActivity(intent);
+		}
+
+	}
+
+	public class RequestPartTask extends AsyncTask<String, Integer, String> {
+
+		@Override
+		protected String doInBackground(String... params) {
+			// TODO Auto-generated method stub
+
+			return connect.GetPartRoute(params[0], params[1], params[2],
+					params[3]);
+		}
+
+		@Override
+		protected void onPostExecute(String result) {
+			if (result != null) {
+				Log.i("PART result", result);
+			} else {
+				Log.i("PART result", "null");
+			}
+			decodeJson objdecodeJson = null;
+			try {
+				objdecodeJson = new decodeJson(result);
+
+			} catch (JSONException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			try {
+				Log.i("top", objdecodeJson.getTop());
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			places = objdecodeJson
+					.JsonToPlaceList(objdecodeJson.getJsonArray());
+			for (int i = 0; i < places.size(); i++) {
+				Log.i("places info", places.get(i).getShopName());
+
+			}
+
+			Intent intent = new Intent();
+			intent.setClass(getApplicationContext(), WarpDSLV.class);
+			intent.putExtra("places", (Serializable) places);
+			intent.putExtra("type", button_type.getText().toString());
+			intent.putExtra("loclat", lat);
+			intent.putExtra("loclng", lng);
+			// intent.putExtra("type", typeString);
 
 			intent.putExtra("circle", circleButton.getText().toString());
 			dialog.dismiss();
@@ -653,7 +781,7 @@ public class MainActivity extends FragmentActivity implements OnFragmentInteract
 		@Override
 		protected void onPostExecute(String result) {
 			try {
-				
+
 				HashMap<Integer, String> hashMapCircle = hashCircle(result);
 				Log.i("circle1", hashMapCircle.get(0));
 			} catch (JSONException e) {
@@ -697,7 +825,7 @@ public class MainActivity extends FragmentActivity implements OnFragmentInteract
 		@Override
 		protected void onPostExecute(String result) {
 			// circleString = result;
-			status_finish_circle = 1; //标记已经获取到商圈
+			status_finish_circle = 1; // 标记已经获取到商圈
 			if (result == null) {
 				circleButton.setText("暂时无法获取位置");
 			} else {
@@ -781,13 +909,16 @@ public class MainActivity extends FragmentActivity implements OnFragmentInteract
 		ShareSDK.stopSDK(this);
 
 	}
+
 	@Override
 	public void onFragmentInteraction(Uri uri) {
 		// TODO Auto-generated method stub
-		
+
 	}
+
 	public class FirstRequestTask extends AsyncTask<String, integer, String> {
-        private String pos_x,pos_y;
+		private String pos_x, pos_y;
+
 		@Override
 		protected String doInBackground(String... params) {
 			// TODO Auto-generated method stub
@@ -800,8 +931,9 @@ public class MainActivity extends FragmentActivity implements OnFragmentInteract
 		protected void onPostExecute(String result) {
 
 			if (result == null) {
-			//	cityTextView.setText("地点未知");
-				Toast.makeText(getApplicationContext(), "抱歉，暂时无法得到您的位置", Toast.LENGTH_SHORT).show();
+				// cityTextView.setText("地点未知");
+				Toast.makeText(getApplicationContext(), "抱歉，暂时无法得到您的位置",
+						Toast.LENGTH_SHORT).show();
 			} else {
 				try {
 					Log.i("ADDRESS REQUEST", result);
@@ -813,29 +945,31 @@ public class MainActivity extends FragmentActivity implements OnFragmentInteract
 					// Toast.LENGTH_LONG).show();
 					// cityTextView.setText(jsonResult
 					// .getString("city"));
-					
-						city = null;
-						String addressComponent = jsonResult
-								.getString("addressComponent");
-						JSONObject address = new JSONObject(addressComponent);
-						city = new String(address.getString("city"));
-						Log.i("city_in asynctask", city);
-						//cityTextView.setText(city);
-						userInfo.edit().putString("city", city).commit();
-						count_city++;
-						
-						userInfo.edit().putInt("count_city", count_city)
-								.commit();
-						Toast.makeText(getApplicationContext(), "系统检测您在" + city + "\n我们已将"+city +"设为您的默认城市", Toast.LENGTH_SHORT).show();
-						ProfileFragment fragment = (ProfileFragment)getSupportFragmentManager().findFragmentById(R.id.menu_right);
-//						fragment.new AddressRequestTask().execute(String.valueOf(lat),
-//								String.valueOf(lng));
-						fragment.setCity(city);
-						
-						new getCurrentCircle().execute(String.valueOf(pos_x),
-								String.valueOf(pos_y),city);
-					
-				
+
+					city = null;
+					String addressComponent = jsonResult
+							.getString("addressComponent");
+					JSONObject address = new JSONObject(addressComponent);
+					city = new String(address.getString("city"));
+					Log.i("city_in asynctask", city);
+					// cityTextView.setText(city);
+					userInfo.edit().putString("city", city).commit();
+					count_city++;
+
+					userInfo.edit().putInt("count_city", count_city).commit();
+					Toast.makeText(getApplicationContext(),
+							"系统检测您在" + city + "\n我们已将" + city + "设为您的默认城市",
+							Toast.LENGTH_SHORT).show();
+					ProfileFragment fragment = (ProfileFragment) getSupportFragmentManager()
+							.findFragmentById(R.id.menu_right);
+					// fragment.new
+					// AddressRequestTask().execute(String.valueOf(lat),
+					// String.valueOf(lng));
+					fragment.setCity(city);
+
+					new getCurrentCircle().execute(String.valueOf(pos_x),
+							String.valueOf(pos_y), city);
+
 				} catch (JSONException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

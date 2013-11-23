@@ -16,6 +16,7 @@ import net.tsz.afinal.FinalDb;
 import org.apache.http.util.EncodingUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.R.integer;
 import android.app.ActionBar;
@@ -57,7 +58,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.mobeta.android.dslv.DragSortListView;
-import com.sina.weibo.sdk.constant.Constants.Msg;
 
 public class WarpDSLV extends FragmentActivity {
 
@@ -93,6 +93,9 @@ public class WarpDSLV extends FragmentActivity {
 	 private String[] picurls;
 	private int picCount;
 	private AnimationSet animationSet;
+	private int[] pics;
+	private String[] picStrings ={"http://115.28.17.121/pics/xian_01.png","http://115.28.17.121/pics/xian_02.png"};
+	
 	private DragSortListView.DropListener onDrop = new DragSortListView.DropListener() {
 		@Override
 		public void drop(int from, int to) {
@@ -109,6 +112,7 @@ public class WarpDSLV extends FragmentActivity {
 		public void remove(int which) {
 			// adapter.remove(adapter.getItem(which));
 			// adapter.notifyDataSetChanged();
+			Toast.makeText(getApplicationContext(), "请稍后,马上为您推荐一个新的地点", Toast.LENGTH_SHORT).show();
 			Log.i("Remove Which", String.valueOf(which));
 			new changeTask().execute(type, String.valueOf(places.get(which)
 					.getPos_x()), String.valueOf(places.get(which).getPos_y()),
@@ -187,17 +191,16 @@ public class WarpDSLV extends FragmentActivity {
 				Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF,
 				-0.02f, Animation.RELATIVE_TO_SELF, 0f,
 				Animation.RELATIVE_TO_SELF, -0.02f);
-		translateAnimation.setDuration(9500);
+		translateAnimation.setDuration(9000);
 		translateAnimation.setStartOffset(500);
 		translateAnimation.setInterpolator(AnimationUtils.loadInterpolator(
-				WarpDSLV.this, android.R.anim.linear_interpolator));
+				WarpDSLV.this, android.R.anim.cycle_interpolator));
 		translateAnimation.setRepeatCount(-1);
 		animationSet.addAnimation(translateAnimation);
-		animationSet.addAnimation(alphaAnimation_out);
+		//animationSet.addAnimation(alphaAnimation_out);
 		//animationSet.addAnimation(alphaAnimation_in);
 		mapImageView = (ImageView) findViewById(R.id.map_preview);
 		mapImageView.setAnimation(animationSet);
-		
 		ipString = getResources().getString(R.string.ip);
 		connect = new Connect(ipString);
 		db = FinalDb.create(this);
@@ -250,41 +253,45 @@ public class WarpDSLV extends FragmentActivity {
 			}
 		} else {
 			places = (List<place>) getIntent().getSerializableExtra("places");
+			Log.i("places", places.toString());
 		}
 		distances = calcDistances(places);
+		
 		List<String> picUrlsList = new ArrayList<String>();
 		for (int i = 0; i < places.size(); i++) {
-			if ( !places.get(i).getPicUrl().equals(null)) {
+			if ( !(places.get(i).getPicUrl()==null)) {
 				picUrlsList.add( places.get(i).getPicUrl());
 			}
 		}
 		
 		picurls = picUrlsList.toArray(new String[picUrlsList.size()]);
 		picCount =0 ;
+		 if (!(places.get(0).getPicUrl()==null)) {
+			 final Handler myHandler = new Handler() {// 创建一个Handler对象  
+		            public void handleMessage(Message msg) {// 重写接收消息的方法  
+		            	//mapImageView.clearAnimation();
+		            	//fb.display(mapImageView, picStrings[msg.what]);
+		            	//mapImageView.setAnimation(animationSet);
+		                super.handleMessage(msg);  
+		            }  
+		        };  
+			 new Thread() {  
+		            public void run() {  
+		                int i = 0;  
+		                while (true) {// 循环  
+		                	myHandler.sendEmptyMessage((i++) % picStrings.length);// 发送消息  
+		                 
+		                    try {  
+		                        Thread.sleep(10000);  
+		                    } catch (Exception e) {  
+		                        e.printStackTrace();  
+		                    }  
+		                }  
+		  
+		            };  
+		        }.start();  
+		}
 		 
-		 final Handler myHandler = new Handler() {// 创建一个Handler对象  
-	            public void handleMessage(Message msg) {// 重写接收消息的方法  
-	            	//mapImageView.clearAnimation();
-	            	fb.display(mapImageView, picurls[msg.what]);
-	            	//mapImageView.setAnimation(animationSet);
-	                super.handleMessage(msg);  
-	            }  
-	        };  
-		 new Thread() {  
-	            public void run() {  
-	                int i = 0;  
-	                while (true) {// 循环  
-	                	myHandler.sendEmptyMessage((i++) % picurls.length);// 发送消息  
-	                 
-	                    try {  
-	                        Thread.sleep(10000);  
-	                    } catch (Exception e) {  
-	                        e.printStackTrace();  
-	                    }  
-	                }  
-	  
-	            };  
-	        }.start();  
 	       
 	//	new getPic().execute(picurls);
 		// button_saveToDB.setOnClickListener(new OnClickListener() {
@@ -555,7 +562,7 @@ public class WarpDSLV extends FragmentActivity {
 			textView_cost.setText(String.valueOf(cost));
 		}
 	}
-
+	
 	public class randomTask extends AsyncTask<String, Integer, String> {
 
 		@Override
@@ -878,21 +885,46 @@ public class WarpDSLV extends FragmentActivity {
 		switch (item.getItemId()) {
 		case R.id.change:
 			View view = (findViewById(R.id.change));
-			showWindow(view);
+			DemoApplication demoApplication = (DemoApplication)getApplication();
+			if (demoApplication.allDay==true) {
+				showWindow(view);
+			}
+			else {
+				String[] types = { "美食", "购物", "电影院", "风景", "咖啡/甜点", "KTV" };
+				JSONObject json = new JSONObject();
+				JSONArray item2 = new JSONArray();
+				for (int i = 0; i < types.length; i++) {
+					if (demoApplication.selectType[i] == true) {
+						item2.put(types[i]);
+					}
+
+				}
+				try {
+					json.put("item", item2);
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				try {
+					new  RequestPartTaskAgain().execute(userInfo.getString("city", "西安市"),
+							circleString,
+							json.getString("item"), userid);
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 			break;
 		case R.id.save:
 			saveToDB(places);
-
 			Intent intent3 = new Intent();
 			intent3.setClass(getApplicationContext(), ShareActivity.class);
 			intent3.putExtra("places", (Serializable) places);
 			startActivity(intent3);
 			finish();
-
 			break;
 		case R.id.map:
 			Intent intent = new Intent();
-
 			intent.setClass(getApplicationContext(), NewMapActivity.class); // set
 																			// new
 																			// map
@@ -924,9 +956,9 @@ public class WarpDSLV extends FragmentActivity {
 			lv_group = (ListView) view.findViewById(R.id.lvGroup);
 			// 加载数据
 			groups = new ArrayList<String>();
-			groups.add("  更奢侈");
-			groups.add("  更便宜");
-			groups.add("  随心换");
+			groups.add("更奢侈");
+			groups.add("更便宜");
+			groups.add("随心换");
 			lv_group.setDividerHeight(0);
 
 			GroupAdapter groupAdapter = new GroupAdapter(this, groups);
@@ -1151,4 +1183,56 @@ public class WarpDSLV extends FragmentActivity {
 		}
 		return bitmapList;
 	}
-}
+	public class RequestPartTaskAgain extends AsyncTask<String, Integer, String> {
+
+		@Override
+		protected String doInBackground(String... params) {
+			// TODO Auto-generated method stub
+
+			return connect.GetPartRoute(params[0], params[1], params[2],
+					params[3]);
+		}
+
+		@Override
+		protected void onPostExecute(String result) {
+			decodeJson objdecodeJson = null;
+			try {
+				objdecodeJson = new decodeJson(result);
+			} catch (JSONException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			try {
+				Log.i("top", objdecodeJson.getTop());
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			places = objdecodeJson
+					.JsonToPlaceList(objdecodeJson.getJsonArray());
+			for (int i = 0; i < places.size(); i++) {
+				Log.i("places info", places.get(i).getShopName());
+			}
+			places_arraylist.clear();
+
+			places_arraylist.addAll(places);
+			adapter.notifyDataSetChanged();
+			cost = 0;
+			for (int i = 0; i < places.size(); i++) {
+				if (places.get(i).getTime().equals("中午")
+						|| places.get(i).getTime().equals("晚餐")||places.get(i).getMainType().equals("美食")) {
+					// cost += places.get(i).getCost();
+					cost += places.get(i).getCost();
+				} 
+
+			}
+
+			Log.i("cost", "人均消费 new" + String.valueOf(cost));
+			textView_cost.setText(String.valueOf(cost));
+		}
+
+		}
+
+	}
+
+

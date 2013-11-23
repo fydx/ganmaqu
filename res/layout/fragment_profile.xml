@@ -61,36 +61,46 @@
     android:id="@+id/radioGroup"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+	android:layout_marginLeft="10dp"
     android:layout_alignLeft="@+id/textView_chuxingshijian"
     android:layout_below="@+id/textView_chuxingshijian"
      android:orientation="horizontal" >
 
-     <RadioButton
+    <RadioButton
         android:id="@+id/radioButton_full"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="全天" />
+        android:layout_width="51dp"
+        android:layout_height="51dp"
+        android:background="@drawable/radiobutton_style_full"
+        android:button="@null"
+        android:layout_alignLeft="@+id/textView_chuxingshijian"
+        android:checked="true" />
+"
       <RadioButton
         android:id="@+id/radioButton_part"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="部分" />
+        android:layout_marginLeft="18dp"
+        android:layout_width="51dp"
+        android:layout_height="51dp"
+        android:text="" 
+          android:button="@null"
+        android:background="@drawable/radiobutton_style_part"
+       />
 </RadioGroup>
 
 <TextView
     android:id="@+id/textView_didianfenlei"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_alignLeft="@+id/radioGroup"
+    android:layout_alignLeft="@+id/textView_chuxingshijian"
     android:layout_below="@+id/radioGroup"
-    android:layout_marginTop="18dp"
+    android:layout_marginTop="28dp"
     android:text="地点分类" 
      android:textSize = "20dp"/>
 
 <GridView
     android:id="@+id/gridView_placesType"
     android:layout_width="match_parent"
-    android:layout_height="180dp"
+    android:layout_height="160dp"
+    android:layout_marginTop="10dp"
     android:layout_alignLeft="@+id/textView_didianfenlei"
     android:layout_below="@+id/textView_didianfenlei"
     android:numColumns="3" >
@@ -115,5 +125,30 @@
     android:layout_marginBottom="2dp"
     android:text="常用功能"
       android:textSize = "20dp" />
+
+<TextView
+    android:id="@+id/textView_quantian"
+    android:layout_width="51dp"
+    android:layout_height="wrap_content"
+    android:layout_alignBaseline="@+id/textView_bufen"
+    android:layout_alignBottom="@+id/textView_bufen"
+    android:layout_alignLeft="@+id/radioGroup"
+    android:gravity="center_horizontal"
+    android:layout_marginTop="3dp"
+    android:text="全天"
+    android:textColor="#474747"
+    android:textSize="12dp" />
+
+<TextView
+    android:id="@+id/textView_bufen"
+    android:layout_width="51dp" 
+    android:layout_height="wrap_content"
+    android:layout_marginTop="3dp"
+    android:layout_alignRight="@+id/radioGroup"
+    android:layout_below="@+id/radioGroup"
+    android:gravity="center_horizontal"
+    android:text="部分"
+    android:textColor="#474747"
+    android:textSize="12dp" />
 
 </RelativeLayout>

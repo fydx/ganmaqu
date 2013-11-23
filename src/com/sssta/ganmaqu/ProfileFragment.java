@@ -6,7 +6,6 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.HashMap;
 import java.util.List;
 
 import net.tsz.afinal.FinalDb;
@@ -39,10 +38,12 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
 import cn.sharesdk.framework.Platform;
-import cn.sharesdk.framework.PlatformActionListener;
 import cn.sharesdk.framework.ShareSDK;
 import cn.sharesdk.sina.weibo.SinaWeibo;
 import cn.sharesdk.tencent.qzone.QZone;
@@ -71,13 +72,17 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
 	private SharedPreferences userInfo;
 	private Connect connect;
 	private String city;
-	private GridView settingsGridView;
+	private GridView settingsGridView, typeSelectGridView;
 	private SettingsGridAdapter settingsGridAdapter;
+	private PlacesGridAdapter typeSelectGridAdapter;
 	private View view_profile;
 	private Activity attach_activity;
 	private Platform weibo;
 	private String nickname;
 	private ImageView usericonImageView;
+	private RadioGroup radioGroup;
+	private RadioButton allDay,partDay;
+	private DemoApplication demoApplication;
 
 	public String getARG_PARAM1() {
 		return ARG_PARAM1;
@@ -139,9 +144,31 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		// Inflate the layout for this fragment
+		
 		db = FinalDb.create(attach_activity.getApplicationContext());
 		view_profile = inflater.inflate(R.layout.fragment_profile, container,
 				false);
+		demoApplication=(DemoApplication) view_profile.getContext().getApplicationContext();
+		radioGroup = (RadioGroup)view_profile.findViewById(R.id.radioGroup);
+		allDay = (RadioButton)view_profile.findViewById(R.id.radioButton_full);
+		partDay = (RadioButton)view_profile.findViewById(R.id.radioButton_part);
+		radioGroup.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			
+			@Override
+			public void onCheckedChanged(RadioGroup group, int checkedId) {
+				// TODO Auto-generated method stub
+				if(allDay.getId() == checkedId)
+				{
+					Log.i("select full", "selected");
+					demoApplication.allDay = true;
+					
+				}
+				if (partDay.getId() == checkedId) {
+					Log.i("select part", "selected");
+					demoApplication.allDay = false;
+				}
+			}
+		});
 		cityTextView = (TextView) view_profile
 				.findViewById(R.id.textView_currentCity);
 		userInfo = view_profile.getContext()
@@ -152,7 +179,7 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
 				.findViewById(R.id.imageView_usericon);
 		String username_init = userInfo.getString("userid", "NULL");
 		Log.i("已验证用户id", username_init);
-		if (!userInfo.getString("userid", "NULL").equals("NULL")) {
+		/*if (!userInfo.getString("userid", "NULL").equals("NULL")) {
 			if (userInfo.getString("accountType", "NULL").equals("weibo")) {
 				Platform weibo = ShareSDK
 						.getPlatform(attach_activity.getApplicationContext(),
@@ -172,7 +199,7 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
 				accountTextView.setText("已登录(原有用户系统):" + username_init);
 			}
 
-		}
+		}*/
 		ipString = view_profile.getContext().getResources()
 				.getString(R.string.ip);
 		city = userInfo.getString("city", "西安市");
@@ -180,8 +207,11 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
 		count_city = userInfo.getInt("count_city", 0);
 		settingsGridView = (GridView) view_profile
 				.findViewById(R.id.gridView_settings);
-		
+		typeSelectGridView = (GridView) view_profile
+				.findViewById(R.id.gridView_placesType);
+
 		settingsGridAdapter = new SettingsGridAdapter(view_profile.getContext());
+		typeSelectGridAdapter = new PlacesGridAdapter(view_profile.getContext());
 		settingsGridView.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
@@ -190,146 +220,19 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
 				// TODO Auto-generated method stub
 				switch (position) {
 				case 0:
-//					if (userInfo.getString("userid", "NULL").equals("NULL")) {
-//
-//						final String[] LogMethods = { "通过新浪微博认证登陆", "通过QQ认证登陆",
-//								"通过原有账号系统登陆" };
-//						AlertDialog.Builder builder = new AlertDialog.Builder(
-//								view_profile.getContext());
-//						builder.setTitle("选择登录方式");
-//						builder.setItems(LogMethods,
-//								new DialogInterface.OnClickListener() {
-//									PlatformActionListener paListener = new PlatformActionListener() {
-//
-//										@Override
-//										public void onError(Platform arg0,
-//												int arg1, Throwable arg2) {
-//											// TODO Auto-generated method stub
-//											Log.e("Throwable", arg2.toString());
-//										}
-//
-//										@Override
-//										public void onComplete(
-//												Platform platform, int arg1,
-//												HashMap<String, Object> arg2) {
-//											// TODO Auto-generated method stub
-//											Platform weibo = ShareSDK.getPlatform(
-//													attach_activity
-//															.getApplicationContext(),
-//													SinaWeibo.NAME);
-//											Platform tencent = ShareSDK.getPlatform(
-//													attach_activity
-//															.getApplicationContext(),
-//													QZone.NAME);
-//
-//											String id = platform.getDb()
-//													.getUserId();
-//											Log.i("id_fragment", id);
-//											nickname = platform.getDb()
-//													.getUserName();
-//											Log.i("nickname", nickname);
-//											userInfo.edit()
-//													.putString("userid", id)
-//													.commit();
-//											if (platform.equals(weibo)) {
-//												userInfo.edit()
-//														.putString(
-//																"accountType",
-//																"weibo")
-//														.commit();
-//											}
-//											if (platform.equals(tencent)) {
-//												userInfo.edit()
-//														.putString(
-//																"accountType",
-//																"tencent")
-//														.commit();
-//											}
-//											new LooperThread().start();
-//											accountTextView
-//													.post(new Runnable() {
-//
-//														@Override
-//														public void run() {
-//															// TODO
-//															// Auto-generated
-//															// method stub
-//															accountTextView
-//																	.setText("已登录:"
-//																			+ nickname);
-//														}
-//													});
-//											new getuserIcon().execute(platform.getDb().getUserIcon());
-//										}
-//
-//										@Override
-//										public void onCancel(Platform arg0,
-//												int arg1) {
-//											// TODO Auto-generated method stub
-//
-//										}
-//									};
-//
-//									@Override
-//									public void onClick(DialogInterface dialog,
-//											int which) {
-//										// TODO Auto-generated method stub
-//										switch (which) {
-//										case 0:
-//											// set sina authorize()
-//
-//											Platform weibo = ShareSDK.getPlatform(
-//													attach_activity
-//															.getApplicationContext(),
-//													SinaWeibo.NAME);
-//											// try {
-//											// String
-//											// id=weibo.getDb().getUserId();
-//											// Log.i("id2_sina", id);
-//											// } catch (Exception e) {
-//											// // TODO: handle exception.
-//											// Log.i("weibo account",
-//											// "failed to be load");
-//											// }
-//
-//											weibo.setPlatformActionListener(paListener);
-//											weibo.authorize();
-//											// weibo.showUser(account);
-//											break;
-//										case 1:
-//											Platform tencent = ShareSDK.getPlatform(
-//													attach_activity
-//															.getApplicationContext(),
-//													QZone.NAME);
-//											tencent.setPlatformActionListener(paListener);
-//											tencent.authorize();
-//											break;
-//										case 2:
-//											createLoginDialog(view_profile);
-//											break;
-//										default:
-//											break;
-//										}
-//									}
-//								});
-//						AlertDialog alert = builder.create();
-//						alert.show();
-//					}
-//
-//					else {
-//						createLogoutDialog(view_profile);
-//					}
+					
 					List<place> placeList = db.findAll(place.class);
 					if (placeList.isEmpty()) {
-						Toast.makeText(view_profile.getContext(), "啊哦，你还没有保存过路线",
-								Toast.LENGTH_SHORT).show();
+						Toast.makeText(view_profile.getContext(),
+								"啊哦，你还没有保存过路线", Toast.LENGTH_SHORT).show();
 					} else {
 						int route_id = placeList.get(placeList.size() - 1)
 								.getRoute_id();
 						List<place> lastLine = db.findAllByWhere(place.class,
 								"route_id = " + String.valueOf(route_id));
 						Intent intent = new Intent();
-						intent.setClass(view_profile.getContext(), WarpDSLV.class);
+						intent.setClass(view_profile.getContext(),
+								WarpDSLV.class);
 						intent.putExtra("places", (Serializable) lastLine);
 						intent.putExtra("type", lastLine.get(0).getRouteType());
 						startActivity(intent);
@@ -349,7 +252,7 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
 
 					startActivity(intent2);
 					break;
-			
+
 				default:
 					break;
 				}
@@ -357,17 +260,20 @@ public class ProfileFragment extends android.support.v4.app.Fragment {
 
 		});
 		settingsGridView.setAdapter(settingsGridAdapter);
-		connect = new Connect(ipString);
+
+		typeSelectGridView.setAdapter(typeSelectGridAdapter);
 		
-cityTextView.setOnClickListener(new OnClickListener() {
-			
+		connect = new Connect(ipString);
+
+		cityTextView.setOnClickListener(new OnClickListener() {
+
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				ChangeCityDialog changeCityDialog = new ChangeCityDialog(
-						view_profile.getContext(), String
-								.valueOf(MainActivity.getLng()), String
-								.valueOf(MainActivity.getLng()));
+						view_profile.getContext(), String.valueOf(MainActivity
+								.getLng()), String.valueOf(MainActivity
+								.getLng()));
 				changeCityDialog.setTextView(cityTextView);
 				changeCityDialog.setCircleTextView(MainActivity
 						.getCircleButton());
@@ -422,10 +328,11 @@ cityTextView.setOnClickListener(new OnClickListener() {
 		// TODO: Update argument type and name
 		public void onFragmentInteraction(Uri uri);
 	}
-	public void setCity(String city)
-	{
-		cityTextView.setText("当前城市:"+city);
+
+	public void setCity(String city) {
+		cityTextView.setText("当前城市:" + city);
 	}
+
 	public class AddressRequestTask extends AsyncTask<String, integer, String> {
 
 		@Override
@@ -460,9 +367,9 @@ cityTextView.setOnClickListener(new OnClickListener() {
 						Log.i("city in profilefragment", city);
 						cityTextView.setText(city);
 						userInfo.edit().putString("city", city).commit();
-						//count_city++;
-						//userInfo.edit().putInt("count_city", count_city)
-						//		.commit();
+						// count_city++;
+						// userInfo.edit().putInt("count_city", count_city)
+						// .commit();
 
 					}
 
@@ -719,8 +626,8 @@ cityTextView.setOnClickListener(new OnClickListener() {
 
 		@Override
 		protected void onPostExecute(Bitmap bitmap) {
-			usericonImageView.setVisibility(View.VISIBLE);
-			usericonImageView.setImageBitmap(bitmap);
+		//	usericonImageView.setVisibility(View.VISIBLE);
+		//	usericonImageView.setImageBitmap(bitmap);
 
 		}
 

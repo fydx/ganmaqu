@@ -180,8 +180,8 @@ public class NewMapActivity extends Activity {
 				end.pt = geoPoints.get(countRoute + 1);
 				mSearch.walkingSearch(null, start, null, end);
 				countRoute++;
-				if (countRoute > 3) {
-					countRoute = 3;
+				if (countRoute > places.size()-2) {
+					countRoute = places.size()-2;
 					Toast.makeText(getApplicationContext(), "这是最后一条路线了",
 							Toast.LENGTH_SHORT).show();
 				}
@@ -232,17 +232,16 @@ public class NewMapActivity extends Activity {
 		}
 		List<Drawable> markers = null;
 		markers = new ArrayList<Drawable>();
-		for (int i = 0; i < markers_id.length; i++) {
+		for (int i = 0; i < places.size(); i++) {
 			markers.add(getResources().getDrawable(markers_id[i]));
 		}
 		List<OverlayItem> overlayItems = null;
 		overlayItems = new ArrayList<OverlayItem>();
-		for (int i = 0; i < markers_id.length; i++) {
+		for (int i = 0; i < places.size(); i++) {
 			OverlayItem temp_overlayItem = new OverlayItem(geoPoints.get(i),
 					places.get(i).getShopName(), places.get(i).getShopName());
 			temp_overlayItem.setMarker(markers.get(i));
 			overlayItems.add(temp_overlayItem);
-
 		}
 		Log.i("overlay items ", String.valueOf(overlayItems.size()));
 

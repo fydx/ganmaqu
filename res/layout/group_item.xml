@@ -10,24 +10,16 @@
 
     <TextView
         android:id="@+id/textView_group"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="TextView"
-        android:textSize = "20dp"
-        android:textColor="#FFFFFF" 
+        android:layout_width="60dp"
+        android:layout_height="30dp"
+        android:text="更奢侈"
+        android:textSize = "15dp"
+        android:textColor="#12a6eb" 
         android:paddingRight="2dp"
-        android:gravity="right|center_vertical"
-        android:background="#0F0F0F"
+        android:gravity="center"
+        android:background="#eeeeee"
         />
 
-    <ImageView
-        android:id="@+id/imageView_menu"
-        android:layout_width="14dp"
-        android:layout_height="18dp"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="3dp"
-        android:layout_marginLeft="5dp"
-        android:src="@drawable/icon_small_high" />
+    
 
 </RelativeLayout>

@@ -11,53 +11,51 @@ import android.widget.ArrayAdapter;
 import com.mobeta.android.dslv.DragSortListView;
 
 public class RouteReviewActivity extends ListActivity {
-	 private ArrayAdapter<String> adapter;
-	
-	 	private List<place> places;
-	  private ArrayList<String> list;
-	  private DragSortListView.DropListener onDrop =
-		        new DragSortListView.DropListener() {
-		            @Override
-		            public void drop(int from, int to) {
-		                String item=adapter.getItem(from);
+	private ArrayAdapter<String> adapter;
 
-		                adapter.notifyDataSetChanged();
-		                adapter.remove(item);
-		                adapter.insert(item, to);
-		            }
-		        };
+	private List<place> places;
+	private ArrayList<String> list;
+	private DragSortListView.DropListener onDrop = new DragSortListView.DropListener() {
+		@Override
+		public void drop(int from, int to) {
+			String item = adapter.getItem(from);
 
-		   private DragSortListView.RemoveListener onRemove = 
-		        new DragSortListView.RemoveListener() {
-		            @Override
-		            public void remove(int which) {
-		              //  adapter.remove(adapter.getItem(which));
-		            	adapter.notifyDataSetChanged();
-		            }
-		        };
+			adapter.notifyDataSetChanged();
+			adapter.remove(item);
+			adapter.insert(item, to);
+		}
+	};
 
-		    private DragSortListView.DragScrollProfile ssProfile =
-		        new DragSortListView.DragScrollProfile() {
-		            @Override
-		            public float getSpeed(float w, long t) {
-		                if (w > 0.8f) {
-		                    // Traverse all views in a millisecond
-		                    return ((float) adapter.getCount()) / 0.001f;
-		                } else {
-		                    return 10.0f * w;
-		                }
-		            }
-		        };
+	private DragSortListView.RemoveListener onRemove = new DragSortListView.RemoveListener() {
+		@Override
+		public void remove(int which) {
+			// adapter.remove(adapter.getItem(which));
+			adapter.notifyDataSetChanged();
+		}
+	};
+
+	private DragSortListView.DragScrollProfile ssProfile = new DragSortListView.DragScrollProfile() {
+		@Override
+		public float getSpeed(float w, long t) {
+			if (w > 0.8f) {
+				// Traverse all views in a millisecond
+				return ((float) adapter.getCount()) / 0.001f;
+			} else {
+				return 10.0f * w;
+			}
+		}
+	};
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_route_review);
-		DragSortListView lv = (DragSortListView) getListView(); 
+		DragSortListView lv = (DragSortListView) getListView();
 		lv.setDropListener(onDrop);
-	    lv.setRemoveListener(onRemove);
-	    lv.setDragScrollProfile(ssProfile);
-	  //  places = getIntent()
-		
+		lv.setRemoveListener(onRemove);
+		lv.setDragScrollProfile(ssProfile);
+		// places = getIntent()
+
 	}
 
 	@Override

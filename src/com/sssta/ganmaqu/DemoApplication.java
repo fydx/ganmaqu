@@ -1,9 +1,6 @@
 ﻿package com.sssta.ganmaqu;
 
 
-import java.security.PublicKey;
-import java.util.HashMap;
-
 import android.app.Application;
 import android.content.Context;
 import android.util.Log;
@@ -12,7 +9,6 @@ import android.widget.Toast;
 import com.baidu.mapapi.BMapManager;
 import com.baidu.mapapi.MKGeneralListener;
 import com.baidu.mapapi.map.MKEvent;
-import com.sssta.ganmaqu.ProfileFragment.loginTask;
 
 
 public class DemoApplication extends Application {
@@ -20,7 +16,8 @@ public class DemoApplication extends Application {
     private static DemoApplication mInstance = null;
     public boolean m_bKeyRight = true;
     BMapManager mBMapManager = null;
-    public boolean[] selectType; 
+    public boolean[] selectType= null ; 
+    public boolean allDay ;
     public enum types {EAT,SHOP,MOVIE,SCENE,COFFEE,KTV};
     
     //public static final String strKey = "970293a9a6573c4517821ee70a7e30a5";  // for baiduapi 
@@ -37,6 +34,12 @@ public class DemoApplication extends Application {
 	    super.onCreate();
 		mInstance = this;
 		initEngineManager(this);
+		selectType = new boolean[6];
+		allDay = true;
+		for (int i = 0; i < selectType.length; i++) {
+			selectType[i] = false;
+		}
+		
 	}
 	
 	public void initEngineManager(Context context) {

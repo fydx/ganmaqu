@@ -7,6 +7,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.util.Log;
+
 
 
 public class decodeJson {
@@ -88,7 +90,12 @@ public class decodeJson {
 		temp_place.setSuitType(jsonObject.getString("suitType"));
 		temp_place.setTelNumber(jsonObject.getString("telNumber"));
 		temp_place.setTime(jsonObject.getString("time"));
-		temp_place.setPicUrl(jsonObject.getString("url"));
+		try {
+			temp_place.setPicUrl(jsonObject.getString("url"));
+		} catch (Exception jsonException) {
+			// TODO: handle exception
+			Log.w("JSON in decode","can not find URL");
+		}
 		return temp_place;
 	}
 }
