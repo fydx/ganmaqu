@@ -96,6 +96,7 @@ public class decodeJson {
 			// TODO: handle exception
 			Log.w("JSON in decode","can not find URL");
 		}
+		temp_place.setWeight(jsonObject.getInt("weight"));
 		return temp_place;
 	}
 }

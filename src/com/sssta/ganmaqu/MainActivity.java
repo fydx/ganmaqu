@@ -322,6 +322,7 @@ public class MainActivity extends FragmentActivity implements
 						}
 					}
 				}); */
+		
 		// set sliding menu
 		menu = new SlidingMenu(this);
 		menu.setMode(SlidingMenu.LEFT);
@@ -453,6 +454,20 @@ public class MainActivity extends FragmentActivity implements
 			@Override
 			public void onClick(View v) {
 				int checkSelect = 0;
+				JSONObject json = new JSONObject();
+				JSONArray item = new JSONArray();
+				for (int i = 0; i < types.length; i++) {
+					if (demoApplication.selectType[i] == true) {
+						item.put(types[i]);
+					}
+
+				}
+				try {
+					json.put("item", item);
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				Log.i("allday/partday", String.valueOf(demoApplication.allDay));
 				for (int j = 0; j < types.length; j++) {
 
@@ -492,26 +507,16 @@ public class MainActivity extends FragmentActivity implements
 						Log.i("lat", String.valueOf(lat));
 						Log.i("lng", String.valueOf(lng));
 						Log.i("status_finish_circle", String.valueOf(status_finish_circle));
-						new RequestTask().execute(button_type.getText()
-								.toString(), String.valueOf(location
-								.getLongitude()), String.valueOf(location
-								.getLatitude()), userInfo.getString("city",
-								"西安市"));
-					} else {
-						JSONObject json = new JSONObject();
-						JSONArray item = new JSONArray();
-						for (int i = 0; i < types.length; i++) {
-							if (demoApplication.selectType[i] == true) {
-								item.put(types[i]);
-							}
-
-						}
 						try {
-							json.put("item", item);
+							new RequestTask().execute(button_type.getText()
+									.toString(), userInfo.getString("city",
+											"西安市"), circleButton.getText().toString(),json.getString("item"),userid,String.valueOf(lat),String.valueOf(lng));
 						} catch (JSONException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
+					} else {
+					
 
 						try {
 							new RequestPartTask().execute(
@@ -660,13 +665,27 @@ public class MainActivity extends FragmentActivity implements
 			double pos_x = 108.947039, pos_y = 34.259203;
 
 			if (params.length > 1) {
-				pos_x = Double.parseDouble(params[1]);
-				pos_y = Double.parseDouble(params[2]);
+				pos_x = Double.parseDouble(params[5]);
+				pos_y = Double.parseDouble(params[6]);
 			}
 
 			try {
-				return connect.GetFullRoute(params[0], pos_x, pos_y, userid,
-						circleButton.getText().toString(), params[3]);
+				JSONObject json = new JSONObject();
+				JSONArray item = new JSONArray();
+				for (int i = 0; i < types.length; i++) {
+					if (demoApplication.selectType[i] == true) {
+						item.put(types[i]);
+					}
+
+				}
+				try {
+					json.put("item", item);
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				return connect.GetFullRoute(params[0],  params[1], params[2],
+						params[3], params[4]);
 
 			} catch (JSONException e) {
 

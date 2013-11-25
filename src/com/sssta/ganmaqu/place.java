@@ -23,7 +23,16 @@ public class place implements Serializable {
 	private String time;
 	private String routeType;
 	private String picUrl;
+	private int weight;
 	
+	public int getWeight() {
+		return weight;
+	}
+
+	public void setWeight(int weight) {
+		this.weight = weight;
+	}
+
 	public String getPicUrl() {
 		return picUrl;
 	}

@@ -2,9 +2,7 @@
 <module type="JAVA_MODULE" version="4">
   <component name="FacetManager">
     <facet type="android" name="Android">
-      <configuration>
-        <option name="LIBRARY_PROJECT" value="true" />
-      </configuration>
+      <configuration />
     </facet>
   </component>
   <component name="NewModuleRootManager" inherit-compiler-output="true">
@@ -13,8 +11,12 @@
       <sourceFolder url="file://$MODULE_DIR$/gen" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
     </content>
-    <orderEntry type="library" name="libs" level="project" />
-    <orderEntry type="module-library" exported="">
+    <orderEntry type="library" exported="" name="libs" level="project" />
+    <orderEntry type="library" exported="" name="library-dslv" level="project" />
+    <orderEntry type="library" exported="" name="library-SlidlingMenu" level="project" />
+    <orderEntry type="library" exported="" name="nineoldandroids" level="project" />
+    <orderEntry type="library" exported="" name="actionbarsherlock" level="project" />
+    <orderEntry type="module-library">
       <library>
         <CLASSES>
           <root url="file://$MODULE_DIR$/../library-SlidlingMenu" />
@@ -26,7 +28,7 @@
         </SOURCES>
       </library>
     </orderEntry>
-    <orderEntry type="module-library" exported="">
+    <orderEntry type="module-library">
       <library>
         <CLASSES>
           <root url="file://$MODULE_DIR$/../actionbarsherlock" />
@@ -39,7 +41,7 @@
         </SOURCES>
       </library>
     </orderEntry>
-    <orderEntry type="module-library" exported="">
+    <orderEntry type="module-library">
       <library>
         <CLASSES>
           <root url="file://$MODULE_DIR$/../nineoldandroids" />
@@ -51,7 +53,7 @@
         </SOURCES>
       </library>
     </orderEntry>
-    <orderEntry type="module-library" exported="">
+    <orderEntry type="module-library">
       <library>
         <CLASSES>
           <root url="file://$MODULE_DIR$/../library-dslv" />

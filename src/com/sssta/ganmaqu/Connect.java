@@ -1,4 +1,5 @@
-package com.sssta.ganmaqu;
+ï»¿package com.sssta.ganmaqu;
+
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -18,8 +19,6 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 
-import android.util.Log;
-
 public final class Connect {
 	private  String ipString;
 	public Connect (String ip)
@@ -33,35 +32,35 @@ public final class Connect {
 		this.ipString = ipString;
 	}
 	/**
-	 * µÃµ½Ò»ÕûÌõÂ·Ïß
-	 * @param typeString ÀàĞÍ £¨Ç××Ó/ÅóÓÑ/ÇéÂÂ£©
-	 * @param pos_x ¾­¶È×ø±ê
-	 * @param pos_y Î³¶È×ø±ê
-	 * @param userid ÓÃ»§id
-	 * @param circle ÉÌÈ¦
-	 * @param cityString ³ÇÊĞ
-	 * @return json¸ñÊ½ Ò»ÌõÂ·Ïß
+	 * å¾—åˆ°ä¸€æ•´æ¡è·¯çº¿
+	 * @param type ç±»å‹ ï¼ˆäº²å­/æœ‹å‹/æƒ…ä¾£ï¼‰
+	 * @param city åŸå¸‚
+	 * @param circleName å•†åœˆ
+	 * @param json ç”¨æˆ·é€‰æ‹©ç±»å‹ ï¼ˆä¸é€‰è¦ä¼ ä¸€ä¸ªç©ºçš„JsonArrayï¼‰
+	 * @param id ç”¨æˆ·id
+	 * @return jsonæ ¼å¼ ä¸€æ¡è·¯çº¿
 	 * @throws JSONException
 	 */
-	public  String GetFullRoute(String typeString, double pos_x,
-			double pos_y, String userid, String circle, String cityString)
+	public  String GetFullRoute(String type,String city,String circleName,String json,String id)
 			throws JSONException {
 		DefaultHttpClient httpclient = new DefaultHttpClient();
 		try {
-			// getApplicationContext().getMainLooper();
-			// Looper.prepare();
-
-			HttpHost target = new HttpHost(ipString, 8080, "http");
-			// String request="/?type=ÇéÂÂ³öĞĞ&pos_x=108.947039&pos_y=34.259203";
-			String request = "/?command=full&type=" + typeString + "&city="
-					+ cityString + "&id=" + userid + "&circleName=" + circle;
-			Log.i("request string", request);
-			HttpGet req = new HttpGet(request);
-			// System.out.println("executing request to " + target);
-			HttpResponse rsp = httpclient.execute(target, req);
-			HttpEntity entity = rsp.getEntity();
-			InputStreamReader isr = new InputStreamReader(entity.getContent(),
-					"utf-8");
+			HttpPost httpPost = new HttpPost("http://"+ipString+":8080/");
+			List<NameValuePair> params = new ArrayList<NameValuePair>();
+			params.add(new BasicNameValuePair("command", "full"));
+//			System.out.println(eat);
+			params.add(new BasicNameValuePair("type", type));
+			params.add(new BasicNameValuePair("circleName", circleName));
+			params.add(new BasicNameValuePair("city", city));
+			params.add(new BasicNameValuePair("json", json));
+			params.add(new BasicNameValuePair("id", id));
+			UrlEncodedFormEntity encodedValues = new UrlEncodedFormEntity(params, "UTF-8");
+			httpPost.setEntity(encodedValues);
+			HttpResponse httpResponse = httpclient.execute(httpPost);
+//			System.out.println("ok");
+//			System.out.println(httpResponse.getStatusLine().getStatusCode());
+			HttpEntity entity = httpResponse.getEntity();
+			InputStreamReader isr = new InputStreamReader(entity.getContent(), "utf-8");
 			BufferedReader br = new BufferedReader(isr);
 			String line = null;
 			line = br.readLine();
@@ -91,12 +90,12 @@ public final class Connect {
 
 	}
 	/**
-	 * »ñÈ¡¡°²¿·Ö¡±·½Ê½µÃµ½µÄÂ·Ïß
-	 * @param city ³ÇÊĞÃû
-	 * @param circleName ÉÌÈ¦Ãû
-	 * @param json ¸ù¾İÓÃ»§ËùÑ¡·¢ËÍµÄjsonÊı¾İ
-	 * @param id ÓÃ»§id
-	 * @return µØµã£¬jsonĞÎÊ½
+	 * è·å–â€œéƒ¨åˆ†â€æ–¹å¼å¾—åˆ°çš„è·¯çº¿
+	 * @param city åŸå¸‚å
+	 * @param circleName å•†åœˆå
+	 * @param json æ ¹æ®ç”¨æˆ·æ‰€é€‰å‘é€çš„jsonæ•°æ®
+	 * @param id ç”¨æˆ·id
+	 * @return åœ°ç‚¹ï¼Œjsonå½¢å¼
 	 */
 	public  String GetPartRoute(String city, String circleName, String json, String id)
 	{
@@ -138,10 +137,10 @@ public final class Connect {
 		return "EXCEPTION";
 	}
      /**
-      * ÇëÇó°Ù¶ÈµØÍ¼URI API µÃµ½µ±Ç°Î»ÖÃ
-      * @param pos_x_add ¾­¶È×ø±ê
-      * @param pos_y_add Î³¶È×ø±ê
-      * @return json×Ö·û´® 
+      * è¯·æ±‚ç™¾åº¦åœ°å›¾URI API å¾—åˆ°å½“å‰ä½ç½®
+      * @param pos_x_add ç»åº¦åæ ‡
+      * @param pos_y_add çº¬åº¦åæ ‡
+      * @return jsonå­—ç¬¦ä¸² 
       */
 	public String GetCurrentAddress(String pos_x_add, String pos_y_add) {
 		if (pos_x_add == null || pos_y_add == null) {
@@ -151,7 +150,7 @@ public final class Connect {
 		try {
 
 			HttpHost target = new HttpHost("api.map.baidu.com", 80, "http");
-			// String request="/?type=ÇéÂÂ³öĞĞ&pos_x=108.947039&pos_y=34.259203";
+			// String request="/?type=æƒ…ä¾£å‡ºè¡Œ&pos_x=108.947039&pos_y=34.259203";
 			String request = "/geocoder?output=json&location=" + pos_x_add
 					+ "," + pos_y_add + "&key=APP_KEY";
 			// Log.i("request string",request);
@@ -189,8 +188,8 @@ public final class Connect {
 
 	}
 	/**
-	 * ·¢ËÍ²»Ï²»¶µÄÀàĞÍµ½·şÎñÆ÷
-	 * @param json  json×Ö·û´®   item1: xxx ,item2:xxx ...
+	 * å‘é€ä¸å–œæ¬¢çš„ç±»å‹åˆ°æœåŠ¡å™¨
+	 * @param json  jsonå­—ç¬¦ä¸²   item1: xxx ,item2:xxx ...
 	 * @return success or exception 
 	 */
 	public String PostDislike(String json)
@@ -235,9 +234,9 @@ public final class Connect {
 		return "EXCEPTION IN POST DISLIKE";
 	}
 	/**
-	 * µÃµ½¸ÃÓÃ»§²»Ï²»¶µÄÀàĞÍ
-	 * @param id ÓÃ»§id
-	 * @return json¸ñÊ½×Ö·û´®
+	 * å¾—åˆ°è¯¥ç”¨æˆ·ä¸å–œæ¬¢çš„ç±»å‹
+	 * @param id ç”¨æˆ·id
+	 * @return jsonæ ¼å¼å­—ç¬¦ä¸²
 	 */
 	public  String GetDislike(String id)
 	{
@@ -266,48 +265,40 @@ public final class Connect {
 		return "EXCETION IN GETDISLIKE";
 	}
 	/**
-	 * µÃµ½Ò»¸ö¸üÉİ³ŞµÄÂ·Ïß
+	 * å¾—åˆ°ä¸€ä¸ªæ›´å¥¢ä¾ˆçš„è·¯çº¿
 	 * @param type
-	 * @param pos_x
-	 * @param pos_y
-	 * @param cost
-	 * @param cityString
-	 * @return Â·Ïß json×Ö·û´® 
+	 * @param city
+	 * @param circleName
+	 * @param cost ä¸Šæ¬¡æ€»èŠ±è´¹
+	 * @param json ç”¨æˆ·é€‰æ‹©ç±»å‹ ï¼ˆä¸é€‰è¦ä¼ ä¸€ä¸ªç©ºçš„JsonArrayï¼‰
+	 * @param id
+	 * @return è·¯çº¿ jsonå­—ç¬¦ä¸² 
 	 */
-	public String GetUpper(String type, String pos_x, String pos_y,
-			String cost,String cityString) {
+	public String GetUpper(String type,String city,String circleName,int cost,String json,String id) {
 		DefaultHttpClient httpclient = new DefaultHttpClient();
 		try {
-			HttpHost target = new HttpHost(ipString, 8080, "http");
-
-			String request = "/?command=upper&type=" + type + "&pos_x=" + pos_x
-					+ "&pos_y=" + pos_y + "&cost=" + cost + "&city="
-							+ cityString;
-			Log.i("changeRequest", request);
-			HttpGet req = new HttpGet(request);
-			Log.i("excute", "executing request to " + target);
-			HttpResponse rsp = httpclient.execute(target, req);
-			HttpEntity entity = rsp.getEntity();
-			InputStreamReader isr = new InputStreamReader(entity.getContent(),
-					"utf-8");
+			HttpPost httpPost = new HttpPost("http://"+ipString+":8080/");
+			List<NameValuePair> params = new ArrayList<NameValuePair>();
+			params.add(new BasicNameValuePair("command", "upper"));
+//			System.out.println(eat);
+			params.add(new BasicNameValuePair("type", type));
+			params.add(new BasicNameValuePair("circleName", circleName));
+			params.add(new BasicNameValuePair("city", city));
+			params.add(new BasicNameValuePair("cost", Integer.toString(cost)));
+			params.add(new BasicNameValuePair("json", json));
+			params.add(new BasicNameValuePair("id", id));
+			UrlEncodedFormEntity encodedValues = new UrlEncodedFormEntity(params, "UTF-8");
+			httpPost.setEntity(encodedValues);
+			HttpResponse httpResponse = httpclient.execute(httpPost);
+//			System.out.println("ok");
+//			System.out.println(httpResponse.getStatusLine().getStatusCode());
+			HttpEntity entity = httpResponse.getEntity();
+			InputStreamReader isr = new InputStreamReader(entity.getContent(), "utf-8");
 			BufferedReader br = new BufferedReader(isr);
 			String line = null;
 			while ((line = br.readLine()) != null) {
 				return line;
 			}
-			// System.out.println(entity.getContent());
-			/*
-			 * System.out.println("----------------------------------------");
-			 * System.out.println(rsp.getStatusLine()); Header[] headers =
-			 * rsp.getAllHeaders(); for (int i = 0; i < headers.length; i++) {
-			 * System.out.println(headers[i]); }
-			 * System.out.println("----------------------------------------");
-			 * BufferedWriter fout = new BufferedWriter(new
-			 * FileWriter("E:\\JavaProject\\output.txt")); if (entity != null) {
-			 * // System.out.println(EntityUtils.toString(entity));
-			 * fout.write(EntityUtils.toString(entity)); fout.newLine(); }
-			 * fout.flush(); fout.close();
-			 */
 		} catch (ClientProtocolException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -323,30 +314,32 @@ public final class Connect {
 		return null;
 	}
 	/**
-	 * µÃµ½Ò»Ìõ¸ü±ãÒËµÄÂ·Ïß
+	 * å¾—åˆ°ä¸€æ¡æ›´ä¾¿å®œçš„è·¯çº¿
 	 * @param type
-	 * @param pos_x
-	 * @param pos_y
+	 * @param city
+	 * @param circleName
 	 * @param cost
-	 * @param cityString
+	 * @param json
+	 * @param id
 	 * @return
 	 */
-	public String GetLower(String type, String pos_x, String pos_y,
-			String cost,String cityString) {
+	public String GetLower(String type,String city,String circleName,int cost,String json,String id) {
 		DefaultHttpClient httpclient = new DefaultHttpClient();
 		try {
-			HttpHost target = new HttpHost(ipString, 8080, "http");
-
-			String request = "/?command=lower&type=" + type + "&pos_x=" + pos_x
-					+ "&pos_y=" + pos_y + "&cost=" + cost + "&city="
-							+ cityString;
-			Log.i("changeRequest", request);
-			HttpGet req = new HttpGet(request);
-			Log.i("excute", "executing request to " + target);
-			HttpResponse rsp = httpclient.execute(target, req);
-			HttpEntity entity = rsp.getEntity();
-			InputStreamReader isr = new InputStreamReader(entity.getContent(),
-					"utf-8");
+			HttpPost httpPost = new HttpPost("http://"+ipString+":8080/");
+			List<NameValuePair> params = new ArrayList<NameValuePair>();
+			params.add(new BasicNameValuePair("command", "lower"));
+			params.add(new BasicNameValuePair("type", type));
+			params.add(new BasicNameValuePair("circleName", circleName));
+			params.add(new BasicNameValuePair("city", city));
+			params.add(new BasicNameValuePair("cost", Integer.toString(cost)));
+			params.add(new BasicNameValuePair("json", json));
+			params.add(new BasicNameValuePair("id", id));
+			UrlEncodedFormEntity encodedValues = new UrlEncodedFormEntity(params, "UTF-8");
+			httpPost.setEntity(encodedValues);
+			HttpResponse httpResponse = httpclient.execute(httpPost);
+			HttpEntity entity = httpResponse.getEntity();
+			InputStreamReader isr = new InputStreamReader(entity.getContent(), "utf-8");
 			BufferedReader br = new BufferedReader(isr);
 			String line = null;
 			while ((line = br.readLine()) != null) {
@@ -380,7 +373,7 @@ public final class Connect {
 		return null;
 	}
 	/**
-	 * ·¢ËÍÓÃ»§È¥¹ıµÄµØµã
+	 * å‘é€ç”¨æˆ·å»è¿‡çš„åœ°ç‚¹
 	 * @param shopId
 	 * @param userId
 	 * @return success or exception
@@ -413,14 +406,14 @@ public final class Connect {
 
 	}
 	/**
-	 * ·¢ËÍÓÃ»§É¾³ı¹ıµÄµØµã
+	 * å‘é€ç”¨æˆ·åˆ é™¤è¿‡çš„åœ°ç‚¹
 	 * @param shopId
 	 * @param userId
 	 * @return success or exception
 	 */
 	public String SendDelete(String shopId, String userId) {
 
-		Log.i("shopId + userId", shopId + " " + userId);
+//		Log.i("shopId + userId", shopId + " " + userId);
 		DefaultHttpClient httpclient = new DefaultHttpClient();
 		try {
 			HttpHost target = new HttpHost(ipString, 8080, "http");
@@ -447,7 +440,7 @@ public final class Connect {
 		return null;
 	}
 	/**
-	 * ·µ»ØÒ»¸ö¸ü½ü»òÕß¸üÔ¶µÄÂ·Ïß
+	 * è¿”å›ä¸€ä¸ªæ›´è¿‘æˆ–è€…æ›´è¿œçš„è·¯çº¿
 	 * @param pos_x
 	 * @param pos_y
 	 * @param shop_x
@@ -455,7 +448,7 @@ public final class Connect {
 	 * @param change
 	 * @param cost
 	 * @param id
-	 * @param type ¸Ä¾àÀë£¬Ô¶Ò»µãchangeÎª1£¬½üÎª-1
+	 * @param type æ”¹è·ç¦»ï¼Œè¿œä¸€ç‚¹changeä¸º1ï¼Œè¿‘ä¸º-1
 	 * @return
 	 */
 	public String GetDisRoute(double pos_x, double pos_y, double shop_x,
@@ -486,13 +479,13 @@ public final class Connect {
 		return null;
 	}
 	/**
-	 * µÃµ½×î½üÉÌÈ¦
+	 * å¾—åˆ°æœ€è¿‘å•†åœˆ
 	 * @param pos_x
 	 * @param pos_y
 	 * @param city
-	 * @return ×î½üÉÌÈ¦String
+	 * @return æœ€è¿‘å•†åœˆString
 	 */
-	public  String GetShopCircle(double pos_x, double pos_y, String city) // ¸ø×ø±ê£¬·µ»Ø×î½üÉÌÈ¦Ãû³Æ
+	public  String GetShopCircle(double pos_x, double pos_y, String city) // ç»™åæ ‡ï¼Œè¿”å›æœ€è¿‘å•†åœˆåç§°
 	{
 		DefaultHttpClient httpclient = new DefaultHttpClient();
 		try {
@@ -519,7 +512,7 @@ public final class Connect {
 		return null;
 	}
 	/**
-	 * »ñµÃÄ³¸ö³ÇÊĞµÄÉÌÈ¦ÁĞ±í
+	 * è·å¾—æŸä¸ªåŸå¸‚çš„å•†åœˆåˆ—è¡¨
 	 * @param city
 	 * @return item1,2,3....
 	 */
@@ -538,7 +531,7 @@ public final class Connect {
 			BufferedReader br = new BufferedReader(isr);
 			String line = null;
 			while ((line = br.readLine()) != null) {
-				Log.i("return circles line", line);
+//				Log.i("return circles line", line);
 				return line;
 			}
 		} catch (Exception e) {
@@ -548,7 +541,7 @@ public final class Connect {
 		return null;
 	}
 	/**
-	 * µÃµ½ÏÖÔÚÖ§³ÖµÄ³ÇÊĞ
+	 * å¾—åˆ°ç°åœ¨æ”¯æŒçš„åŸå¸‚
 	 * @return
 	 */
 	public String GetAvailableCity()
@@ -577,33 +570,29 @@ public final class Connect {
 		}
 		return null;
 	}
+
 	/**
-	 * µÃµ½¸ü»»µÄµ¥¸öµØµã
+	 * å¾—åˆ°æ›´æ¢çš„å•ä¸ªåœ°ç‚¹
 	 * @param type
+	 * @param city
+	 * @param shopName
 	 * @param pos_x
 	 * @param pos_y
 	 * @param time
-	 * @param shopname
 	 * @param cost
-	 * @param citysString
+	 * @param w æ‰€é€‰ç±»å‹æ‰€å æƒå€¼
 	 * @return json
 	 */
-	public String GetChangeSingle(String type, String pos_x,
-			String pos_y, String time, String shopname, String cost,String citysString) {
+	public String GetChangeSingle(String type,String city,String shopName,double pos_x,double pos_y,String time,int cost,int w) {
 		DefaultHttpClient httpclient = new DefaultHttpClient();
 		try {
-			HttpHost target = new HttpHost(ipString, 8080, "http");
-			String request = "/?command=change&type=" + type + "&pos_x="
-					+ pos_x + "&pos_y=" + pos_y + "&time=" + time
-					+ "&shopName=" + shopname + "&cost=" + cost + "&city="
-					+ citysString;
-			Log.i("changeRequest", request);
+			HttpHost target = new HttpHost(ipString, 8080, "http");//113.3368,23.15255
+			String request = "/?command=change&type="+type+"&pos_x="+pos_x+"&pos_y="+pos_y+"&time="+time+"&shopName="+shopName+"&cost="+cost+"&city="+city+"&weight="+w;
 			HttpGet req = new HttpGet(request);
-			Log.i("excute", "executing request to " + target);
+			System.out.println("executing request to " + target);
 			HttpResponse rsp = httpclient.execute(target, req);
 			HttpEntity entity = rsp.getEntity();
-			InputStreamReader isr = new InputStreamReader(entity.getContent(),
-					"utf-8");
+			InputStreamReader isr = new InputStreamReader(entity.getContent(), "utf-8");
 			BufferedReader br = new BufferedReader(isr);
 			String line = null;
 			while ((line = br.readLine()) != null) {
@@ -637,7 +626,7 @@ public final class Connect {
 		return null;
 	}
 	/**
-	 * ÑéÖ¤ÕË»§ÃÜÂë
+	 * éªŒè¯è´¦æˆ·å¯†ç 
 	 * @param id
 	 * @param password
 	 * @return
@@ -666,12 +655,12 @@ public final class Connect {
 		return "EXCEPTION IN LOGIN";
 	}
 	/**
-	 * ÓÃ»§×¢²á
+	 * ç”¨æˆ·æ³¨å†Œ
 	 * @param id
 	 * @param password
 	 * @return
 	 */
-	public  String RegUser(String id, String password) // ÓÃ»§×¢²á
+	public  String RegUser(String id, String password) // ç”¨æˆ·æ³¨å†Œ
 	{
 		DefaultHttpClient httpclient = new DefaultHttpClient();
 		try {

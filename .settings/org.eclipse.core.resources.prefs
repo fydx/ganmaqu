@@ -1,7 +1,7 @@
 eclipse.preferences.version=1
 encoding//src/cn/sharesdk/onekeyshare=UTF-8
 encoding//src/com/sssta/ganmaqu/ChangeCityDialog.java=GBK
-encoding//src/com/sssta/ganmaqu/Connect.java=GBK
+encoding//src/com/sssta/ganmaqu/Connect.java=UTF-8
 encoding//src/com/sssta/ganmaqu/ConstantS.java=UTF-8
 encoding//src/com/sssta/ganmaqu/DetailActivity.java=GBK
 encoding//src/com/sssta/ganmaqu/DislikeActivity.java=GBK
@@ -9,6 +9,7 @@ encoding//src/com/sssta/ganmaqu/MapActivity.java=UTF-8
 encoding//src/com/sssta/ganmaqu/ProfileFragment.java=GBK
 encoding//src/com/sssta/ganmaqu/SettingsGridAdapter.java=GBK
 encoding//src/com/sssta/ganmaqu/WelcomeActivity.java=UTF-8
+encoding//src/com/sssta/ganmaqu/myGridView.java=GBK
 encoding//src/com/sssta/ganmaqu/wxapi=UTF-8
 encoding//src/net/tsz/afinal=UTF-8
 encoding//src/net/tsz/afinal/bitmap/core=UTF-8

@@ -63,6 +63,8 @@ public class WarpDSLV extends FragmentActivity {
 
 	// private ArrayAdapter<String> adapter;
 	private String ipString;
+	private final String[] types = { "美食", "购物", "电影院", "风景", "咖啡/甜点", "KTV" };
+	private DemoApplication demoApplication;
 	private FinalDb db, db_user;
 	private int cost = 0, tempCost = 0;
 	private ArrayAdapter<place> adapter;
@@ -89,13 +91,16 @@ public class WarpDSLV extends FragmentActivity {
 	private String city;
 	private DragSortListView lv;
 	private ImageView mapImageView;
-	 private FinalBitmap fb;
-	 private String[] picurls;
+	private FinalBitmap fb;
+	private String[] picurls;
 	private int picCount;
 	private AnimationSet animationSet;
 	private int[] pics;
-	private String[] picStrings ={"http://115.28.17.121/pics/xian_01.png","http://115.28.17.121/pics/xian_02.png"};
-	
+	private JSONObject json;
+	private JSONArray item ;
+	private String[] picStrings = { "http://115.28.17.121/pics/xian_01.png",
+			"http://115.28.17.121/pics/xian_02.png" };
+
 	private DragSortListView.DropListener onDrop = new DragSortListView.DropListener() {
 		@Override
 		public void drop(int from, int to) {
@@ -112,13 +117,15 @@ public class WarpDSLV extends FragmentActivity {
 		public void remove(int which) {
 			// adapter.remove(adapter.getItem(which));
 			// adapter.notifyDataSetChanged();
-			Toast.makeText(getApplicationContext(), "请稍后,马上为您推荐一个新的地点", Toast.LENGTH_SHORT).show();
+			Toast.makeText(getApplicationContext(), "请稍后,马上为您推荐一个新的地点",
+					Toast.LENGTH_SHORT).show();
 			Log.i("Remove Which", String.valueOf(which));
-			new changeTask().execute(type, String.valueOf(places.get(which)
-					.getPos_x()), String.valueOf(places.get(which).getPos_y()),
-					places.get(which).getTime(), places.get(which)
-							.getShopName(), String.valueOf(which), String
-							.valueOf(places.get(which).getCost()), city);
+			new changeTask().execute(type, city, places.get(which)
+					.getShopName(), String
+					.valueOf(places.get(which).getPos_x()), String
+					.valueOf(places.get(which).getPos_y()), places.get(which)
+					.getTime(), String.valueOf(places.get(which).getCost()),
+					String.valueOf(places.get(which).getWeight()),String.valueOf(which));
 			new sendDeleteTask().execute(
 					String.valueOf(places.get(which).getId()), userid);
 		}
@@ -144,9 +151,24 @@ public class WarpDSLV extends FragmentActivity {
 		// requestWindowFeature(Window.FEATURE_NO_TITLE);
 		getWindow().requestFeature(Window.FEATURE_ACTION_BAR); // Add this line
 		setContentView(R.layout.warp_main);
+		demoApplication = (DemoApplication) getApplication();
 		userInfo = getSharedPreferences("userInfo", 0);
 		userid = userInfo.getString("userid", "root");
 		city = userInfo.getString("city", "西安市");
+		json = new JSONObject();
+		item = new JSONArray();
+		for (int i = 0; i < types.length; i++) {
+			if (demoApplication.selectType[i] == true) {
+				item.put(types[i]);
+			}
+
+		}
+		try {
+			json.put("item", item);
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		fb = FinalBitmap.create(this);
 		/*
 		 * actionbar 设置
@@ -177,7 +199,8 @@ public class WarpDSLV extends FragmentActivity {
 		AlphaAnimation alphaAnimation_in = new AlphaAnimation(0, 1);
 		alphaAnimation_in.setDuration(10000);
 		alphaAnimation_in.setInterpolator(AnimationUtils.loadInterpolator(
-				WarpDSLV.this, android.R.anim.accelerate_decelerate_interpolator));
+				WarpDSLV.this,
+				android.R.anim.accelerate_decelerate_interpolator));
 		/*
 		 * 设置位移动画
 		 */
@@ -197,8 +220,8 @@ public class WarpDSLV extends FragmentActivity {
 				WarpDSLV.this, android.R.anim.cycle_interpolator));
 		translateAnimation.setRepeatCount(-1);
 		animationSet.addAnimation(translateAnimation);
-		//animationSet.addAnimation(alphaAnimation_out);
-		//animationSet.addAnimation(alphaAnimation_in);
+		// animationSet.addAnimation(alphaAnimation_out);
+		// animationSet.addAnimation(alphaAnimation_in);
 		mapImageView = (ImageView) findViewById(R.id.map_preview);
 		mapImageView.setAnimation(animationSet);
 		ipString = getResources().getString(R.string.ip);
@@ -256,44 +279,43 @@ public class WarpDSLV extends FragmentActivity {
 			Log.i("places", places.toString());
 		}
 		distances = calcDistances(places);
-		
+
 		List<String> picUrlsList = new ArrayList<String>();
 		for (int i = 0; i < places.size(); i++) {
-			if ( !(places.get(i).getPicUrl()==null)) {
-				picUrlsList.add( places.get(i).getPicUrl());
+			if (!(places.get(i).getPicUrl() == null)) {
+				picUrlsList.add(places.get(i).getPicUrl());
 			}
 		}
-		
+
 		picurls = picUrlsList.toArray(new String[picUrlsList.size()]);
-		picCount =0 ;
-		 if (!(places.get(0).getPicUrl()==null)) {
-			 final Handler myHandler = new Handler() {// 创建一个Handler对象  
-		            public void handleMessage(Message msg) {// 重写接收消息的方法  
-		            	//mapImageView.clearAnimation();
-		            	//fb.display(mapImageView, picStrings[msg.what]);
-		            	//mapImageView.setAnimation(animationSet);
-		                super.handleMessage(msg);  
-		            }  
-		        };  
-			 new Thread() {  
-		            public void run() {  
-		                int i = 0;  
-		                while (true) {// 循环  
-		                	myHandler.sendEmptyMessage((i++) % picStrings.length);// 发送消息  
-		                 
-		                    try {  
-		                        Thread.sleep(10000);  
-		                    } catch (Exception e) {  
-		                        e.printStackTrace();  
-		                    }  
-		                }  
-		  
-		            };  
-		        }.start();  
+		picCount = 0;
+		if (!(places.get(0).getPicUrl() == null)) {
+			final Handler myHandler = new Handler() {// 创建一个Handler对象
+				public void handleMessage(Message msg) {// 重写接收消息的方法
+					// mapImageView.clearAnimation();
+					// fb.display(mapImageView, picStrings[msg.what]);
+					// mapImageView.setAnimation(animationSet);
+					super.handleMessage(msg);
+				}
+			};
+			new Thread() {
+				public void run() {
+					int i = 0;
+					while (true) {// 循环
+						myHandler.sendEmptyMessage((i++) % picStrings.length);// 发送消息
+
+						try {
+							Thread.sleep(10000);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+
+				};
+			}.start();
 		}
-		 
-	       
-	//	new getPic().execute(picurls);
+
+		// new getPic().execute(picurls);
 		// button_saveToDB.setOnClickListener(new OnClickListener() {
 		//
 		// @Override
@@ -484,28 +506,11 @@ public class WarpDSLV extends FragmentActivity {
 
 			// String detail = places.get(position).getAddress();
 			Log.i("position", String.valueOf(position));
+			int[] icons = { R.drawable.icon_rank_1, R.drawable.icon_rank_2,
+					R.drawable.icon_rank_3, R.drawable.icon_rank_4,
+					R.drawable.icon_rank_5, R.drawable.icon_rank_6, };
+			holder.dragImageView.setImageResource(icons[position]);
 
-			if (places.get(position).getTime().equals("上午")) {
-				holder.dragImageView.setImageResource(R.drawable.icon_morning);
-
-			}
-			if (places.get(position).getTime().equals("中午")) {
-				holder.dragImageView.setImageResource(R.drawable.icon_launch);
-
-			}
-			if (places.get(position).getTime().equals("下午")) {
-				holder.dragImageView
-						.setImageResource(R.drawable.icon_afternoon);
-
-			}
-			if (places.get(position).getTime().equals("晚餐")) {
-				holder.dragImageView.setImageResource(R.drawable.icon_dinner);
-
-			}
-			if (places.get(position).getTime().equals("晚上")) {
-				holder.dragImageView.setImageResource(R.drawable.icon_evening);
-
-			}
 			return v;
 		}
 	}
@@ -562,17 +567,20 @@ public class WarpDSLV extends FragmentActivity {
 			textView_cost.setText(String.valueOf(cost));
 		}
 	}
-	
+
 	public class randomTask extends AsyncTask<String, Integer, String> {
 
 		@Override
 		protected String doInBackground(String... params) {
 			// TODO Auto-generated method stub
 			try {
-				return connect.GetFullRoute(type, loclng, loclng, userid,
-						circleString, city);
+				
+				return connect.GetFullRoute(params[0],
+						userInfo.getString("city", "西安市"),
+						json.getString("item"), circleString, userid);
+
 			} catch (JSONException e) {
-				// TODO Auto-generated catch block
+
 				e.printStackTrace();
 			}
 			return null;
@@ -610,11 +618,8 @@ public class WarpDSLV extends FragmentActivity {
 					// cost += places.get(i).getCost();
 					cost += places.get(i).getCost();
 				} else {
-
 				}
-
 			}
-
 			Log.i("cost", "人均消费 new" + String.valueOf(cost));
 			textView_cost.setText(String.valueOf(cost));
 		}
@@ -627,10 +632,16 @@ public class WarpDSLV extends FragmentActivity {
 
 		@Override
 		protected String doInBackground(String... param) {
-
-			rankString = param[5];
+			// new changeTask().execute(type, String.valueOf(places.get(which)
+			// .getPos_x()), String.valueOf(places.get(which).getPos_y()),
+			// places.get(which).getTime(), places.get(which)
+			// .getShopName(), String.valueOf(which), String
+			// .valueOf(places.get(which).getCost()), city);
+			rankString = param[8];
 			return connect.GetChangeSingle(param[0], param[1], param[2],
-					param[3], param[4], param[6], param[7]);
+					Double.parseDouble(param[3]), Double.parseDouble(param[4]),
+					param[5], Integer.parseInt(param[6]),
+					Integer.parseInt(param[7]));
 		}
 
 		@Override
@@ -678,8 +689,8 @@ public class WarpDSLV extends FragmentActivity {
 		@Override
 		protected String doInBackground(String... params) {
 			// TODO Auto-generated method stub
-			return connect.GetLower(params[0], params[1], params[2], params[3],
-					params[4]);
+			return connect.GetLower(params[0], params[1], params[2],
+					Integer.parseInt(params[3]), params[4], params[5]);
 		}
 
 		@Override
@@ -733,8 +744,8 @@ public class WarpDSLV extends FragmentActivity {
 		@Override
 		protected String doInBackground(String... params) {
 			// TODO Auto-generated method stub
-			return connect.GetUpper(params[0], params[1], params[2], params[3],
-					params[4]);
+			return connect.GetUpper(params[0], params[1], params[2],
+					Integer.parseInt(params[3]), params[4], params[5]);
 		}
 
 		@Override
@@ -882,60 +893,60 @@ public class WarpDSLV extends FragmentActivity {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-		case R.id.change:
-			View view = (findViewById(R.id.change));
-			DemoApplication demoApplication = (DemoApplication)getApplication();
-			if (demoApplication.allDay==true) {
-				showWindow(view);
-			}
-			else {
-				String[] types = { "美食", "购物", "电影院", "风景", "咖啡/甜点", "KTV" };
-				JSONObject json = new JSONObject();
-				JSONArray item2 = new JSONArray();
-				for (int i = 0; i < types.length; i++) {
-					if (demoApplication.selectType[i] == true) {
-						item2.put(types[i]);
-					}
+        int i1 = item.getItemId();
+        if (i1 == R.id.change) {
+            View view = (findViewById(R.id.change));
+                DemoApplication demoApplication = (DemoApplication) getApplication();
+                if (demoApplication.allDay == true) {
+                    showWindow(view);
+            } else {
+                String[] types = {"美食", "购物", "电影院", "风景", "咖啡/甜点", "KTV"};
+                JSONObject json = new JSONObject();
+                JSONArray item2 = new JSONArray();
+                for (int i = 0; i < types.length; i++) {
+                    if (demoApplication.selectType[i] == true) {
+                        item2.put(types[i]);
+                    }
 
-				}
-				try {
-					json.put("item", item2);
-				} catch (JSONException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				try {
-					new  RequestPartTaskAgain().execute(userInfo.getString("city", "西安市"),
-							circleString,
-							json.getString("item"), userid);
-				} catch (JSONException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-			break;
-		case R.id.save:
-			saveToDB(places);
-			Intent intent3 = new Intent();
-			intent3.setClass(getApplicationContext(), ShareActivity.class);
-			intent3.putExtra("places", (Serializable) places);
-			startActivity(intent3);
-			finish();
-			break;
-		case R.id.map:
-			Intent intent = new Intent();
-			intent.setClass(getApplicationContext(), NewMapActivity.class); // set
-																			// new
-																			// map
-																			// activity
-			intent.putExtra("places", (Serializable) places);
-			startActivity(intent);
-			overridePendingTransition(android.R.anim.fade_in,
-					android.R.anim.fade_out);
-		default:
-			break;
-		}
+                }
+                try {
+                    json.put("item", item2);
+                } catch (JSONException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+                try {
+                    new RequestPartTaskAgain().execute(
+                            userInfo.getString("city", "西安市"), circleString,
+                            json.getString("item"), userid);
+                } catch (JSONException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+
+        } else if (i1 == R.id.save) {
+            saveToDB(places);
+            Intent intent3 = new Intent();
+            intent3.setClass(getApplicationContext(), ShareActivity.class);
+            intent3.putExtra("places", (Serializable) places);
+            startActivity(intent3);
+            finish();
+
+        } else if (i1 == R.id.map) {
+            Intent intent = new Intent();
+            intent.setClass(getApplicationContext(), NewMapActivity.class); // set
+            // new
+            // map
+            // activity
+            intent.putExtra("places", (Serializable) places);
+            startActivity(intent);
+            overridePendingTransition(android.R.anim.fade_in,
+                    android.R.anim.fade_out);
+
+
+        } else {
+        }
 
 		return true;
 	}
@@ -1034,9 +1045,13 @@ public class WarpDSLV extends FragmentActivity {
 			}
 		}
 
-		new lowerTask().execute(type, String.valueOf(places.get(0).getPos_x()),
-				String.valueOf(places.get(0).getPos_y()),
-				String.valueOf(tempCost), city);
+		try {
+			new lowerTask().execute(type, city,circleString,
+					String.valueOf(tempCost),json.getString("item"),userid);
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public class CustomPopupWindow extends PopupWindow {
@@ -1121,7 +1136,7 @@ public class WarpDSLV extends FragmentActivity {
 	/**
 	 * 到Url下载图片 并进行裁剪
 	 * 
-	 * @param imgUrl
+	 * @param
 	 * @return Bitmap
 	 */
 	public class getPic extends AsyncTask<String, Integer, List<Bitmap>> {
@@ -1132,31 +1147,30 @@ public class WarpDSLV extends FragmentActivity {
 
 			return getBitmapFromUrl(params);
 		}
+
 		@Override
-		protected void onProgressUpdate(Integer... values)
-		{
-			Toast.makeText(getApplicationContext(), values[0].toString(), Toast.LENGTH_SHORT).show();
+		protected void onProgressUpdate(Integer... values) {
+			Toast.makeText(getApplicationContext(), values[0].toString(),
+					Toast.LENGTH_SHORT).show();
 		}
+
 		@Override
 		protected void onPostExecute(List<Bitmap> bitmapList) {
-			int index = 0  ;
+			int index = 0;
 			while (true) {
-				index = index ++ % bitmapList.size();
-				
+				index = index++ % bitmapList.size();
+
 				mapImageView.setImageBitmap(bitmapList.get(index));
-				
-			
-				
-				
+
 			}
-			
+
 		}
 
 	}
 
 	private List<Bitmap> getBitmapFromUrl(String... imgUrl) {
 		List<Bitmap> bitmapList = new ArrayList<Bitmap>();
-		
+
 		int cut_from_x = 40; // 从图片的x轴的x处开始裁剪
 		int cut_from_y = 13; // 从图片的y轴的y处开始裁剪
 		int image_width_x = 300; // 裁剪生成新图皮的宽
@@ -1183,7 +1197,9 @@ public class WarpDSLV extends FragmentActivity {
 		}
 		return bitmapList;
 	}
-	public class RequestPartTaskAgain extends AsyncTask<String, Integer, String> {
+
+	public class RequestPartTaskAgain extends
+			AsyncTask<String, Integer, String> {
 
 		@Override
 		protected String doInBackground(String... params) {
@@ -1220,10 +1236,11 @@ public class WarpDSLV extends FragmentActivity {
 			cost = 0;
 			for (int i = 0; i < places.size(); i++) {
 				if (places.get(i).getTime().equals("中午")
-						|| places.get(i).getTime().equals("晚餐")||places.get(i).getMainType().equals("美食")) {
+						|| places.get(i).getTime().equals("晚餐")
+						|| places.get(i).getMainType().equals("美食")) {
 					// cost += places.get(i).getCost();
 					cost += places.get(i).getCost();
-				} 
+				}
 
 			}
 
@@ -1231,8 +1248,6 @@ public class WarpDSLV extends FragmentActivity {
 			textView_cost.setText(String.valueOf(cost));
 		}
 
-		}
-
 	}
 
-
+}

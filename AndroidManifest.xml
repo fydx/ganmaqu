@@ -73,7 +73,8 @@
           cn.sharesdk.framework. authorize.AuthorizeAdapter， 
           可以监听到页面的生命周期，也能获取页面的各种UI控件
           开发者可以通过继承AuthorizeAdapter，重写其方法， 
-          并获取各种UI来自定义这个页面的行为。 
+          并获取各种UI来自定义这个页面的行为。 
+
             -->
             <meta-data
                 android:name="Adapter"
@@ -83,23 +84,8 @@
             android:name="com.sssta.ganmaqu.MainActivity"
             android:label="@string/title_activity_main" >
         </activity>-->  
-        <activity
-            android:name="com.sssta.ganmaqu.NewMainActivity"
-            android:label="@string/title_activity_main"
-            android:screenOrientation="portrait" >
-        </activity>
-        <activity
-            android:name="kankan.wheel.demo.CitiesActivity"
-            android:label="@string/title_activity_main" >
-        </activity>
-        <activity
-            android:name="com.sssta.ganmaqu.ResultActivity"
-            android:label="@string/title_activity_result" >
-        </activity>
-        <activity
-            android:name="com.sssta.ganmaqu.TestBedDSLV"
-            android:label="@string/title_activity_result" >
-        </activity>
+
+
         <activity
             android:name="com.sssta.ganmaqu.WarpDSLV"
             android:label="@string/title_activity_result"

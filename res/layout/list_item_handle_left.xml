@@ -78,7 +78,7 @@
         android:layout_alignParentTop="true"
         android:layout_marginTop="7dp"
         android:layout_marginRight="10dp"
-        android:src="@drawable/icon_morning" />
+        android:src="@drawable/icon_rank_1" />
 
     <ImageView
         android:id="@+id/imageView_cost"

@@ -113,7 +113,7 @@ public class NewMapActivity extends Activity {
 
 		DemoApplication app = (DemoApplication) this.getApplication();
 		final int markers_id[] = { R.drawable.icon_1, R.drawable.icon_2,
-				R.drawable.icon_3, R.drawable.icon_4, R.drawable.icon_5 };
+				R.drawable.icon_3, R.drawable.icon_4, R.drawable.icon_5,R.drawable.icon_6 };
 		// BMapManager 必须在setContentview前面初始化，否则报错
 		if (app.mBMapManager == null) {
 			app.mBMapManager = new BMapManager(this);

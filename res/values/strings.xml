@@ -8,7 +8,7 @@
     <string name="title_activity_main">MainActivity</string>
     <string name="title_activity_result">ResultActivity</string>
     <string name="ok">OK</string>
-    <string name="cancel">Cancel</string>
+
     <string name="select_remove_mode">Remove modes</string>
     <string name="select_drag_init_mode">Start-drag modes</string>
     <string name="select_enables">Enable/Disable</string>
