@@ -3,6 +3,9 @@ package com.sssta.ganmaqu;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.HashMap;
+import java.util.List;
+
+import net.tsz.afinal.FinalDb;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
@@ -14,6 +17,8 @@ import org.json.JSONObject;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.opengl.Visibility;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -36,7 +41,14 @@ public class CircleDialog extends Dialog {
 	private String city;
 	private Button button;
 	private Connect connect;
-	
+	private SharedPreferences cityStatus;
+	private FinalDb db;
+	public SharedPreferences getCityStatus() {
+		return cityStatus;
+	}
+	public void setCityStatus(SharedPreferences cityStatus) {
+		this.cityStatus = cityStatus;
+	}
 	public CircleDialog(Context context) {
 		super(context,R.style.CustomDialog);
 		ipString = getContext().getResources()
@@ -52,6 +64,9 @@ public class CircleDialog extends Dialog {
 		Log.i("ipString", ipString);
 		connect = new Connect(ipString);
 		this.city = cityString;
+		db = FinalDb.create(context);
+		
+		this.cityStatus =  context.getSharedPreferences("cityStatus", 0);
 		setCustomView(); 
 		// TODO Auto-generated constructor stub
 	}
@@ -79,7 +94,25 @@ public class CircleDialog extends Dialog {
         gridView_circles = (myGridView)mView.findViewById(R.id.gridView_circles);
         gridAdapter = new GridAdapter(this.getContext());
         Log.i("city_dialog", city);
-        new getCircles().execute(city);
+        if (cityStatus.getInt(city, 0)==0) {
+        	 new getCircles().execute(city);
+		}
+        else {
+        	TextView button_wait = (TextView)mView.findViewById(R.id.textView_wait);
+   			button_wait.setVisibility(View.GONE);
+        	gridAdapter.setHashMap(readCityFromLocal(city));
+   			gridView_circles.setOnTouchListener(new OnTouchListener() {
+				
+				@Override
+				public boolean onTouch(View v, MotionEvent event) {
+					// TODO Auto-generated method stub
+					return MotionEvent.ACTION_MOVE == event.getAction() ? true
+                            : false;
+				}
+			});
+   			gridView_circles.setAdapter(gridAdapter);
+		}
+       
         super.setContentView(mView);  
         
        
@@ -89,7 +122,21 @@ public class CircleDialog extends Dialog {
         //重写本方法，使外部调用时不可破坏控件的视图。  
         //也可以使用本方法改变CustomDialog的内容部分视图，比如让用户把内容视图变成复选框列表，图片等。这需要获取mView视图里的其它控件  
     	 
-    }  
+    } 
+    public HashMap<Integer, String> readCityFromLocal(String cityname)
+    {
+    	List<CityCircles> circles = db.findAllByWhere(CityCircles.class, "name_city = " + "'" + city+ "'");
+    	Log.i("circles from db", String.valueOf(circles.size()));
+    
+		
+    	HashMap<Integer,String> ansHashMap = new HashMap<Integer, String>();
+    	for (int i = 0; i < circles.size(); i++) {
+    		ansHashMap.put(i,circles.get(i).getName_circle());
+		}
+    	
+    	return ansHashMap;
+    	
+    }
     public class GridAdapter extends BaseAdapter {
 		
 		
@@ -212,8 +259,16 @@ public class CircleDialog extends Dialog {
     //	Log.i("result String", circle.toString());
     	
     	
+    	
     	while (circle.has("item" + String.valueOf(i))) {
     		String temp = circle.getString("item"+ String.valueOf(i));
+    		CityCircles cityCircles = new CityCircles();
+    		cityCircles.setName_circle(temp);
+    		cityCircles.setName_city(city);
+    		db.save(cityCircles);
+    		Editor e = cityStatus.edit();
+			e.putInt(city, 1);
+			e.commit();
     		ansHashMap.put(i-1, temp);
     		i++;
 		}
