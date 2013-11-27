@@ -65,7 +65,6 @@ public class CircleDialog extends Dialog {
 		connect = new Connect(ipString);
 		this.city = cityString;
 		db = FinalDb.create(context);
-		
 		this.cityStatus =  context.getSharedPreferences("cityStatus", 0);
 		setCustomView(); 
 		// TODO Auto-generated constructor stub

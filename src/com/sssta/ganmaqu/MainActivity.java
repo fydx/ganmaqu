@@ -1,9 +1,12 @@
 package com.sssta.ganmaqu;
 
 import java.io.Serializable;
+import java.lang.reflect.ParameterizedType;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.jar.Attributes.Name;
 
 import net.tsz.afinal.FinalDb;
 
@@ -19,6 +22,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.graphics.drawable.BitmapDrawable;
 import android.location.Address;
 import android.location.Criteria;
 import android.location.Geocoder;
@@ -33,7 +37,10 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.View.OnClickListener;
 import android.view.Window;
 import android.view.animation.AlphaAnimation;
@@ -42,10 +49,14 @@ import android.view.animation.AnimationSet;
 import android.view.animation.AnimationUtils;
 import android.view.animation.ScaleAnimation;
 import android.view.animation.TranslateAnimation;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.PopupWindow;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -54,6 +65,7 @@ import cn.sharesdk.framework.ShareSDK;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.sssta.ganmaqu.ProfileFragment.OnFragmentInteractionListener;
 import com.sssta.ganmaqu.ProfileFragment.loginTask;
+import com.sssta.ganmaqu.WarpDSLV.randomTask;
 
 public class MainActivity extends FragmentActivity implements
 		OnFragmentInteractionListener {
@@ -85,7 +97,10 @@ public class MainActivity extends FragmentActivity implements
 	private ImageView imageView_change;
 	private DemoApplication demoApplication;
 	private RadioGroup typeRadioGroup;
-	private Animation ToLargeScaleAnimation,ToSmallScaleAnimation;
+	private Animation ToLargeScaleAnimation, ToSmallScaleAnimation;
+	private CustomPopupWindow popupWindow;
+	private List<String> groups ;
+
 	public static double getLat() {
 		return lat;
 	}
@@ -103,7 +118,7 @@ public class MainActivity extends FragmentActivity implements
 		super.onCreate(savedInstanceState);
 		ShareSDK.initSDK(MainActivity.this);
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE); // no title bar
-		//typeCount = 0;
+		// typeCount = 0;
 		// setBehindContentView(R.layout.menu_right);
 		demoApplication = (DemoApplication) getApplication();
 		ipString = getApplicationContext().getResources()
@@ -181,15 +196,18 @@ public class MainActivity extends FragmentActivity implements
 		TextView textView1 = (TextView) findViewById(R.id.tuijianshangquan);
 		TextView textView2 = (TextView) findViewById(R.id.chuxingleixing);
 		circleButton = (Button) findViewById(R.id.button_circle);
-		button_type = (Button)findViewById(R.id.button_type);
+		button_type = (Button) findViewById(R.id.button_type);
 		button_yes = (Button) findViewById(R.id.button_go);
 		ImageView cloud_top = (ImageView) findViewById(R.id.imageView_cloud_top);
 		ImageView cloud_bottom = (ImageView) findViewById(R.id.imageView_cloud_bottom);
 		imageView_change = (ImageView) findViewById(R.id.imageView_last);
-//		familyRadioButton = (RadioButton) findViewById(R.id.radioButton_family);
-//		friendRadioButton = (RadioButton) findViewById(R.id.radioButton_friend);
-//		coupleRadioButton = (RadioButton) findViewById(R.id.radioButton_couple);
-	//	typeRadioGroup = (RadioGroup) findViewById(R.id.radioGroup_type);
+		// familyRadioButton = (RadioButton)
+		// findViewById(R.id.radioButton_family);
+		// friendRadioButton = (RadioButton)
+		// findViewById(R.id.radioButton_friend);
+		// coupleRadioButton = (RadioButton)
+		// findViewById(R.id.radioButton_couple);
+		// typeRadioGroup = (RadioGroup) findViewById(R.id.radioGroup_type);
 
 		/*
 		 * 设置动画
@@ -200,7 +218,7 @@ public class MainActivity extends FragmentActivity implements
 		circleButton.setAnimation(animationSet);
 		button_yes.setAnimation(animationSet);
 		imageView_change.setAnimation(animationSet);
-		 button_type.setAnimation(animationSet);
+		button_type.setAnimation(animationSet);
 		cloud_top.setAnimation(animationSetTrans_top);
 		cloud_bottom.setAnimation(animationSetTrans);
 
@@ -227,102 +245,83 @@ public class MainActivity extends FragmentActivity implements
 				}
 			}
 		});
-		
-		ToLargeScaleAnimation = new ScaleAnimation(0.7f, 1.0f,0.7f,1.0f,Animation.RELATIVE_TO_SELF,0.5f,Animation.RELATIVE_TO_SELF,0.5f);
+
+		ToLargeScaleAnimation = new ScaleAnimation(0.7f, 1.0f, 0.7f, 1.0f,
+				Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF,
+				0.5f);
 		ToLargeScaleAnimation.setDuration(500);
 		ToLargeScaleAnimation.setInterpolator(AnimationUtils.loadInterpolator(
-				MainActivity.this, android.R.anim.anticipate_overshoot_interpolator));       
+				MainActivity.this,
+				android.R.anim.anticipate_overshoot_interpolator));
 		ToLargeScaleAnimation.setFillAfter(true);
 		ToLargeScaleAnimation.setFillEnabled(true);
-		
-		 
-		ToSmallScaleAnimation = new ScaleAnimation(1.0f, 0.7f,1.0f,0.7f,Animation.RELATIVE_TO_SELF,0.5f,Animation.RELATIVE_TO_SELF,0.5f);
+
+		ToSmallScaleAnimation = new ScaleAnimation(1.0f, 0.7f, 1.0f, 0.7f,
+				Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF,
+				0.5f);
 		ToSmallScaleAnimation.setDuration(500);
 		ToSmallScaleAnimation.setInterpolator(AnimationUtils.loadInterpolator(
-				MainActivity.this, android.R.anim.anticipate_overshoot_interpolator));   
+				MainActivity.this,
+				android.R.anim.anticipate_overshoot_interpolator));
 		ToSmallScaleAnimation.setFillAfter(true);
 		ToSmallScaleAnimation.setFillEnabled(true);
 
-		
-	/*	typeRadioGroup
-				.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+		/*
+		 * typeRadioGroup .setOnCheckedChangeListener(new
+		 * OnCheckedChangeListener() {
+		 * 
+		 * @Override public void onCheckedChanged(RadioGroup group, int
+		 * checkedId) { // TODO Auto-generated method stub if
+		 * (familyRadioButton.getId() == checkedId) { if
+		 * (friendRadioButton.isChecked()) { friendRadioButton.clearAnimation();
+		 * familyRadioButton.clearAnimation();
+		 * coupleRadioButton.clearAnimation();
+		 * friendRadioButton.startAnimation(ToSmallScaleAnimation);
+		 * familyRadioButton.startAnimation(ToLargeScaleAnimation); } else {
+		 * friendRadioButton.clearAnimation();
+		 * familyRadioButton.clearAnimation();
+		 * coupleRadioButton.clearAnimation();
+		 * coupleRadioButton.startAnimation(ToSmallScaleAnimation);
+		 * familyRadioButton.startAnimation(ToLargeScaleAnimation); }
+		 * 
+		 * } typeCount = 0; } if (friendRadioButton.getId() == checkedId) {
+		 * switch (typeCount) { case 0: friendRadioButton.clearAnimation();
+		 * familyRadioButton.clearAnimation();
+		 * coupleRadioButton.clearAnimation();
+		 * familyRadioButton.startAnimation(ToSmallScaleAnimation);
+		 * friendRadioButton.startAnimation(ToLargeScaleAnimation);
+		 * Log.i("friend selected", "family"+ String.valueOf(typeCount)); break;
+		 * case 2: friendRadioButton.clearAnimation();
+		 * familyRadioButton.clearAnimation();
+		 * coupleRadioButton.clearAnimation();
+		 * coupleRadioButton.startAnimation(ToSmallScaleAnimation);
+		 * friendRadioButton.startAnimation(ToLargeScaleAnimation);
+		 * Log.i("friend selected", "couple"+ String.valueOf(typeCount)); break;
+		 * default: break; }
+		 * 
+		 * typeCount = 1;
+		 * 
+		 * }
+		 * 
+		 * if (coupleRadioButton.getId() == checkedId) { switch (typeCount) {
+		 * case 0: friendRadioButton.clearAnimation();
+		 * familyRadioButton.clearAnimation();
+		 * coupleRadioButton.clearAnimation();
+		 * familyRadioButton.startAnimation(ToSmallScaleAnimation);
+		 * coupleRadioButton.startAnimation(ToLargeScaleAnimation);
+		 * Log.i("couple selected", "family"+ String.valueOf(typeCount)); break;
+		 * case 1: friendRadioButton.clearAnimation();
+		 * familyRadioButton.clearAnimation();
+		 * coupleRadioButton.clearAnimation();
+		 * friendRadioButton.startAnimation(ToSmallScaleAnimation);
+		 * coupleRadioButton.startAnimation(ToLargeScaleAnimation);
+		 * Log.i("couple selected", "friend"+ String.valueOf(typeCount)); break;
+		 * default: break; } typeCount = 2;
+		 * 
+		 * 
+		 * } } });
+		 */
 
-					@Override
-					public void onCheckedChanged(RadioGroup group, int checkedId) {
-						// TODO Auto-generated method stub
-						if (familyRadioButton.getId() == checkedId) {
-							if (friendRadioButton.isChecked()) {
-								friendRadioButton.clearAnimation();
-								familyRadioButton.clearAnimation();
-								coupleRadioButton.clearAnimation();
-								friendRadioButton.startAnimation(ToSmallScaleAnimation);
-								familyRadioButton.startAnimation(ToLargeScaleAnimation);
-							}
-							else {
-								friendRadioButton.clearAnimation();
-								familyRadioButton.clearAnimation();
-								coupleRadioButton.clearAnimation();
-								coupleRadioButton.startAnimation(ToSmallScaleAnimation);
-								familyRadioButton.startAnimation(ToLargeScaleAnimation);
-							}
-							
-							}
-							typeCount = 0;
-						}
-						if (friendRadioButton.getId() == checkedId) {
-							switch (typeCount) {
-							case 0:
-								friendRadioButton.clearAnimation();
-								familyRadioButton.clearAnimation();
-								coupleRadioButton.clearAnimation();
-								familyRadioButton.startAnimation(ToSmallScaleAnimation);
-								friendRadioButton.startAnimation(ToLargeScaleAnimation);
-								Log.i("friend selected", "family"+ String.valueOf(typeCount));
-								break;
-							case 2:
-								friendRadioButton.clearAnimation();
-								familyRadioButton.clearAnimation();
-								coupleRadioButton.clearAnimation();
-								coupleRadioButton.startAnimation(ToSmallScaleAnimation);
-								friendRadioButton.startAnimation(ToLargeScaleAnimation);
-								Log.i("friend selected", "couple"+ String.valueOf(typeCount));
-								break;
-							default:
-								break;
-							}
-							
-							typeCount = 1;
-
-						}
-						
-						if (coupleRadioButton.getId() == checkedId) {
-							switch (typeCount) {
-							case 0:
-								friendRadioButton.clearAnimation();
-								familyRadioButton.clearAnimation();
-								coupleRadioButton.clearAnimation();
-								familyRadioButton.startAnimation(ToSmallScaleAnimation);
-								coupleRadioButton.startAnimation(ToLargeScaleAnimation);
-								Log.i("couple selected", "family"+ String.valueOf(typeCount));
-								break;
-							case 1:
-								friendRadioButton.clearAnimation();
-								familyRadioButton.clearAnimation();
-								coupleRadioButton.clearAnimation();
-								friendRadioButton.startAnimation(ToSmallScaleAnimation);
-								coupleRadioButton.startAnimation(ToLargeScaleAnimation);
-								Log.i("couple selected", "friend"+ String.valueOf(typeCount));
-								break;
-							default:
-								break;
-							}
-							typeCount = 2;
-							
-						
-						}
-					}
-				}); */
-		
 		// set sliding menu
 		menu = new SlidingMenu(this);
 		menu.setMode(SlidingMenu.LEFT);
@@ -377,15 +376,17 @@ public class MainActivity extends FragmentActivity implements
 			}
 		});
 
-		 button_type.setOnClickListener(new OnClickListener() {
+		button_type.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				View view = (findViewById(R.id.button_type));
+				showWindow(view);
+			}
+
 		
-		 @Override
-		 public void onClick(View v) {
-		 // TODO Auto-generated method stub
-		 button_type.setText(Types[count_type % 3]);
-		 count_type++;
-		 }
-		 });
+
+		});
 
 		circleButton.setOnClickListener(new OnClickListener() {
 
@@ -482,14 +483,15 @@ public class MainActivity extends FragmentActivity implements
 				if (location == null) {
 					// TODO 如果没有location时？
 				}
-				
+
 				if (lat == 0.0 || lng == 0.0 || status_finish_circle == 0) {
 					Log.i("lat", String.valueOf(lat));
 					Log.i("lng", String.valueOf(lng));
-					Log.i("status_finish_circle", String.valueOf(status_finish_circle));
+					Log.i("status_finish_circle",
+							String.valueOf(status_finish_circle));
 					Toast.makeText(getApplicationContext(),
 							"定位失败，请打开定位服务或稍后再试", Toast.LENGTH_SHORT).show();
-				} else if (checkSelect == 0  && demoApplication.allDay == false) {
+				} else if (checkSelect == 0 && demoApplication.allDay == false) {
 					Toast.makeText(getApplicationContext(),
 							"您选择的是“部分”模式，请在侧边栏里选择你想要出行的地点类型",
 							Toast.LENGTH_SHORT).show();
@@ -506,22 +508,33 @@ public class MainActivity extends FragmentActivity implements
 					if (demoApplication.allDay == true) {
 						Log.i("lat", String.valueOf(lat));
 						Log.i("lng", String.valueOf(lng));
-						Log.i("status_finish_circle", String.valueOf(status_finish_circle));
+						Log.i("status_finish_circle",
+								String.valueOf(status_finish_circle));
 						try {
-							new RequestTask().execute(button_type.getText()
-									.toString(), userInfo.getString("city",
-											"西安市"), circleButton.getText().toString(),json.getString("item"),userid,String.valueOf(lat),String.valueOf(lng));
+							/**
+							 * param 0 city param 1 circle param 2 type param 3
+							 * json param 4 id
+							 */
+							new GetPlaceList().execute(
+									userInfo.getString("city", "西安市"),
+									circleButton.getText().toString(),
+									button_type.getText().toString(),
+									json.getString("item"), userid);
 						} catch (JSONException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 					} else {
-					
 
 						try {
-							new RequestPartTask().execute(
+							/**
+							 * param 0 city param 1 circle param 2 type param 3
+							 * json param 4 id
+							 */
+							new GetPlaceList().execute(
 									userInfo.getString("city", "西安市"),
 									circleButton.getText().toString(),
+									button_type.getText().toString(),
 									json.getString("item"), userid);
 						} catch (JSONException e) {
 							// TODO Auto-generated catch block
@@ -657,6 +670,51 @@ public class MainActivity extends FragmentActivity implements
 		return result;
 	}
 
+	/**
+	 * param 0 city param 1 circle param 2 type param 3 json param 4 id
+	 * 
+	 * @author LB
+	 * 
+	 */
+	public class GetPlaceList extends AsyncTask<String, Integer, String> {
+
+		String type;
+		String json;
+		String id;
+
+		@Override
+		protected String doInBackground(String... params) {
+			// TODO Auto-generated method stub
+			type = params[2];
+			json = params[3];
+			id = params[4];
+			return connect.GetCirclePos(params[0], params[1]);
+		}
+
+		@Override
+		protected void onPostExecute(String result) {
+			double lng_circle = 0;
+			double lat_circle = 0;
+			try {
+				JSONObject jsonObject = new JSONObject(result);
+				lng_circle = jsonObject.getDouble("lng");
+				lat_circle = jsonObject.getDouble("lat");
+				// Log.i("circle pos_x", String)
+
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			if (demoApplication.allDay == true) {
+				new RequestTask().execute(type, String.valueOf(lng_circle),
+						String.valueOf(lat_circle), json, id);
+			} else {
+				new RequestPartTask().execute(String.valueOf(lng_circle),
+						String.valueOf(lat_circle), json, id);
+			}
+		}
+	}
+
 	public class RequestTask extends AsyncTask<String, integer, String> {
 
 		@Override
@@ -665,8 +723,8 @@ public class MainActivity extends FragmentActivity implements
 			double pos_x = 108.947039, pos_y = 34.259203;
 
 			if (params.length > 1) {
-				pos_x = Double.parseDouble(params[5]);
-				pos_y = Double.parseDouble(params[6]);
+				// pos_x = Double.parseDouble(params[5]);
+				// pos_y = Double.parseDouble(params[6]);
 			}
 
 			try {
@@ -684,7 +742,7 @@ public class MainActivity extends FragmentActivity implements
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				return connect.GetFullRoute(params[0],  params[1], params[2],
+				return connect.GetFullRoute(params[0], params[1], params[2],
 						params[3], params[4]);
 
 			} catch (JSONException e) {
@@ -771,7 +829,6 @@ public class MainActivity extends FragmentActivity implements
 					.JsonToPlaceList(objdecodeJson.getJsonArray());
 			for (int i = 0; i < places.size(); i++) {
 				Log.i("places info", places.get(i).getShopName());
-
 			}
 
 			Intent intent = new Intent();
@@ -997,4 +1054,78 @@ public class MainActivity extends FragmentActivity implements
 
 		}
 	}
+
+	public void showWindow(final View parent) {
+		ListView lv_group = null;
+		Log.i("run show window", "show");
+		typeSelectAdapter groupAdapter = null;
+		groups = null;
+	
+		
+			LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+			View view = layoutInflater.inflate(R.layout.group_list, null);
+
+			lv_group = (ListView) view.findViewById(R.id.lvGroup);
+			// 加载数据
+			if (groups!=null) {
+				groups.clear();
+			}
+		
+			groups = new ArrayList<String>();
+			for (int i = 0; i < Types.length; i++) {
+				if (!Types[i].equals(button_type.getText().toString())) {
+					groups.add(Types[i]);
+					Log.i("add types", Types[i]);
+				}
+			}
+			//groups.add("更奢侈");
+			//groups.add("更便宜");
+		    //groups.add("随心换");
+			lv_group.setDividerHeight(0);
+		
+			lv_group.setOnItemClickListener(new OnItemClickListener() {
+
+				@Override
+				public void onItemClick(AdapterView<?> adapterView, View view,
+						int position, long id) {
+					
+					TextView textView = (TextView) view.findViewById(R.id.textview_main_item);
+					button_type.setText(textView.getText().toString());
+					// Toast.makeText(WarpDSLV.this, groups.get(position), 1000)
+					// .show();
+					
+					if (popupWindow != null) {
+						popupWindow.dismiss();
+					}
+				}
+			});
+			
+			groupAdapter =  new typeSelectAdapter(this, groups);
+			groupAdapter.setHeight(button_type.getHeight());
+			groupAdapter.setWidth(button_type.getWidth());
+			lv_group.setAdapter(groupAdapter);
+			// 创建一个PopupWindow对象
+			popupWindow = new CustomPopupWindow(view, button_type.getWidth(),
+					button_type.getHeight()*2);
+		
+
+		// 使其聚集
+		popupWindow.setFocusable(true);
+		// 设置允许在外点击消失
+		popupWindow.setOutsideTouchable(true);
+		popupWindow.setAnimationStyle(R.style.PopupWindowAnimation);
+		// 这个是为了点击“返回Back”也能使其消失，并且并不会影响你的背景
+		popupWindow.setBackgroundDrawable(new BitmapDrawable());
+		WindowManager windowManager = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
+		// 显示的位置为:屏幕的宽度的一半-PopupWindow的高度的一半
+		int xPos = windowManager.getDefaultDisplay().getWidth() / 2
+				- popupWindow.getWidth() / 2;
+		//Log.i("coder", "xPos:" + xPos);
+
+		// popupWindow.showAsDropDown(parent, xPos, 0);
+		popupWindow.showAsDropDown(parent);
+	
+	}
+
 }

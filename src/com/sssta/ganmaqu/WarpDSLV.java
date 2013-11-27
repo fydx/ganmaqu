@@ -34,7 +34,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -53,7 +52,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -97,7 +95,7 @@ public class WarpDSLV extends FragmentActivity {
 	private AnimationSet animationSet;
 	private int[] pics;
 	private JSONObject json;
-	private JSONArray item ;
+	private JSONArray item;
 	private String[] picStrings = { "http://115.28.17.121/pics/xian_01.png",
 			"http://115.28.17.121/pics/xian_02.png" };
 
@@ -125,7 +123,8 @@ public class WarpDSLV extends FragmentActivity {
 					.valueOf(places.get(which).getPos_x()), String
 					.valueOf(places.get(which).getPos_y()), places.get(which)
 					.getTime(), String.valueOf(places.get(which).getCost()),
-					String.valueOf(places.get(which).getWeight()),String.valueOf(which));
+					String.valueOf(places.get(which).getWeight()), String
+							.valueOf(which));
 			new sendDeleteTask().execute(
 					String.valueOf(places.get(which).getId()), userid);
 		}
@@ -372,9 +371,8 @@ public class WarpDSLV extends FragmentActivity {
 			list.add(places.get(i).getDetailType());
 			list_time.add(places.get(i).getTime());
 
-			if (places.get(i).getTime().equals("中午")
-					|| places.get(i).getTime().equals("晚餐")) {
-				// cost += places.get(i).getCost();
+			if (places.get(i).getMainType().equals("美食")) {
+
 				cost += places.get(i).getCost();
 			} else {
 
@@ -574,10 +572,9 @@ public class WarpDSLV extends FragmentActivity {
 		protected String doInBackground(String... params) {
 			// TODO Auto-generated method stub
 			try {
-				
+
 				return connect.GetFullRoute(params[0],
-						userInfo.getString("city", "西安市"),
-						json.getString("item"), circleString, userid);
+						params[1],params[2],params[3],params[4]);
 
 			} catch (JSONException e) {
 
@@ -689,8 +686,9 @@ public class WarpDSLV extends FragmentActivity {
 		@Override
 		protected String doInBackground(String... params) {
 			// TODO Auto-generated method stub
+		
 			return connect.GetLower(params[0], params[1], params[2],
-					Integer.parseInt(params[3]), params[4], params[5]);
+			params[3], params[4], params[5]);
 		}
 
 		@Override
@@ -743,9 +741,8 @@ public class WarpDSLV extends FragmentActivity {
 
 		@Override
 		protected String doInBackground(String... params) {
-			// TODO Auto-generated method stub
-			return connect.GetUpper(params[0], params[1], params[2],
-					Integer.parseInt(params[3]), params[4], params[5]);
+			 return connect.GetUpper(params[0], params[1], params[2],
+			 params[3], params[4], params[5]);
 		}
 
 		@Override
@@ -893,60 +890,59 @@ public class WarpDSLV extends FragmentActivity {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-        int i1 = item.getItemId();
-        if (i1 == R.id.change) {
-            View view = (findViewById(R.id.change));
-                DemoApplication demoApplication = (DemoApplication) getApplication();
-                if (demoApplication.allDay == true) {
-                    showWindow(view);
-            } else {
-                String[] types = {"美食", "购物", "电影院", "风景", "咖啡/甜点", "KTV"};
-                JSONObject json = new JSONObject();
-                JSONArray item2 = new JSONArray();
-                for (int i = 0; i < types.length; i++) {
-                    if (demoApplication.selectType[i] == true) {
-                        item2.put(types[i]);
-                    }
+		int i1 = item.getItemId();
+		if (i1 == R.id.change) {
+			View view = (findViewById(R.id.change));
+			DemoApplication demoApplication = (DemoApplication) getApplication();
+			if (demoApplication.allDay == true) {
+				showWindow(view);
+			} else {
+				String[] types = { "美食", "购物", "电影院", "风景", "咖啡/甜点", "KTV" };
+				JSONObject json = new JSONObject();
+				JSONArray item2 = new JSONArray();
+				for (int i = 0; i < types.length; i++) {
+					if (demoApplication.selectType[i] == true) {
+						item2.put(types[i]);
+					}
 
-                }
-                try {
-                    json.put("item", item2);
-                } catch (JSONException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-                try {
-                    new RequestPartTaskAgain().execute(
-                            userInfo.getString("city", "西安市"), circleString,
-                            json.getString("item"), userid);
-                } catch (JSONException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-            }
+				}
+				try {
+					json.put("item", item2);
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				try {
+					new RequestPartTaskAgain().execute(
+							userInfo.getString("city", "西安市"), circleString,
+							json.getString("item"), userid);
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 
-        } else if (i1 == R.id.save) {
-            saveToDB(places);
-            Intent intent3 = new Intent();
-            intent3.setClass(getApplicationContext(), ShareActivity.class);
-            intent3.putExtra("places", (Serializable) places);
-            startActivity(intent3);
-            finish();
+		} else if (i1 == R.id.save) {
+			saveToDB(places);
+			Intent intent3 = new Intent();
+			intent3.setClass(getApplicationContext(), ShareActivity.class);
+			intent3.putExtra("places", (Serializable) places);
+			startActivity(intent3);
+			finish();
 
-        } else if (i1 == R.id.map) {
-            Intent intent = new Intent();
-            intent.setClass(getApplicationContext(), NewMapActivity.class); // set
-            // new
-            // map
-            // activity
-            intent.putExtra("places", (Serializable) places);
-            startActivity(intent);
-            overridePendingTransition(android.R.anim.fade_in,
-                    android.R.anim.fade_out);
+		} else if (i1 == R.id.map) {
+			Intent intent = new Intent();
+			intent.setClass(getApplicationContext(), NewMapActivity.class); // set
+			// new
+			// map
+			// activity
+			intent.putExtra("places", (Serializable) places);
+			startActivity(intent);
+			overridePendingTransition(android.R.anim.fade_in,
+					android.R.anim.fade_out);
 
-
-        } else {
-        }
+		} else {
+		}
 
 		return true;
 	}
@@ -1007,7 +1003,15 @@ public class WarpDSLV extends FragmentActivity {
 					startCheap();
 					break;
 				case 2:
-					new randomTask().execute();
+	
+					try {
+						new randomTask().execute(type, String.valueOf(places.get(0).getPos_x()),
+								String.valueOf(places.get(0).getPos_y()),
+								json.getString("item"), userid);
+					} catch (JSONException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					break;
 				default:
 					break;
@@ -1031,9 +1035,14 @@ public class WarpDSLV extends FragmentActivity {
 			}
 		}
 
-		new upperTask().execute(type, String.valueOf(places.get(0).getPos_x()),
-				String.valueOf(places.get(0).getPos_y()),
-				String.valueOf(tempCost), city);
+		try {
+			new upperTask().execute(type, String.valueOf(places.get(0).getPos_x()),
+					String.valueOf(places.get(0).getPos_y()),
+					String.valueOf(tempCost), json.getString("item"), userid);
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public void startCheap() {
@@ -1046,47 +1055,12 @@ public class WarpDSLV extends FragmentActivity {
 		}
 
 		try {
-			new lowerTask().execute(type, city,circleString,
-					String.valueOf(tempCost),json.getString("item"),userid);
+			new lowerTask().execute(type, String.valueOf(places.get(0).getPos_x()),
+					String.valueOf(places.get(0).getPos_y()),String.valueOf(tempCost), json.getString("item"), userid);
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}
-
-	public class CustomPopupWindow extends PopupWindow {
-		public CustomPopupWindow(View contentView, int width, int height) {
-			super(contentView, width, height, false);
-		}
-
-		/**
-		 * 在指定控件上方显示，默认x座标与指定控件的中点x座标相同
-		 * 
-		 * @param anchor
-		 * @param xoff
-		 * @param yoff
-		 */
-		public void showAsPullUp(View anchor, int xoff, int yoff) {
-			// 保存anchor在屏幕中的位置
-			int[] location = new int[2];
-			// 保存anchor上部中点
-			int[] anchorCenter = new int[2];
-			// 读取位置anchor座标
-			anchor.getLocationOnScreen(location);
-			// 计算anchor中点
-			anchorCenter[0] = location[0] + anchor.getWidth() / 2;
-			anchorCenter[1] = location[1];
-			super.showAtLocation(
-					anchor,
-					Gravity.TOP | Gravity.LEFT,
-					anchorCenter[0] + xoff,
-					anchorCenter[1]
-							- anchor.getContext()
-									.getResources()
-									.getDimensionPixelSize(
-											R.dimen.popup_upload_height) + yoff);
-		}
-
 	}
 
 	public List<String> calcDistances(List<place> places) {

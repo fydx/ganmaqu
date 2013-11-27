@@ -89,7 +89,14 @@ public class decodeJson {
 		temp_place.setShopName(jsonObject.getString("shopName"));
 		temp_place.setSuitType(jsonObject.getString("suitType"));
 		temp_place.setTelNumber(jsonObject.getString("telNumber"));
-		temp_place.setTime(jsonObject.getString("time"));
+		try {
+			temp_place.setTime(jsonObject.getString("time"));
+		} catch (Exception e) {
+			// TODO: handle exception
+			Log.w("JSON in decode","can not find TIME,add afternoon temp");
+			temp_place.setTime("下午");
+		}
+		
 		try {
 			temp_place.setPicUrl(jsonObject.getString("url"));
 		} catch (Exception jsonException) {
