@@ -17,7 +17,10 @@ public class DemoApplication extends Application {
     public boolean m_bKeyRight = true;
     BMapManager mBMapManager = null;
     public boolean[] selectType= null ; 
+    public boolean myCircle; 
     public boolean allDay ;
+    public double circle_lat;
+    public double circle_lng;
     public enum types {EAT,SHOP,MOVIE,SCENE,COFFEE,KTV};
     
     //public static final String strKey = "970293a9a6573c4517821ee70a7e30a5";  // for baiduapi 
@@ -36,12 +39,21 @@ public class DemoApplication extends Application {
 		initEngineManager(this);
 		selectType = new boolean[6];
 		allDay = true;
+		myCircle = false;
 		for (int i = 0; i < selectType.length; i++) {
 			selectType[i] = false;
 		}
 		
 	}
 	
+	public boolean isMyCircle() {
+		return myCircle;
+	}
+
+	public void setMyCircle(boolean myCircle) {
+		this.myCircle = myCircle;
+	}
+
 	public void initEngineManager(Context context) {
         if (mBMapManager == null) {
             mBMapManager = new BMapManager(context);

@@ -143,6 +143,10 @@
             android:name="com.sssta.ganmaqu.AboutActivity"
             android:label="@string/title_activity_about" >
         </activity>
+        <activity
+            android:name="com.sssta.ganmaqu.PoiSearchActivity"
+            android:label="@string/title_activity_about" >
+        </activity>
     </application>
 
 </manifest>

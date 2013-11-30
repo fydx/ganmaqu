@@ -1,25 +1,20 @@
 package com.sssta.ganmaqu;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.List;
 
 import net.tsz.afinal.FinalDb;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpHost;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
-import android.opengl.Visibility;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -43,6 +38,7 @@ public class CircleDialog extends Dialog {
 	private Connect connect;
 	private SharedPreferences cityStatus;
 	private FinalDb db;
+	private Activity activity;
 	public SharedPreferences getCityStatus() {
 		return cityStatus;
 	}
@@ -55,7 +51,7 @@ public class CircleDialog extends Dialog {
 				.getString(R.string.ip);
 		Log.i("ipString", ipString);
 		setCustomView(); 
-		// TODO Auto-generated constructor stub
+		
 	}
 	public CircleDialog(Context context,String cityString) {
 		super(context,R.style.CustomDialog);
@@ -65,10 +61,25 @@ public class CircleDialog extends Dialog {
 		connect = new Connect(ipString);
 		this.city = cityString;
 		db = FinalDb.create(context);
+		
 		this.cityStatus =  context.getSharedPreferences("cityStatus", 0);
 		setCustomView(); 
-		// TODO Auto-generated constructor stub
+		
 	}
+	public CircleDialog(Context context,String cityString,Activity activity_main) {
+		super(context,R.style.CustomDialog);
+		ipString = getContext().getResources()
+				.getString(R.string.ip);
+		Log.i("ipString", ipString);
+		connect = new Connect(ipString);
+		this.city = cityString;
+		db = FinalDb.create(context);
+		activity = activity_main;
+		this.cityStatus =  context.getSharedPreferences("cityStatus", 0);
+		setCustomView(); 
+		
+	}
+	
 	public void setbutton(Button button_trans) {
 		this.button = button_trans;
 	}
@@ -88,7 +99,7 @@ public class CircleDialog extends Dialog {
      * 设置整个弹出框的视图 
      */  
     private void setCustomView(){  
-        View mView = LayoutInflater.from(getContext()).inflate(R.layout.dialog_main_circles, null);  
+        final View mView = LayoutInflater.from(getContext()).inflate(R.layout.dialog_main_circles, null);  
       
         gridView_circles = (myGridView)mView.findViewById(R.id.gridView_circles);
         gridAdapter = new GridAdapter(this.getContext());
@@ -111,7 +122,19 @@ public class CircleDialog extends Dialog {
 			});
    			gridView_circles.setAdapter(gridAdapter);
 		}
-       
+       Button button_myCircle = (Button)mView.findViewById(R.id.button_myCircle);
+       button_myCircle.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				Intent intent = new Intent();
+				intent.setClass(mView.getContext(), PoiSearchActivity.class);
+				intent.putExtra("city", city);
+				activity.startActivityForResult(intent, 1);
+
+			}
+		});
         super.setContentView(mView);  
         
        
@@ -274,4 +297,11 @@ public class CircleDialog extends Dialog {
     	//Log.i("hasmap", ansHashMap.toString());
     	return ansHashMap;
     }
+    /**
+     * 为了得到传回的数据，必须在前面的Activity中（指MainActivity类）重写onActivityResult方法
+     * 
+     * requestCode 请求码，即调用startActivityForResult()传递过去的值
+     * resultCode 结果码，结果码用于标识返回数据来自哪个新Activity
+     */
+    
 }

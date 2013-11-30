@@ -395,7 +395,7 @@ public class MainActivity extends FragmentActivity implements
 				// TODO Auto-generated method stub
 				if (city != null) {
 					circleDialog = new CircleDialog(MainActivity.this, userInfo
-							.getString("city", "西安市"));
+							.getString("city", "西安市"), MainActivity.this);
 					// circleDialog.setCity(city);
 					circleDialog.setbutton(circleButton);
 					circleDialog.show();
@@ -500,55 +500,38 @@ public class MainActivity extends FragmentActivity implements
 							R.style.activity_translucent);
 					dialog.setContentView(R.layout.dialog_connect);
 					dialog.show();
-					// Toast.makeText(getApplicationContext(),
-					// Types[typeWheel.getCurrentItem()], Toast.LENGTH_SHORT)
-					// .show();
-					// Log.i("Current Item", Types[typeWheel.getCurrentItem()]);
-
-					if (demoApplication.allDay == true) {
 						Log.i("lat", String.valueOf(lat));
 						Log.i("lng", String.valueOf(lng));
-						Log.i("status_finish_circle",
-								String.valueOf(status_finish_circle));
 						try {
-							/**
+							/**开始请求服务器
 							 * param 0 city param 1 circle param 2 type param 3
 							 * json param 4 id
 							 */
-							new GetPlaceList().execute(
-									userInfo.getString("city", "西安市"),
-									circleButton.getText().toString(),
-									button_type.getText().toString(),
-									json.getString("item"), userid);
+							
+							if (demoApplication.myCircle==true) {
+								new GetPlaceList().execute(
+										null,
+										null,
+										button_type.getText().toString(),
+										json.getString("item"), userid);
+							}
+							else {
+								new GetPlaceList().execute(
+										userInfo.getString("city", "西安市"),
+										circleButton.getText().toString(),
+										button_type.getText().toString(),
+										json.getString("item"), userid);
+							}
+						
 						} catch (JSONException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
-					} else {
-
-						try {
-							/**
-							 * param 0 city param 1 circle param 2 type param 3
-							 * json param 4 id
-							 */
-							new GetPlaceList().execute(
-									userInfo.getString("city", "西安市"),
-									circleButton.getText().toString(),
-									button_type.getText().toString(),
-									json.getString("item"), userid);
-						} catch (JSONException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-						Log.i("PART CIRCLE", circleButton.getText().toString());
-						Log.i("PART JSON", json.toString());
-						Log.i("PART USER", userid);
-					}
+					 
 				}
 
 			}
 		});
-		// numberWheel.setCurrentItem(3);
 	}
 
 	// 判断是否开启GPS，若未开启，打开GPS设置界面
@@ -641,14 +624,6 @@ public class MainActivity extends FragmentActivity implements
 					String.valueOf(lng));
 
 		}
-		// count++;
-		// Toast.makeText(
-		// getApplicationContext(),
-		// "(main)您当前的位置是: " + "\n" + latLongString + "\n"
-		// + getAddressbyGeoPoint(location), Toast.LENGTH_LONG)
-		// .show();
-		// myLocationText.setText("您当前的位置是:/n" + latLongString + "/n"
-		// + getAddressbyGeoPoint(location));
 
 	}
 
@@ -688,6 +663,9 @@ public class MainActivity extends FragmentActivity implements
 			type = params[2];
 			json = params[3];
 			id = params[4];
+			if (params[0] == null || params[1] == null) {
+				return null;
+			}
 			return connect.GetCirclePos(params[0], params[1]);
 		}
 
@@ -695,16 +673,23 @@ public class MainActivity extends FragmentActivity implements
 		protected void onPostExecute(String result) {
 			double lng_circle = 0;
 			double lat_circle = 0;
-			try {
-				JSONObject jsonObject = new JSONObject(result);
-				lng_circle = jsonObject.getDouble("lng");
-				lat_circle = jsonObject.getDouble("lat");
-				// Log.i("circle pos_x", String)
+			if (result != null ) {
+				try {
+					JSONObject jsonObject = new JSONObject(result);
+					lng_circle = jsonObject.getDouble("lng");
+					lat_circle = jsonObject.getDouble("lat");
+					// Log.i("circle pos_x", String)
 
-			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
+			else {
+				lng_circle = demoApplication.circle_lng;
+				lat_circle = demoApplication.circle_lat;
+			}
+			
 			if (demoApplication.allDay == true) {
 				new RequestTask().execute(type, String.valueOf(lng_circle),
 						String.valueOf(lat_circle), json, id);
@@ -1127,5 +1112,13 @@ public class MainActivity extends FragmentActivity implements
 		popupWindow.showAsDropDown(parent);
 	
 	}
-
+	@Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data)//重写onActivityResult方法
+    {
+        Log.i("fydx","activity result in");  
+		if (requestCode == 1 && resultCode == 0) {
+			circleButton.setText(data.getStringExtra("circle"));
+			circleDialog.dismiss();
+		}
+    }
 }
