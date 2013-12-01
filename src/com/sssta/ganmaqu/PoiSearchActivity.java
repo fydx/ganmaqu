@@ -2,13 +2,19 @@ package com.sssta.ganmaqu;
 
 import java.util.ArrayList;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.res.Resources;
+import android.database.CursorJoiner.Result;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
+import android.view.Window;
 import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -37,7 +43,6 @@ import com.baidu.mapapi.search.MKTransitRouteResult;
 import com.baidu.mapapi.search.MKWalkingRouteResult;
 import com.baidu.platform.comapi.basestruct.GeoPoint;
 
-
 public class PoiSearchActivity extends Activity {
 
 	private MapView mMapView = null;
@@ -50,7 +55,8 @@ public class PoiSearchActivity extends Activity {
 	private OverlayItem mCurItem = null;
 	private MyOverlay mOverlay = null;
 	private DemoApplication demoApplication;
-	private EditText editSearchKey ;
+	private EditText editSearchKey;
+	private String areaString;
 	/**
 	 * 搜索关键字输入窗口
 	 */
@@ -58,11 +64,32 @@ public class PoiSearchActivity extends Activity {
 	private ArrayAdapter<String> sugAdapter = null;
 	private int load_Index;
 	private String city;
-	
+	private SharedPreferences userInfo;
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		getWindow().requestFeature(Window.FEATURE_ACTION_BAR); // 加入 Actionbar 
 		DemoApplication app = (DemoApplication) this.getApplication();
+		userInfo = getApplicationContext().getSharedPreferences("userInfo", 0);
+
+		city = userInfo.getString("city", "西安市");
+	
+		/*
+		 * actionbar 设置
+		 */
+		ActionBar actionBar = this.getActionBar();
+		actionBar.setDisplayOptions(ActionBar.DISPLAY_HOME_AS_UP,
+				ActionBar.DISPLAY_HOME_AS_UP);
+		actionBar.setBackgroundDrawable(getResources().getDrawable(
+				R.drawable.myCircle_actionbar));
+		actionBar.setDisplayShowHomeEnabled(false);
+		actionBar.setTitle("自定义商圈");
+		int titleId = Resources.getSystem().getIdentifier("action_bar_title",
+				"id", "android");
+		TextView title = (TextView) findViewById(titleId);
+		title.setTextColor(Color.parseColor("#FFFFFF"));
+		actionBar.setDisplayHomeAsUpEnabled(true);
 		city = getIntent().getStringExtra("city");
 		if (app.mBMapManager == null) {
 			app.mBMapManager = new BMapManager(this);
@@ -70,7 +97,7 @@ public class PoiSearchActivity extends Activity {
 					new DemoApplication.MyGeneralListener());
 		}
 		setContentView(R.layout.activity_poisearch);
-		demoApplication = (DemoApplication)getApplication();
+		demoApplication = (DemoApplication) getApplication();
 		GeoPoint p = new GeoPoint((int) (34.265733 * 1E6),
 				(int) (108.953906 * 1E6));
 		// GeoPoint p = new GeoPoint((int) (36.065159 * 1E6),
@@ -84,12 +111,12 @@ public class PoiSearchActivity extends Activity {
 		mMapView.getController().setCenter(p);
 		// 初始化搜索模块，注册搜索事件监听
 		mSearch = new MKSearch();
-		mOverlay = new MyOverlay(getResources().getDrawable(R.drawable.marker_location),
-				mMapView);
-		
+		mOverlay = new MyOverlay(getResources().getDrawable(
+				R.drawable.mark), mMapView);
+
 		button = new Button(this);
 		button.setBackgroundResource(R.drawable.popup);
-		
+
 		mSearch.init(app.mBMapManager, new MKSearchListener() {
 			// 在此处理详情页结果
 			@Override
@@ -118,6 +145,7 @@ public class PoiSearchActivity extends Activity {
 					// 将poi结果显示到地图上
 					// MyPoiOverlay poiOverlay = new MyPoiOverlay(
 					// PoiSearchActivity.this, mMapView, mSearch);
+					mOverlay.getAllItem().clear();
 					mkPoiInfos = new ArrayList<MKPoiInfo>();
 					// poiOverlay.setData(res.getAllPoi());
 					mkPoiInfos = res.getAllPoi();
@@ -126,7 +154,7 @@ public class PoiSearchActivity extends Activity {
 						OverlayItem item = new OverlayItem(location,
 								"location", "");
 						item.setMarker(getResources().getDrawable(
-								R.drawable.marker_location));
+								R.drawable.mark));
 						mOverlay.addItem(item);
 
 					}
@@ -135,6 +163,10 @@ public class PoiSearchActivity extends Activity {
 					 */
 					mItems = new ArrayList<OverlayItem>();
 					mItems.addAll(mOverlay.getAllItem());
+					/**
+					 * 清空所有图层
+					 */
+					mMapView.getOverlays().clear();
 					/**
 					 * 将overlay 添加至MapView中
 					 */
@@ -235,8 +267,7 @@ public class PoiSearchActivity extends Activity {
 				if (cs.length() <= 0) {
 					return;
 				}
-				String city = ((TextView) findViewById(R.id.city)).getText()
-						.toString();
+				
 				/**
 				 * 使用建议搜索服务获取建议列表，结果在onSuggestionResult()中更新
 				 */
@@ -249,8 +280,7 @@ public class PoiSearchActivity extends Activity {
 		PopupClickListener popListener = new PopupClickListener() {
 			@Override
 			public void onClickedPopup(int index) {
-				
-			
+
 				finish();
 			}
 		};
@@ -301,9 +331,10 @@ public class PoiSearchActivity extends Activity {
 	 * @param v
 	 */
 	public void searchButtonProcess(View v) {
-		TextView editCity = (TextView) findViewById(R.id.city);
+		
 		editSearchKey = (EditText) findViewById(R.id.searchkey);
-		mSearch.poiSearchInCity(editCity.getText().toString(), editSearchKey
+		areaString = editSearchKey.getText().toString();
+		mSearch.poiSearchInCity(city, editSearchKey
 				.getText().toString());
 	}
 
@@ -327,16 +358,18 @@ public class PoiSearchActivity extends Activity {
 
 			button.setText("选取此处为自定义商圈");
 			button.setOnClickListener(new OnClickListener() {
-				
+
 				@Override
 				public void onClick(View v) {
 					// TODO Auto-generated method stub
 					Intent intent = new Intent();
-					demoApplication.myCircle=true;
-					demoApplication.circle_lat = mkPoiInfos.get(index).pt.getLatitudeE6() / 1E6;
-					demoApplication.circle_lng = mkPoiInfos.get(index).pt.getLongitudeE6() / 1E6;
-					intent.putExtra("circle",editSearchKey.getText().toString());
-					setResult(0, intent);
+					demoApplication.myCircle = true;
+					demoApplication.circle_lat = mkPoiInfos.get(index).pt
+							.getLatitudeE6() / 1E6;
+					demoApplication.circle_lng = mkPoiInfos.get(index).pt
+							.getLongitudeE6() / 1E6;
+					intent.putExtra("circle", areaString);
+					setResult(2, intent);
 					finish();
 				}
 			});
@@ -353,7 +386,7 @@ public class PoiSearchActivity extends Activity {
 					MapView.LayoutParams.BOTTOM_CENTER);
 			// 添加View到MapView中
 			mMapView.addView(button, layoutParam);
-			
+
 			return true;
 
 		}

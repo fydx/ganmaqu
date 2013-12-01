@@ -14,11 +14,11 @@
 
     <Button
         android:id="@+id/button_myCircle"
-         android:layout_width="120dp"
+         android:layout_width="match_parent"
         android:layout_height="34dp"
          android:layout_margin="10dp"
         android:textSize="16dp"
-        android:background="@drawable/button_style_detail"
+        android:background="@drawable/button_style_blue"
         android:textColor="#FFFFFF"
         android:text="自定义商圈" />
     

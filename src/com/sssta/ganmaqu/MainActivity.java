@@ -99,7 +99,7 @@ public class MainActivity extends FragmentActivity implements
 	private RadioGroup typeRadioGroup;
 	private Animation ToLargeScaleAnimation, ToSmallScaleAnimation;
 	private CustomPopupWindow popupWindow;
-	private List<String> groups ;
+	private List<String> groups;
 
 	public static double getLat() {
 		return lat;
@@ -384,8 +384,6 @@ public class MainActivity extends FragmentActivity implements
 				showWindow(view);
 			}
 
-		
-
 		});
 
 		circleButton.setOnClickListener(new OnClickListener() {
@@ -399,6 +397,7 @@ public class MainActivity extends FragmentActivity implements
 					// circleDialog.setCity(city);
 					circleDialog.setbutton(circleButton);
 					circleDialog.show();
+
 				} else {
 					Toast.makeText(getApplicationContext(),
 							"请稍后等待获取到当前城市，或手动选择当前城市后点击", Toast.LENGTH_SHORT)
@@ -500,34 +499,31 @@ public class MainActivity extends FragmentActivity implements
 							R.style.activity_translucent);
 					dialog.setContentView(R.layout.dialog_connect);
 					dialog.show();
-						Log.i("lat", String.valueOf(lat));
-						Log.i("lng", String.valueOf(lng));
-						try {
-							/**开始请求服务器
-							 * param 0 city param 1 circle param 2 type param 3
-							 * json param 4 id
-							 */
-							
-							if (demoApplication.myCircle==true) {
-								new GetPlaceList().execute(
-										null,
-										null,
-										button_type.getText().toString(),
-										json.getString("item"), userid);
-							}
-							else {
-								new GetPlaceList().execute(
-										userInfo.getString("city", "西安市"),
-										circleButton.getText().toString(),
-										button_type.getText().toString(),
-										json.getString("item"), userid);
-							}
-						
-						} catch (JSONException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
+					Log.i("lat", String.valueOf(lat));
+					Log.i("lng", String.valueOf(lng));
+					try {
+						/**
+						 * 开始请求服务器 param 0 city param 1 circle param 2 type
+						 * param 3 json param 4 id
+						 */
+
+						if (demoApplication.myCircle == true) {
+							new GetPlaceList().execute(null, null, button_type
+									.getText().toString(), json
+									.getString("item"), userid);
+						} else {
+							new GetPlaceList().execute(
+									userInfo.getString("city", "西安市"),
+									circleButton.getText().toString(),
+									button_type.getText().toString(),
+									json.getString("item"), userid);
 						}
-					 
+
+					} catch (JSONException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+
 				}
 
 			}
@@ -673,7 +669,7 @@ public class MainActivity extends FragmentActivity implements
 		protected void onPostExecute(String result) {
 			double lng_circle = 0;
 			double lat_circle = 0;
-			if (result != null ) {
+			if (result != null) {
 				try {
 					JSONObject jsonObject = new JSONObject(result);
 					lng_circle = jsonObject.getDouble("lng");
@@ -684,12 +680,11 @@ public class MainActivity extends FragmentActivity implements
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-			}
-			else {
+			} else {
 				lng_circle = demoApplication.circle_lng;
 				lat_circle = demoApplication.circle_lat;
 			}
-			
+
 			if (demoApplication.allDay == true) {
 				new RequestTask().execute(type, String.valueOf(lng_circle),
 						String.valueOf(lat_circle), json, id);
@@ -1045,55 +1040,54 @@ public class MainActivity extends FragmentActivity implements
 		Log.i("run show window", "show");
 		typeSelectAdapter groupAdapter = null;
 		groups = null;
-	
-		
-			LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-			View view = layoutInflater.inflate(R.layout.group_list, null);
+		LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-			lv_group = (ListView) view.findViewById(R.id.lvGroup);
-			// 加载数据
-			if (groups!=null) {
-				groups.clear();
+		View view = layoutInflater.inflate(R.layout.group_list, null);
+
+		lv_group = (ListView) view.findViewById(R.id.lvGroup);
+		// 加载数据
+		if (groups != null) {
+			groups.clear();
+		}
+
+		groups = new ArrayList<String>();
+		for (int i = 0; i < Types.length; i++) {
+			if (!Types[i].equals(button_type.getText().toString())) {
+				groups.add(Types[i]);
+				Log.i("add types", Types[i]);
 			}
-		
-			groups = new ArrayList<String>();
-			for (int i = 0; i < Types.length; i++) {
-				if (!Types[i].equals(button_type.getText().toString())) {
-					groups.add(Types[i]);
-					Log.i("add types", Types[i]);
+		}
+		// groups.add("更奢侈");
+		// groups.add("更便宜");
+		// groups.add("随心换");
+		lv_group.setDividerHeight(0);
+
+		lv_group.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> adapterView, View view,
+					int position, long id) {
+
+				TextView textView = (TextView) view
+						.findViewById(R.id.textview_main_item);
+				button_type.setText(textView.getText().toString());
+				// Toast.makeText(WarpDSLV.this, groups.get(position), 1000)
+				// .show();
+
+				if (popupWindow != null) {
+					popupWindow.dismiss();
 				}
 			}
-			//groups.add("更奢侈");
-			//groups.add("更便宜");
-		    //groups.add("随心换");
-			lv_group.setDividerHeight(0);
-		
-			lv_group.setOnItemClickListener(new OnItemClickListener() {
+		});
 
-				@Override
-				public void onItemClick(AdapterView<?> adapterView, View view,
-						int position, long id) {
-					
-					TextView textView = (TextView) view.findViewById(R.id.textview_main_item);
-					button_type.setText(textView.getText().toString());
-					// Toast.makeText(WarpDSLV.this, groups.get(position), 1000)
-					// .show();
-					
-					if (popupWindow != null) {
-						popupWindow.dismiss();
-					}
-				}
-			});
-			
-			groupAdapter =  new typeSelectAdapter(this, groups);
-			groupAdapter.setHeight(button_type.getHeight());
-			groupAdapter.setWidth(button_type.getWidth());
-			lv_group.setAdapter(groupAdapter);
-			// 创建一个PopupWindow对象
-			popupWindow = new CustomPopupWindow(view, button_type.getWidth(),
-					button_type.getHeight()*2);
-		
+		groupAdapter = new typeSelectAdapter(this, groups);
+		groupAdapter.setHeight(button_type.getHeight());
+		groupAdapter.setWidth(button_type.getWidth());
+		lv_group.setAdapter(groupAdapter);
+		// 创建一个PopupWindow对象
+		popupWindow = new CustomPopupWindow(view, button_type.getWidth(),
+				button_type.getHeight() * 2);
 
 		// 使其聚集
 		popupWindow.setFocusable(true);
@@ -1106,19 +1100,20 @@ public class MainActivity extends FragmentActivity implements
 		// 显示的位置为:屏幕的宽度的一半-PopupWindow的高度的一半
 		int xPos = windowManager.getDefaultDisplay().getWidth() / 2
 				- popupWindow.getWidth() / 2;
-		//Log.i("coder", "xPos:" + xPos);
+		// Log.i("coder", "xPos:" + xPos);
 
 		// popupWindow.showAsDropDown(parent, xPos, 0);
 		popupWindow.showAsDropDown(parent);
-	
+
 	}
+
 	@Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data)//重写onActivityResult方法
-    {
-        Log.i("fydx","activity result in");  
-		if (requestCode == 1 && resultCode == 0) {
+	protected void onActivityResult(int requestCode, int resultCode, Intent data)// 重写onActivityResult方法
+	{
+		Log.i("fydx", "activity result in");
+		if (requestCode == 1 && resultCode == 2) {
 			circleButton.setText(data.getStringExtra("circle"));
 			circleDialog.dismiss();
 		}
-    }
+	}
 }

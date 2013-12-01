@@ -913,8 +913,8 @@ public class WarpDSLV extends FragmentActivity {
 					e.printStackTrace();
 				}
 				try {
-					new RequestPartTaskAgain().execute(
-							userInfo.getString("city", "西安市"), circleString,
+					new RequestPartTaskAgain().execute(String.valueOf(loclng)
+							, String.valueOf(loclat),
 							json.getString("item"), userid);
 				} catch (JSONException e) {
 					// TODO Auto-generated catch block

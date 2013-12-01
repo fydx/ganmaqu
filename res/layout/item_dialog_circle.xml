@@ -13,6 +13,6 @@
         android:textSize="16dp"
         android:textColor="#FFFFFF"
         android:gravity="center"
-        android:background="@drawable/button_style_detail" />
+        android:background="@drawable/button_style_blue" />
 
 </LinearLayout>
