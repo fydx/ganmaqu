@@ -84,8 +84,7 @@ public class MainActivity extends FragmentActivity implements
 	private int count, count_city, count_type;
 	private static Button circleButton;
 	private Button button_type, button_yes;
-	private RadioButton familyRadioButton, friendRadioButton,
-			coupleRadioButton;
+	private RadioButton familyRadioButton, friendRadioButton,coupleRadioButton;
 	private FinalDb db;
 	private String userid;
 	private static String city;
@@ -93,6 +92,7 @@ public class MainActivity extends FragmentActivity implements
 	private SlidingMenu menu;
 	private SharedPreferences userInfo;
 	private int count_first;
+	private boolean route_first, isClickCircle;
 	private Connect connect;
 	private ImageView imageView_change;
 	private DemoApplication demoApplication;
@@ -118,24 +118,22 @@ public class MainActivity extends FragmentActivity implements
 		super.onCreate(savedInstanceState);
 		ShareSDK.initSDK(MainActivity.this);
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE); // no title bar
-		// typeCount = 0;
-		// setBehindContentView(R.layout.menu_right);
+		/*
+		 * 变量初始化
+		 */
 		demoApplication = (DemoApplication) getApplication();
 		ipString = getApplicationContext().getResources()
 				.getString(R.string.ip);
 		connect = new Connect(ipString);
+		route_first = true;
+		isClickCircle = false;
 		count_type = 0;
-		// Platform[] platformList =
-		// ShareSDK.getPlatformList(NewMainActivity.this) ;
-		// platformList[0].authorize();
 		setContentView(R.layout.activity_selectedmain);
 		userInfo = getApplicationContext().getSharedPreferences("userInfo", 0);
-
 		city = userInfo.getString("city", "西安市");
 		count_first = userInfo.getInt("first", 0);
 		count_city = userInfo.getInt("count_city", 0);
 		Log.i("city from sharedperferece", city);
-		// setSlidingActionBarEnabled(true);
 		/*
 		 * 设置渐显动画
 		 */
@@ -201,13 +199,7 @@ public class MainActivity extends FragmentActivity implements
 		ImageView cloud_top = (ImageView) findViewById(R.id.imageView_cloud_top);
 		ImageView cloud_bottom = (ImageView) findViewById(R.id.imageView_cloud_bottom);
 		imageView_change = (ImageView) findViewById(R.id.imageView_last);
-		// familyRadioButton = (RadioButton)
-		// findViewById(R.id.radioButton_family);
-		// friendRadioButton = (RadioButton)
-		// findViewById(R.id.radioButton_friend);
-		// coupleRadioButton = (RadioButton)
-		// findViewById(R.id.radioButton_couple);
-		// typeRadioGroup = (RadioGroup) findViewById(R.id.radioGroup_type);
+	
 
 		/*
 		 * 设置动画
@@ -265,62 +257,6 @@ public class MainActivity extends FragmentActivity implements
 				android.R.anim.anticipate_overshoot_interpolator));
 		ToSmallScaleAnimation.setFillAfter(true);
 		ToSmallScaleAnimation.setFillEnabled(true);
-
-		/*
-		 * typeRadioGroup .setOnCheckedChangeListener(new
-		 * OnCheckedChangeListener() {
-		 * 
-		 * @Override public void onCheckedChanged(RadioGroup group, int
-		 * checkedId) { // TODO Auto-generated method stub if
-		 * (familyRadioButton.getId() == checkedId) { if
-		 * (friendRadioButton.isChecked()) { friendRadioButton.clearAnimation();
-		 * familyRadioButton.clearAnimation();
-		 * coupleRadioButton.clearAnimation();
-		 * friendRadioButton.startAnimation(ToSmallScaleAnimation);
-		 * familyRadioButton.startAnimation(ToLargeScaleAnimation); } else {
-		 * friendRadioButton.clearAnimation();
-		 * familyRadioButton.clearAnimation();
-		 * coupleRadioButton.clearAnimation();
-		 * coupleRadioButton.startAnimation(ToSmallScaleAnimation);
-		 * familyRadioButton.startAnimation(ToLargeScaleAnimation); }
-		 * 
-		 * } typeCount = 0; } if (friendRadioButton.getId() == checkedId) {
-		 * switch (typeCount) { case 0: friendRadioButton.clearAnimation();
-		 * familyRadioButton.clearAnimation();
-		 * coupleRadioButton.clearAnimation();
-		 * familyRadioButton.startAnimation(ToSmallScaleAnimation);
-		 * friendRadioButton.startAnimation(ToLargeScaleAnimation);
-		 * Log.i("friend selected", "family"+ String.valueOf(typeCount)); break;
-		 * case 2: friendRadioButton.clearAnimation();
-		 * familyRadioButton.clearAnimation();
-		 * coupleRadioButton.clearAnimation();
-		 * coupleRadioButton.startAnimation(ToSmallScaleAnimation);
-		 * friendRadioButton.startAnimation(ToLargeScaleAnimation);
-		 * Log.i("friend selected", "couple"+ String.valueOf(typeCount)); break;
-		 * default: break; }
-		 * 
-		 * typeCount = 1;
-		 * 
-		 * }
-		 * 
-		 * if (coupleRadioButton.getId() == checkedId) { switch (typeCount) {
-		 * case 0: friendRadioButton.clearAnimation();
-		 * familyRadioButton.clearAnimation();
-		 * coupleRadioButton.clearAnimation();
-		 * familyRadioButton.startAnimation(ToSmallScaleAnimation);
-		 * coupleRadioButton.startAnimation(ToLargeScaleAnimation);
-		 * Log.i("couple selected", "family"+ String.valueOf(typeCount)); break;
-		 * case 1: friendRadioButton.clearAnimation();
-		 * familyRadioButton.clearAnimation();
-		 * coupleRadioButton.clearAnimation();
-		 * friendRadioButton.startAnimation(ToSmallScaleAnimation);
-		 * coupleRadioButton.startAnimation(ToLargeScaleAnimation);
-		 * Log.i("couple selected", "friend"+ String.valueOf(typeCount)); break;
-		 * default: break; } typeCount = 2;
-		 * 
-		 * 
-		 * } } });
-		 */
 
 		// set sliding menu
 		menu = new SlidingMenu(this);
@@ -397,6 +333,7 @@ public class MainActivity extends FragmentActivity implements
 					// circleDialog.setCity(city);
 					circleDialog.setbutton(circleButton);
 					circleDialog.show();
+					isClickCircle = true;
 
 				} else {
 					Toast.makeText(getApplicationContext(),
@@ -408,8 +345,6 @@ public class MainActivity extends FragmentActivity implements
 		});
 
 		count = 0;
-		// new getCircles().execute("西安");
-
 		userid = userInfo.getString("userid", "root");
 		Log.i("id from sharedpreference", userid);
 		// 获取LocationManager服务
@@ -483,7 +418,7 @@ public class MainActivity extends FragmentActivity implements
 					// TODO 如果没有location时？
 				}
 
-				if (lat == 0.0 || lng == 0.0 || status_finish_circle == 0) {
+				if ((lat == 0.0 || lng == 0.0 || status_finish_circle == 0||userInfo.getString("city", "0").equals("0"))&&(isClickCircle==false) ) {
 					Log.i("lat", String.valueOf(lat));
 					Log.i("lng", String.valueOf(lng));
 					Log.i("status_finish_circle",
@@ -602,17 +537,14 @@ public class MainActivity extends FragmentActivity implements
 			latLongString = "无法获取地理信息";
 		}
 		if (count_first != 0) {
-			Log.i("address request start", "execute");
-			// TODO 修改坐标
-			// new AddressRequestTask().execute("34.238225","108.924703");
-			// //Test
-			new getCurrentCircle().execute(String.valueOf(lng),
-					String.valueOf(lat), userInfo.getString("city", "西安市"));
-			Log.i("loaction", String.valueOf(lat) + " " + String.valueOf(lng));
-			// if (count_first != 0) {
-			// new getCurrentCircle().execute(String.valueOf(lng),
-			// String.valueOf(lat), userInfo.getString("city", "西安市"));
-			// }
+			if (route_first == true) {
+				Log.i("address request start", "execute");
+				new getCurrentCircle().execute(String.valueOf(lng),
+						String.valueOf(lat), userInfo.getString("city", "西安市"));
+				Log.i("loaction",
+						String.valueOf(lat) + " " + String.valueOf(lng));
+				route_first = false;
+			}
 
 		} else {
 
@@ -874,6 +806,8 @@ public class MainActivity extends FragmentActivity implements
 		protected String doInBackground(String... params) {
 			// TODO Auto-generated method stub
 			// Log.i("params, msg)
+			Log.i("ganmaqu", "In GetCurrentCircle" + params[0] + "  "
+					+ params[1] + "  " + params[2]);
 			return connect.GetShopCircle(Double.parseDouble(params[0]),
 					Double.parseDouble(params[1]), params[2]);
 		}
@@ -996,35 +930,40 @@ public class MainActivity extends FragmentActivity implements
 					JSONObject jsonObject = new JSONObject(result);
 					JSONObject jsonResult = new JSONObject(
 							jsonObject.getString("result"));
-					// Toast.makeText(getApplicationContext(),
-					// jsonResult.getString("formatted_address"),
-					// Toast.LENGTH_LONG).show();
-					// cityTextView.setText(jsonResult
-					// .getString("city"));
-
 					city = null;
 					String addressComponent = jsonResult
 							.getString("addressComponent");
 					JSONObject address = new JSONObject(addressComponent);
 					city = new String(address.getString("city"));
-					Log.i("city_in asynctask", city);
-					// cityTextView.setText(city);
-					userInfo.edit().putString("city", city).commit();
-					count_city++;
+					if (city.length()>2) {
+						Log.i("city_in asynctask", city);
+						// cityTextView.setText(city);
+						userInfo.edit().putString("city", city).commit();
+						count_city++;
 
-					userInfo.edit().putInt("count_city", count_city).commit();
-					Toast.makeText(getApplicationContext(),
-							"系统检测您在" + city + "\n我们已将" + city + "设为您的默认城市",
-							Toast.LENGTH_SHORT).show();
-					ProfileFragment fragment = (ProfileFragment) getSupportFragmentManager()
-							.findFragmentById(R.id.menu_right);
-					// fragment.new
-					// AddressRequestTask().execute(String.valueOf(lat),
-					// String.valueOf(lng));
-					fragment.setCity(city);
+						userInfo.edit().putInt("count_city", count_city).commit();
+						Toast.makeText(getApplicationContext(),
+								"系统检测您在" + city + "\n我们已将" + city + "设为您的默认城市",
+								Toast.LENGTH_SHORT).show();
+						ProfileFragment fragment = (ProfileFragment) getSupportFragmentManager()
+								.findFragmentById(R.id.menu_right);
+						fragment.setCity(city);
+//						new getCurrentCircle().execute(String.valueOf(pos_x),
+//								String.valueOf(pos_y), userInfo.getString("city", "西安市"));
+						new getCurrentCircle().execute(String.valueOf(pos_x),
+								String.valueOf(pos_y), userInfo.getString("city", "西安市"));
+					}
+					else {
+						//TODO 创建activity/dialog 选择相关城市
+						 Log.i("ganmaqu", "can not find city,use xi'an temp");
+						 ProfileFragment fragment = (ProfileFragment) getSupportFragmentManager()
+									.findFragmentById(R.id.menu_right);
+							fragment.setCity("西安市");
+							new getCurrentCircle().execute(String.valueOf(pos_x),
+									String.valueOf(pos_y), "西安市");
+					}
+					
 
-					new getCurrentCircle().execute(String.valueOf(pos_x),
-							String.valueOf(pos_y), city);
 
 				} catch (JSONException e) {
 					// TODO Auto-generated catch block

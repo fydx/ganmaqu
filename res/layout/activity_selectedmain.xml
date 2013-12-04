@@ -3,7 +3,8 @@
     android:id="@+id/relativelayout_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#12a6eb" >
+    android:background="#12a6eb"
+    android:addStatesFromChildren="true" >
 
     <ImageView
         android:id="@+id/navigation_drawer"
@@ -23,6 +24,12 @@
         android:layout_marginTop="5dp"
         android:background="#ffbf42"
         android:text="正在获取..."
+        android:maxEms="6"
+        android:focusable = "true"
+        android:focusableInTouchMode="true" 
+        android:singleLine="true"
+        android:ellipsize="marquee"
+        android:marqueeRepeatLimit="marquee_forever"
         android:textSize="20dp" />
 
     <ImageView

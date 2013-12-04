@@ -35,7 +35,7 @@ public class CircleDialog extends Dialog {
 	private String city;
 	private Button button;
 	private Connect connect;
-	private SharedPreferences cityStatus;
+	private SharedPreferences cityStatus;// 用于检测用户是否已经完成城市商圈缓存											
 	private FinalDb db;
 	private Activity activity;
 
@@ -107,8 +107,13 @@ public class CircleDialog extends Dialog {
 		gridView_circles = (myGridView) mView
 				.findViewById(R.id.gridView_circles);
 		gridAdapter = new GridAdapter(this.getContext());
-		Log.i("city_dialog", city);
+		try {
+			Log.i("city_dialog", city);
+		} catch (Exception e) {
+			Log.i("city_dialog", "null");
+		}
 		if (cityStatus.getInt(city, 0) == 0) {
+
 			new getCircles().execute(city);
 		} else {
 			TextView button_wait = (TextView) mView
@@ -140,7 +145,7 @@ public class CircleDialog extends Dialog {
 
 			}
 		});
-	
+
 		super.setContentView(mView);
 
 	}
@@ -254,14 +259,14 @@ public class CircleDialog extends Dialog {
 
 		@Override
 		protected void onPostExecute(String result) {
+			Log.i("ganmaqu", "getCircles   " + result);
 			try {
 				TextView button_wait = (TextView) findViewById(R.id.textView_wait);
 				button_wait.setVisibility(View.GONE);
 				HashMap<Integer, String> hashMapCircle = hashCircle(result);
-				Log.i("circle1", hashMapCircle.get(0));
+				// Log.i("circle1", hashMapCircle.get(0));
 				gridAdapter.setHashMap(hashMapCircle);
 				gridView_circles.setOnTouchListener(new OnTouchListener() {
-
 					@Override
 					public boolean onTouch(View v, MotionEvent event) {
 						// TODO Auto-generated method stub
@@ -274,9 +279,7 @@ public class CircleDialog extends Dialog {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-
 		}
-
 	}
 
 	public HashMap<Integer, String> hashCircle(String resultString)
@@ -304,11 +307,6 @@ public class CircleDialog extends Dialog {
 		// Log.i("hasmap", ansHashMap.toString());
 		return ansHashMap;
 	}
-	/**
-	 * 为了得到传回的数据，必须在前面的Activity中（指MainActivity类）重写onActivityResult方法
-	 * 
-	 * requestCode 请求码，即调用startActivityForResult()传递过去的值 resultCode
-	 * 结果码，结果码用于标识返回数据来自哪个新Activity
-	 */
+	
 
 }

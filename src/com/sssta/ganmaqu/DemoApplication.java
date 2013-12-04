@@ -16,7 +16,8 @@ public class DemoApplication extends Application {
     private static DemoApplication mInstance = null;
     public boolean m_bKeyRight = true;
     BMapManager mBMapManager = null;
-    public boolean[] selectType= null ; 
+    public boolean[] selectType= null ;
+    public boolean firstloc;
     public boolean myCircle; 
     public boolean allDay ;
     public double circle_lat;
@@ -40,6 +41,7 @@ public class DemoApplication extends Application {
 		selectType = new boolean[6];
 		allDay = true;
 		myCircle = false;
+		firstloc= true;
 		for (int i = 0; i < selectType.length; i++) {
 			selectType[i] = false;
 		}

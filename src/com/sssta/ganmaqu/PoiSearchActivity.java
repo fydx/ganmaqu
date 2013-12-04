@@ -7,15 +7,14 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
-import android.database.CursorJoiner.Result;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
-import android.view.Window;
 import android.view.View.OnClickListener;
+import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -54,9 +53,11 @@ public class PoiSearchActivity extends Activity {
 	private MapView.LayoutParams layoutParam = null;
 	private OverlayItem mCurItem = null;
 	private MyOverlay mOverlay = null;
+	private View popView = null;
 	private DemoApplication demoApplication;
 	private EditText editSearchKey;
 	private String areaString;
+	private TextView popupTextView;
 	/**
 	 * 搜索关键字输入窗口
 	 */
@@ -69,12 +70,12 @@ public class PoiSearchActivity extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		getWindow().requestFeature(Window.FEATURE_ACTION_BAR); // 加入 Actionbar 
+		getWindow().requestFeature(Window.FEATURE_ACTION_BAR); // 加入 Actionbar
 		DemoApplication app = (DemoApplication) this.getApplication();
 		userInfo = getApplicationContext().getSharedPreferences("userInfo", 0);
 
 		city = userInfo.getString("city", "西安市");
-	
+
 		/*
 		 * actionbar 设置
 		 */
@@ -111,12 +112,12 @@ public class PoiSearchActivity extends Activity {
 		mMapView.getController().setCenter(p);
 		// 初始化搜索模块，注册搜索事件监听
 		mSearch = new MKSearch();
-		mOverlay = new MyOverlay(getResources().getDrawable(
-				R.drawable.mark), mMapView);
-
-		button = new Button(this);
-		button.setBackgroundResource(R.drawable.popup);
-
+		mOverlay = new MyOverlay(getResources().getDrawable(R.drawable.mark),
+				mMapView);
+		popView = getLayoutInflater().inflate(R.layout.popup_mycircle, null);
+		popupTextView = (TextView)popView.findViewById(R.id.textView_mycircle);
+		
+		
 		mSearch.init(app.mBMapManager, new MKSearchListener() {
 			// 在此处理详情页结果
 			@Override
@@ -267,7 +268,7 @@ public class PoiSearchActivity extends Activity {
 				if (cs.length() <= 0) {
 					return;
 				}
-				
+
 				/**
 				 * 使用建议搜索服务获取建议列表，结果在onSuggestionResult()中更新
 				 */
@@ -331,11 +332,10 @@ public class PoiSearchActivity extends Activity {
 	 * @param v
 	 */
 	public void searchButtonProcess(View v) {
-		
+
 		editSearchKey = (EditText) findViewById(R.id.searchkey);
 		areaString = editSearchKey.getText().toString();
-		mSearch.poiSearchInCity(city, editSearchKey
-				.getText().toString());
+		mSearch.poiSearchInCity(city, editSearchKey.getText().toString());
 	}
 
 	public void goToNextPage(View v) {
@@ -356,8 +356,8 @@ public class PoiSearchActivity extends Activity {
 		@Override
 		public boolean onTap(final int index) {
 
-			button.setText("选取此处为自定义商圈");
-			button.setOnClickListener(new OnClickListener() {
+			popupTextView.setText(mkPoiInfos.get(index).name);
+			popView.setOnClickListener(new OnClickListener() {
 
 				@Override
 				public void onClick(View v) {
@@ -385,7 +385,7 @@ public class PoiSearchActivity extends Activity {
 					// 控件对齐方式
 					MapView.LayoutParams.BOTTOM_CENTER);
 			// 添加View到MapView中
-			mMapView.addView(button, layoutParam);
+			mMapView.addView(popView, layoutParam);
 
 			return true;
 
@@ -395,7 +395,7 @@ public class PoiSearchActivity extends Activity {
 		public boolean onTap(GeoPoint pt, MapView mMapView) {
 			if (pop != null) {
 				pop.hidePop();
-				mMapView.removeView(button);
+				mMapView.removeView(popView);
 			}
 			return false;
 		}
