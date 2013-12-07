@@ -2,10 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.sssta.ganmaqu"
     android:versionCode="1"
-    android:versionName="1.0" >
+    android:versionName="0.8.1" >
 
     <uses-sdk
-        android:minSdkVersion="14"
+        android:minSdkVersion="9"
         android:targetSdkVersion="17" />
     <!-- 在SDCard中创建与删除文件权限 -->
     <uses-permission android:name="android.permission.GET_TASKS" />
@@ -73,23 +73,22 @@
           cn.sharesdk.framework. authorize.AuthorizeAdapter， 
           可以监听到页面的生命周期，也能获取页面的各种UI控件
           开发者可以通过继承AuthorizeAdapter，重写其方法， 
-          并获取各种UI来自定义这个页面的行为。 
-
+          并获取各种UI来自定义这个页面的行为。 
             -->
             <meta-data
                 android:name="Adapter"
                 android:value="cn.sharesdk.demo.MyAdapter" />
         </activity>
-   <!--     <activity
+        <!--
+            <activity
             android:name="com.sssta.ganmaqu.MainActivity"
             android:label="@string/title_activity_main" >
-        </activity>-->  
-
+        </activity>
+        -->
 
         <activity
             android:name="com.sssta.ganmaqu.WarpDSLV"
-            android:label="@string/title_activity_result"
-         >
+            android:label="@string/title_activity_result" >
         </activity>
         <activity
             android:name="com.sssta.ganmaqu.MapActivity"

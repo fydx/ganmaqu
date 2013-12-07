@@ -1055,4 +1055,15 @@ public class MainActivity extends FragmentActivity implements
 			circleDialog.dismiss();
 		}
 	}
+	@Override
+	public void onBackPressed()
+	{
+		if (menu.isMenuShowing()) {
+			menu.showContent();
+		}
+		else {
+			finish();
+		}
+	}
+	
 }
