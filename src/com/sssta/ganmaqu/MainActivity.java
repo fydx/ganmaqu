@@ -1,12 +1,10 @@
 package com.sssta.ganmaqu;
 
 import java.io.Serializable;
-import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.jar.Attributes.Name;
 
 import net.tsz.afinal.FinalDb;
 
@@ -35,14 +33,12 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.support.v4.app.FragmentActivity;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.View.OnClickListener;
 import android.view.Window;
+import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
@@ -50,24 +46,23 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.ScaleAnimation;
 import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.PopupWindow;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
 import cn.sharesdk.framework.ShareSDK;
 
+import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
+import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu.OnCloseListener;
+import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu.OnOpenListener;
 import com.sssta.ganmaqu.ProfileFragment.OnFragmentInteractionListener;
-import com.sssta.ganmaqu.ProfileFragment.loginTask;
-import com.sssta.ganmaqu.WarpDSLV.randomTask;
 
-public class MainActivity extends FragmentActivity implements
+public class MainActivity extends SherlockFragmentActivity implements
 		OnFragmentInteractionListener {
 	private LocationManager locationManager;
 	private int status_finish_circle = 0;
@@ -118,6 +113,9 @@ public class MainActivity extends FragmentActivity implements
 		super.onCreate(savedInstanceState);
 		ShareSDK.initSDK(MainActivity.this);
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE); // no title bar
+	
+	
+		
 		/*
 		 * 变量初始化
 		 */
@@ -190,7 +188,7 @@ public class MainActivity extends FragmentActivity implements
 		 * 控件绑定
 		 */
 		// button_type = (Button) findViewById(R.id.button_type);
-		ImageView navigation_drawer = (ImageView) findViewById(R.id.navigation_drawer);
+		final ImageView navigation_drawer = (ImageView) findViewById(R.id.navigation_drawer);
 		TextView textView1 = (TextView) findViewById(R.id.tuijianshangquan);
 		TextView textView2 = (TextView) findViewById(R.id.chuxingleixing);
 		circleButton = (Button) findViewById(R.id.button_circle);
@@ -198,7 +196,7 @@ public class MainActivity extends FragmentActivity implements
 		button_yes = (Button) findViewById(R.id.button_go);
 		ImageView cloud_top = (ImageView) findViewById(R.id.imageView_cloud_top);
 		ImageView cloud_bottom = (ImageView) findViewById(R.id.imageView_cloud_bottom);
-		imageView_change = (ImageView) findViewById(R.id.imageView_last);
+	//	imageView_change = (ImageView) findViewById(R.id.imageView_last);
 	
 
 		/*
@@ -209,34 +207,34 @@ public class MainActivity extends FragmentActivity implements
 		textView2.setAnimation(animationSet);
 		circleButton.setAnimation(animationSet);
 		button_yes.setAnimation(animationSet);
-		imageView_change.setAnimation(animationSet);
+	//	imageView_change.setAnimation(animationSet);
 		button_type.setAnimation(animationSet);
 		cloud_top.setAnimation(animationSetTrans_top);
 		cloud_bottom.setAnimation(animationSetTrans);
 
 		db = FinalDb.create(this);
-		imageView_change.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				List<place> placeList = db.findAll(place.class);
-				if (placeList.isEmpty()) {
-					Toast.makeText(getApplicationContext(), "啊哦，你还没有保存过路线",
-							Toast.LENGTH_SHORT).show();
-				} else {
-					int route_id = placeList.get(placeList.size() - 1)
-							.getRoute_id();
-					List<place> lastLine = db.findAllByWhere(place.class,
-							"route_id = " + String.valueOf(route_id));
-					Intent intent = new Intent();
-					intent.setClass(getApplicationContext(), WarpDSLV.class);
-					intent.putExtra("places", (Serializable) lastLine);
-					intent.putExtra("type", lastLine.get(0).getRouteType());
-					startActivity(intent);
-				}
-			}
-		});
+//		imageView_change.setOnClickListener(new OnClickListener() {
+//
+//			@Override
+//			public void onClick(View v) {
+//				// TODO Auto-generated method stub
+//				List<place> placeList = db.findAll(place.class);
+//				if (placeList.isEmpty()) {
+//					Toast.makeText(getApplicationContext(), "啊哦，你还没有保存过路线",
+//							Toast.LENGTH_SHORT).show();
+//				} else {
+//					int route_id = placeList.get(placeList.size() - 1)
+//							.getRoute_id();
+//					List<place> lastLine = db.findAllByWhere(place.class,
+//							"route_id = " + String.valueOf(route_id));
+//					Intent intent = new Intent();
+//					intent.setClass(getApplicationContext(), WarpDSLV.class);
+//					intent.putExtra("places", (Serializable) lastLine);
+//					intent.putExtra("type", lastLine.get(0).getRouteType());
+//					startActivity(intent);
+//				}
+//			}
+//		});
 
 		ToLargeScaleAnimation = new ScaleAnimation(0.7f, 1.0f, 0.7f, 1.0f,
 				Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF,
@@ -257,7 +255,27 @@ public class MainActivity extends FragmentActivity implements
 				android.R.anim.anticipate_overshoot_interpolator));
 		ToSmallScaleAnimation.setFillAfter(true);
 		ToSmallScaleAnimation.setFillEnabled(true);
-
+		final AnimationSet menuToogle_close =  new AnimationSet(false);
+		TranslateAnimation translateAnimation_close = new TranslateAnimation(
+				Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF,
+				-0.05f, Animation.RELATIVE_TO_SELF, 0f,
+				Animation.RELATIVE_TO_SELF, 0f);
+		translateAnimation_close.setDuration(1000);
+		translateAnimation_close.setStartOffset(100);
+		translateAnimation_close.setInterpolator(AnimationUtils.loadInterpolator(
+				MainActivity.this, android.R.anim.accelerate_decelerate_interpolator));
+		menuToogle_close.addAnimation(translateAnimation_close);
+		final AnimationSet menuToogle_open =  new AnimationSet(false);
+		TranslateAnimation translateAnimation_open = new TranslateAnimation(
+				Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF,
+				0.05f, Animation.RELATIVE_TO_SELF, 0f,
+				Animation.RELATIVE_TO_SELF, 0f);
+		menuToogle_open.setDuration(1000);
+		menuToogle_open.setStartOffset(100);
+		menuToogle_open.setInterpolator(AnimationUtils.loadInterpolator(
+				MainActivity.this, android.R.anim.accelerate_decelerate_interpolator));
+	//	translateAnimation2.setRepeatCount(1);
+		menuToogle_open.addAnimation(translateAnimation_open);
 		// set sliding menu
 		menu = new SlidingMenu(this);
 		menu.setMode(SlidingMenu.LEFT);
@@ -271,7 +289,23 @@ public class MainActivity extends FragmentActivity implements
 		// menu.setSecondaryShadowDrawable(R.drawable.shadowright);
 		menu.attachToActivity(this, SlidingMenu.SLIDING_CONTENT);
 		menu.setMenu(R.layout.menu_right);
-
+	
+		menu.setOnOpenListener(new OnOpenListener() {
+			
+			@Override
+			public void onOpen() {
+				// TODO Auto-generated method stub
+				navigation_drawer.startAnimation(menuToogle_open);
+			}
+		});
+		menu.setOnCloseListener(new OnCloseListener() {
+			
+			@Override
+			public void onClose() {
+				// TODO Auto-generated method stub
+				navigation_drawer.startAnimation(menuToogle_close);
+			}
+		});
 		if (isConnect(this) == false) {
 			new AlertDialog.Builder(this)
 					.setTitle("网络错误")

@@ -1350,6 +1350,7 @@ containing a value of this type.
         public static final int expensive=0x7f020100;
         public static final int far=0x7f020101;
         public static final int filled_activity_bg=0x7f020102;
+        public static final int float_actionbar=0x7f020182;
         public static final int friend=0x7f020103;
         public static final int full=0x7f020104;
         public static final int full_unselected=0x7f020105;

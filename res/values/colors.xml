@@ -10,5 +10,6 @@
     <color name="White_little">#cce6e6e6</color>
     <drawable name = "result_actionbar">#272c2e</drawable>
     <drawable name = "myCircle_actionbar">#15aef1</drawable>
+    <drawable name="float_actionbar">#FFFFFFFF</drawable>
    
 </resources>

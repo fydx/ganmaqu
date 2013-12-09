@@ -36,6 +36,7 @@
         dslv:track_drag_sort="false"
         dslv:use_default_controller="true" >
     </com.mobeta.android.dslv.DragSortListView>
+   
     <!--
     <LinearLayout
         android:id="@+id/linearlayout2"

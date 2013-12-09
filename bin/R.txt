@@ -444,6 +444,7 @@ int drawable evening 0x7f0200ff
 int drawable expensive 0x7f020100
 int drawable far 0x7f020101
 int drawable filled_activity_bg 0x7f020102
+int drawable float_actionbar 0x7f020182
 int drawable friend 0x7f020103
 int drawable full 0x7f020104
 int drawable full_unselected 0x7f020105
