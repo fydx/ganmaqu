@@ -131,6 +131,10 @@ public class MainActivity extends SherlockFragmentActivity implements
 		city = userInfo.getString("city", "西安市");
 		count_first = userInfo.getInt("first", 0);
 		count_city = userInfo.getInt("count_city", 0);
+		if (count_city == 0 ) {
+			//此处弹出选择城市  (dialog/activity)
+			
+		}
 		Log.i("city from sharedperferece", city);
 		/*
 		 * 设置渐显动画

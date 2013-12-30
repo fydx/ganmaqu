@@ -286,7 +286,7 @@ public class NewMapActivity extends Activity {
 			public void onGetDrivingRouteResult(MKDrivingRouteResult arg0,
 					int arg1) {
 				// TODO Auto-generated method stub
-
+				
 			}
 
 			@Override
